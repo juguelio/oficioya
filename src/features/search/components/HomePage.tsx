@@ -2,7 +2,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useCityStore } from '@/features/search/store'
 import { cn } from '@/shared/utils/cn'
-import type { CiudadId } from '@/design-system/tokens'
+import type { CiudadId, RubroId } from '@/design-system/tokens'
 
 // ─── Local images (downloaded from Stitch) ───────────────────────────────────
 const HERO_IMG            = '/images/hero-lanin.png'
@@ -16,12 +16,14 @@ const IMG_PROVIDER_JARD   = '/images/provider-jardinero.png'
 export function HomePage() {
   const ciudadId    = useCityStore(s => s.ciudadId)
   const setCiudad   = useCityStore(s => s.setCiudad)
+  const setRubro    = useCityStore(s => s.setRubro)
   const clearCiudad = useCityStore(s => s.clearCiudad)
   const navigate    = useNavigate()
 
   const ciudadData = ciudades.find(c => c.id === ciudadId)
 
   function handleRubro(rubroId: string) {
+    setRubro(rubroId as RubroId)
     navigate(`/${ciudadId}/${rubroId}`)
   }
 

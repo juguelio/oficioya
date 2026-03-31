@@ -22,17 +22,21 @@ const FALLBACK_IMG = '/images/provider-carpintera.png'
 export function RubroPage() {
   const storeCiudadId = useCityStore(s => s.ciudadId)
   const setCiudad     = useCityStore(s => s.setCiudad)
+  const setRubro      = useCityStore(s => s.setRubro)
   const clearCiudad   = useCityStore(s => s.clearCiudad)
   const { ciudad: ciudadParam, rubro } = useParams<{ ciudad: string; rubro: RubroId }>()
   const navigate = useNavigate()
 
-  // Prefer URL param; sync to store if they diverge
+  // URL params are the source of truth on navigation. Sync both ciudad and rubro to the store.
   const ciudadId = (ciudadParam as CiudadId) ?? storeCiudadId
   useEffect(() => {
     if (ciudadParam && ciudadParam !== storeCiudadId) {
       setCiudad(ciudadParam as CiudadId)
     }
-  }, [ciudadParam, storeCiudadId, setCiudad])
+    if (rubro) {
+      setRubro(rubro)
+    }
+  }, [ciudadParam, rubro, storeCiudadId, setCiudad, setRubro])
 
   const ciudadData = ciudades.find(c => c.id === ciudadId)
   const rubroData  = rubros.find(r => r.id === rubro)
@@ -106,7 +110,7 @@ export function RubroPage() {
               {rubros.slice(0, 6).map(r => (
                 <button
                   key={r.id}
-                  onClick={() => navigate(`/${ciudadId}/${r.id}`)}
+                  onClick={() => { setRubro(r.id); navigate(`/${ciudadId}/${r.id}`) }}
                   className={cn(
                     'px-4 py-2 rounded-md text-sm font-semibold whitespace-nowrap transition-all shrink-0',
                     r.id === rubro
