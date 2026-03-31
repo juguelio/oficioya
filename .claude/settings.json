@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(git:*)",
+      "Bash(curl:*)",
+      "Read(src/**)",
+      "Write(src/**)",
+      "Edit(src/**)",
+      "Read(public/**)",
+      "Write(public/**)",
+      "Read(package.json)",
+      "Read(package-lock.json)",
+      "Read(tsconfig.json)",
+      "Read(tsconfig.app.json)",
+      "Read(tsconfig.node.json)",
+      "Read(vite.config.ts)",
+      "Read(vite.config.js)",
+      "Read(tailwind.config.ts)",
+      "Read(tailwind.config.js)",
+      "Read(postcss.config.js)",
+      "Read(eslint.config.*)",
+      "Read(.env.example)",
+      "Read(index.html)",
+      "Read(CLAUDE.md)",
+      "Read(SKILLmd.md)",
+      "Read(.claude/**)",
+      "Write(.claude/settings.json)",
+      "Edit(.claude/settings.json)"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/eslint-on-edit.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/git-context.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

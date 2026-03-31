@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  /* ── Fondos en capas ────────────────────────────────────────────────────── */
+  --color-noche:     #0E1510;   /* fondo base absoluto */
+  --color-bosque-dk: #1E3A1E;   /* verde bosque oscuro — nav, headers */
+  --color-bosque-lt: #4A8C49;   /* acción primaria — botones, highlights */
+  --color-sombra:    #1A2A1A;   /* cards, panels */
+  --color-nieve:     #EFF3EE;   /* texto principal */
+  --color-muted:     #7A9A79;   /* texto secundario, captions */
+  --color-lago:      #2E6E8A;   /* acento azul */
+
+  /* ── Tipografía ─────────────────────────────────────────────────────────── */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Raleway', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ── Radios ─────────────────────────────────────────────────────────────── */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-full: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-noche);
+  color: var(--color-nieve);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
