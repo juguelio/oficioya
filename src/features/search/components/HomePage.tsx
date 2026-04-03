@@ -16,21 +16,22 @@ const IMG_PROVIDER_JARD   = '/images/provider-jardinero.png'
 export function HomePage() {
   const ciudadId    = useCityStore(s => s.ciudadId)
   const setCiudad   = useCityStore(s => s.setCiudad)
-  const setRubro    = useCityStore(s => s.setRubro)
   const clearCiudad = useCityStore(s => s.clearCiudad)
   const navigate    = useNavigate()
 
   const ciudadData = ciudades.find(c => c.id === ciudadId)
 
-  function handleRubro(rubroId: string) {
-    setRubro(rubroId as RubroId)
+  function handleRubro(rubroId: RubroId) {
+    if (!ciudadId) {
+      // Scroll to city pills if no city is selected yet
+      document.getElementById('city-pills')?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
     navigate(`/${ciudadId}/${rubroId}`)
   }
 
-  function handleSearchClick() {
-    if (!ciudadId) {
-      document.getElementById('city-selector')?.scrollIntoView({ behavior: 'smooth' })
-    }
+  function handleCitySelect(id: CiudadId) {
+    setCiudad(id)
   }
 
   return (
@@ -55,29 +56,18 @@ export function HomePage() {
           </span>
         </div>
 
-        {ciudadId ? (
-          <button
-            onClick={clearCiudad}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[--radius-full] bg-[--color-sombra] border border-[--color-bosque-lt]/30 hover:border-red-500/40 transition-all"
-            title="Cambiar ciudad"
-          >
-            <span className="text-xs font-semibold text-[--color-nieve]">{ciudadData?.label}</span>
-            <span className="text-xs text-[--color-muted] hover:text-red-400 transition-colors">×</span>
-          </button>
-        ) : (
-          <Link
-            to="/planes"
-            className="text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors"
-          >
-            Soy prestador →
-          </Link>
-        )}
+        <Link
+          to="/planes"
+          className="text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors"
+        >
+          Soy prestador →
+        </Link>
       </header>
 
       <main className="pt-16 pb-24">
 
         {/* ── Hero Section ──────────────────────────────────────────────────────── */}
-        <section className="relative h-[530px] flex items-end px-6 pb-12 overflow-hidden">
+        <section className="relative h-[400px] flex items-end px-6 pb-8 overflow-hidden">
           <div className="absolute inset-0 z-0">
             <img
               src={HERO_IMG}
@@ -90,7 +80,7 @@ export function HomePage() {
 
           <div className="relative z-10 max-w-2xl">
             <h2
-              className="text-5xl md:text-7xl font-black tracking-tight text-[--color-nieve] leading-none mb-4"
+              className="text-4xl md:text-6xl font-black tracking-tight text-[--color-nieve] leading-none mb-3"
               style={{
                 fontFamily: 'var(--font-display)',
                 letterSpacing: '-0.03em',
@@ -100,72 +90,54 @@ export function HomePage() {
               Manos expertas,<br />
               <span className="text-[--color-bosque-lt]">origen local.</span>
             </h2>
-            <p className="text-[--color-muted] text-lg max-w-md mb-8">
-              Conectá con los mejores profesionales en San Martín de los Andes,
-              Villa La Angostura y Bariloche.
+            <p className="text-[--color-muted] text-base max-w-md">
+              Conectá con profesionales en el corredor andino patagónico.
             </p>
-
-            {/* Search bar */}
-            <div className="relative max-w-xl">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-[--color-muted]">
-                <IconSearch />
-              </div>
-              <input
-                readOnly
-                onClick={handleSearchClick}
-                className={cn(
-                  'w-full h-14 pl-12 pr-6 rounded-[--radius-xl] cursor-pointer',
-                  'bg-[--color-noche] border focus:outline-none focus:ring-2 focus:ring-[--color-bosque-lt]/40',
-                  'text-[--color-nieve] placeholder:text-[--color-muted]/50 transition-all',
-                  ciudadId
-                    ? 'border-[--color-bosque-lt]/30'
-                    : 'border-[#1E2E1E] hover:border-[--color-bosque-lt]/30',
-                )}
-                placeholder={
-                  ciudadId
-                    ? `Buscar en ${ciudadData?.label}…`
-                    : '¿Qué servicio buscás?'
-                }
-              />
-            </div>
           </div>
         </section>
 
-        {/* ── City Selector ─────────────────────────────────────────────────────── */}
-        {!ciudadId && (
-          <section id="city-selector" className="px-6 mt-10">
-            <p className="text-xs font-bold tracking-[0.15em] text-[--color-muted] uppercase mb-4">
-              ¿Dónde estás?
-            </p>
-            <div className="flex flex-col gap-2 max-w-xl">
-              {ciudades.map(c => (
-                <button
-                  key={c.id}
-                  onClick={() => setCiudad(c.id as CiudadId)}
-                  className={cn(
-                    'flex items-center justify-between w-full px-4 py-4 rounded-[--radius-lg] text-left',
-                    'bg-[--color-sombra] border border-[#1E2E1E]',
-                    'transition-all duration-150',
-                    'hover:border-[--color-bosque-lt] hover:bg-[#1E2E1E] hover:-translate-y-0.5',
-                    'active:scale-[0.98]',
-                  )}
-                >
-                  <span className="text-sm font-semibold text-[--color-nieve]">{c.label}</span>
-                  <span className="text-[--color-muted] text-sm">→</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
+        {/* ── City Pills — always visible, inline ───────────────────────────────── */}
+        <section id="city-pills" className="px-6 pt-5 pb-2">
+          <p className="text-xs font-bold tracking-[0.15em] text-[--color-muted] uppercase mb-3">
+            {ciudadId ? 'Ciudad seleccionada' : '¿Dónde estás?'}
+          </p>
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {ciudades.map(c => (
+              <button
+                key={c.id}
+                onClick={() => handleCitySelect(c.id as CiudadId)}
+                className={cn(
+                  'px-4 py-2.5 rounded-[--radius-full] text-sm font-semibold whitespace-nowrap transition-all shrink-0',
+                  'active:scale-95',
+                  ciudadId === c.id
+                    ? 'bg-[--color-bosque-lt] text-white shadow-lg shadow-[--color-bosque-lt]/20'
+                    : 'bg-[--color-sombra] text-[--color-muted] border border-[#1E2E1E] hover:border-[--color-bosque-lt]/50 hover:text-[--color-nieve]',
+                )}
+              >
+                {c.label}
+              </button>
+            ))}
+            {ciudadId && (
+              <button
+                onClick={clearCiudad}
+                className="px-3 py-2.5 rounded-[--radius-full] text-xs font-semibold whitespace-nowrap transition-all shrink-0 text-[--color-muted] hover:text-red-400 border border-[#1E2E1E] hover:border-red-500/40 active:scale-95"
+                style={{ backgroundColor: '#1a2026' }}
+                aria-label="Cambiar ciudad"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </section>
 
         {/* ── Category Grid ─────────────────────────────────────────────────────── */}
-        <section className="px-6 mt-12">
+        <section className="px-6 mt-6">
           <h3
-            className="text-xl font-bold mb-6 flex items-center gap-2 text-[--color-nieve]"
+            className="text-xl font-bold mb-5 flex items-center gap-2 text-[--color-nieve]"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             <span className="w-2 h-6 bg-[--color-bosque-lt] rounded-full inline-block" />
-            {ciudadId ? `Servicios en ${ciudadData?.label}` : 'Servicios por categoría'}
+            {ciudadId ? `Servicios en ${ciudadData?.label}` : 'Elegí un rubro'}
           </h3>
 
           {/* Top 4 rubros — large cards */}
@@ -173,54 +145,63 @@ export function HomePage() {
             {rubros.slice(0, 4).map(r => (
               <button
                 key={r.id}
-                onClick={() => ciudadId ? handleRubro(r.id) : handleSearchClick()}
+                onClick={() => handleRubro(r.id as RubroId)}
                 className={cn(
-                  'bg-[--color-sombra] rounded-[--radius-xl] p-6 text-left group',
+                  'bg-[--color-sombra] rounded-[--radius-xl] p-5 text-left group',
                   'border border-[#1E2E1E] hover:border-[--color-bosque-lt]',
                   'hover:bg-[#1E2E1E] transition-all cursor-pointer hover:-translate-y-0.5',
+                  'active:scale-[0.98]',
+                  !ciudadId && 'opacity-60',
                 )}
               >
-                <div className="w-12 h-12 rounded-[--radius-lg] bg-[#2A3A2A] flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform leading-none">
+                <div className="w-12 h-12 rounded-[--radius-lg] bg-[#2A3A2A] flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform leading-none">
                   {r.icon}
                 </div>
                 <span
-                  className="font-bold text-lg block text-[--color-nieve]"
+                  className="font-bold text-base block text-[--color-nieve]"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   {r.label}
                 </span>
-                <span className="text-xs text-[--color-muted] uppercase tracking-widest font-semibold">
-                  {ciudadId ? ciudadData?.label : 'Patagonia'}
-                </span>
+                {ciudadId && (
+                  <span className="text-xs text-[--color-bosque-lt] font-semibold mt-0.5 block">
+                    {ciudadData?.label}
+                  </span>
+                )}
               </button>
             ))}
           </div>
 
-          {/* Rest of rubros — compact list (only shown when city is selected) */}
-          {ciudadId && (
-            <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
-              {rubros.slice(4).map(r => (
-                <button
-                  key={r.id}
-                  onClick={() => handleRubro(r.id)}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-4 rounded-[--radius-lg] text-left group',
-                    'bg-[--color-sombra] border border-[#1E2E1E]',
-                    'hover:border-[--color-bosque-lt] hover:bg-[#1E2E1E] hover:-translate-y-0.5',
-                    'transition-all duration-150 active:scale-[0.98]',
-                  )}
-                >
-                  <span className="text-2xl leading-none">{r.icon}</span>
-                  <span className="text-sm font-semibold text-[--color-nieve]">{r.label}</span>
-                </button>
-              ))}
-            </div>
+          {/* Rest of rubros — compact list */}
+          <div className={cn('mt-4 grid grid-cols-2 md:grid-cols-3 gap-3', !ciudadId && 'opacity-60')}>
+            {rubros.slice(4).map(r => (
+              <button
+                key={r.id}
+                onClick={() => handleRubro(r.id as RubroId)}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3.5 rounded-[--radius-lg] text-left group',
+                  'bg-[--color-sombra] border border-[#1E2E1E]',
+                  'hover:border-[--color-bosque-lt] hover:bg-[#1E2E1E] hover:-translate-y-0.5',
+                  'transition-all duration-150 active:scale-[0.98]',
+                )}
+              >
+                <span className="text-2xl leading-none">{r.icon}</span>
+                <span className="text-sm font-semibold text-[--color-nieve]">{r.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Prompt when no city selected */}
+          {!ciudadId && (
+            <p className="text-xs text-[--color-muted] text-center mt-4">
+              Elegí tu ciudad arriba para ver los prestadores disponibles
+            </p>
           )}
         </section>
 
         {/* ── Profesionales Destacados ──────────────────────────────────────────── */}
-        <section className="px-6 mt-16">
-          <div className="flex justify-between items-end mb-8">
+        <section className="px-6 mt-14">
+          <div className="flex justify-between items-end mb-6">
             <div>
               <h3
                 className="text-2xl font-bold text-[--color-nieve]"
@@ -231,8 +212,11 @@ export function HomePage() {
               <p className="text-sm text-[--color-muted]">Los mejor calificados en tu zona</p>
             </div>
             <button
-              onClick={() => ciudadId ? navigate(`/${ciudadId}/electricista`) : handleSearchClick()}
-              className="text-[--color-bosque-lt] text-xs font-bold uppercase tracking-widest border-b border-[--color-bosque-lt] pb-1 hover:opacity-80 transition-opacity"
+              onClick={() => ciudadId ? navigate(`/${ciudadId}/electricista`) : undefined}
+              className={cn(
+                'text-[--color-bosque-lt] text-xs font-bold uppercase tracking-widest border-b border-[--color-bosque-lt] pb-1 hover:opacity-80 transition-opacity',
+                !ciudadId && 'opacity-40 cursor-not-allowed',
+              )}
             >
               Ver todos
             </button>
@@ -272,7 +256,7 @@ export function HomePage() {
         </section>
 
         {/* ── Para prestadores CTA ──────────────────────────────────────────────── */}
-        <section className="px-6 mt-16">
+        <section className="px-6 mt-14">
           <div className="flex justify-between items-end mb-2">
             <div>
               <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-2">
@@ -412,15 +396,6 @@ function IconMenu() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
       <path d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-  )
-}
-
-function IconSearch() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
     </svg>
   )
 }

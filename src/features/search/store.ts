@@ -18,7 +18,7 @@ export const useCityStore = create<SearchState>()(
       rubroId: null,
       setCiudad: (id) => set({ ciudadId: id }),
       setRubro: (id) => set({ rubroId: id }),
-      clearCiudad: () => set({ ciudadId: null }),
+      clearCiudad: () => set({ ciudadId: null, rubroId: null }),
       clearRubro: () => set({ rubroId: null }),
     }),
     { name: 'oficio-search' },

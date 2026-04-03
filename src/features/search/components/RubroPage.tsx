@@ -190,17 +190,22 @@ type ProviderListCardProps = {
 }
 
 function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
-  const img      = provider.photos?.[0] ?? fallbackImg
-  const waLink   = `https://wa.me/${provider.phone.replace(/\D/g, '')}`
+  const img         = provider.photos?.[0] ?? fallbackImg
+  const waLink      = `https://wa.me/${provider.phone.replace(/\D/g, '')}`
   const ciudadLabel = ciudades.find(c => c.id === provider.ciudad)?.label ?? provider.ciudad
+  const navigate    = useNavigate()
 
   return (
     <article
-      className="rounded-xl overflow-hidden hover:brightness-110 transition-all duration-300 group"
+      className="rounded-xl overflow-hidden transition-all duration-300 group"
       style={{ backgroundColor: '#1a2026' }}
     >
-      {/* Photo */}
-      <div className="relative h-48 w-full">
+      {/* Photo — tap navigates to full profile */}
+      <button
+        className="relative h-48 w-full block text-left"
+        onClick={() => navigate(`/prestador/${provider.id}`)}
+        aria-label={`Ver perfil de ${provider.name}`}
+      >
         <img
           src={img}
           alt={provider.name}
@@ -225,19 +230,25 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
             ✓ Verificado
           </div>
         )}
-      </div>
+      </button>
 
       {/* Info */}
       <div className="p-5">
         <div className="flex justify-between items-start mb-2">
-          <h2
-            className="text-xl font-bold text-[--color-nieve]"
-            style={{ fontFamily: 'var(--font-display)' }}
+          {/* Name taps to profile */}
+          <button
+            className="text-left hover:text-[--color-bosque-lt] transition-colors"
+            onClick={() => navigate(`/prestador/${provider.id}`)}
           >
-            {provider.name}
-          </h2>
+            <h2
+              className="text-xl font-bold text-[--color-nieve]"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              {provider.name}
+            </h2>
+          </button>
           {provider.subscription === 'destacado' && (
-            <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: '#F5C842', color: '#0e1419' }}>
+            <span className="text-xs font-bold px-2 py-1 rounded-full shrink-0 ml-2" style={{ backgroundColor: '#F5C842', color: '#0e1419' }}>
               Destacado
             </span>
           )}
@@ -256,6 +267,7 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
           </p>
         )}
 
+        {/* Primary CTA — WhatsApp, no navigation required */}
         <a
           href={waLink}
           target="_blank"
@@ -266,6 +278,14 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
           <IconWhatsApp />
           Contactar por WhatsApp
         </a>
+
+        {/* Secondary link — full profile for more detail */}
+        <button
+          onClick={() => navigate(`/prestador/${provider.id}`)}
+          className="w-full mt-2 py-2 text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors text-center active:scale-[0.98]"
+        >
+          Ver perfil completo →
+        </button>
       </div>
     </article>
   )
