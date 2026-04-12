@@ -1,0 +1,183 @@
+{
+  "name": "Oficio — WhatsApp Response Router",
+  "nodes": [
+    {
+      "id": "wa-router-trigger",
+      "name": "Webhook: Incoming WhatsApp Message",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 200],
+      "parameters": {
+        "path": "whatsapp-incoming",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "wa-router-extract",
+      "name": "Code: Extract Phone and Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 200],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Normalize incoming WhatsApp Business API payload.\n// Supports 360dialog / official WhatsApp Cloud API format.\nconst body = $input.first().json.body ?? $input.first().json;\n\nlet fromPhone = null;\nlet messageText = '';\n\n// Cloud API format\nif (body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {\n  const msg = body.entry[0].changes[0].value.messages[0];\n  fromPhone   = msg.from;            // e.g. '5492944513870'\n  messageText = msg.text?.body ?? '';\n}\n// 360dialog format\nelse if (body?.messages?.[0]) {\n  const msg   = body.messages[0];\n  fromPhone   = msg.from;\n  messageText = msg.text?.body ?? '';\n}\n\nif (!fromPhone) {\n  return [{ json: { skip: true, reason: 'no_message_found' } }];\n}\n\n// Normalize: ensure +549 prefix\nconst normalizedPhone = fromPhone.startsWith('+') ? fromPhone : '+' + fromPhone;\nconst response = messageText.trim().toUpperCase();  // 'SI' or 'NO'\n\nreturn [{ json: { fromPhone: normalizedPhone, response, skip: false } }];"
+      }
+    },
+    {
+      "id": "wa-router-if-skip",
+      "name": "IF: Valid Message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [480, 200],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-skip",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": false,
+              "operator": { "type": "boolean", "operation": "equal" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "wa-router-find-request",
+      "name": "Supabase: Find Active Request for Provider",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 0],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/find_emergency_request_by_provider_phone",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey",        "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={ \"p_phone\": \"{{ $json.fromPhone }}\" }",
+        "options": {}
+      }
+    },
+    {
+      "id": "wa-router-if-has-request",
+      "name": "IF: Active Request Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [960, 0],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-has-request",
+              "leftValue": "={{ $json.n8n_resume_url }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notEmpty" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "wa-router-resume",
+      "name": "HTTP: Resume n8n Execution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, -200],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.n8n_resume_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={ \"response\": \"{{ $('Code: Extract Phone and Response').first().json.response }}\" }",
+        "options": {}
+      }
+    },
+    {
+      "id": "wa-router-respond-ok",
+      "name": "Respond: OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1440, -200],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"ok\": true }",
+        "options": { "responseCode": 200 }
+      }
+    },
+    {
+      "id": "wa-router-respond-skip",
+      "name": "Respond: Skipped",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [720, 400],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"ok\": true, \"skipped\": true }",
+        "options": { "responseCode": 200 }
+      }
+    },
+    {
+      "id": "wa-router-respond-no-match",
+      "name": "Respond: No Active Request",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1200, 200],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"ok\": true, \"reason\": \"no_active_request\" }",
+        "options": { "responseCode": 200 }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook: Incoming WhatsApp Message": {
+      "main": [[{ "node": "Code: Extract Phone and Response", "type": "main", "index": 0 }]]
+    },
+    "Code: Extract Phone and Response": {
+      "main": [[{ "node": "IF: Valid Message?", "type": "main", "index": 0 }]]
+    },
+    "IF: Valid Message?": {
+      "main": [
+        [{ "node": "Supabase: Find Active Request for Provider", "type": "main", "index": 0 }],
+        [{ "node": "Respond: Skipped", "type": "main", "index": 0 }]
+      ]
+    },
+    "Supabase: Find Active Request for Provider": {
+      "main": [[{ "node": "IF: Active Request Found?", "type": "main", "index": 0 }]]
+    },
+    "IF: Active Request Found?": {
+      "main": [
+        [{ "node": "HTTP: Resume n8n Execution",    "type": "main", "index": 0 }],
+        [{ "node": "Respond: No Active Request",    "type": "main", "index": 0 }]
+      ]
+    },
+    "HTTP: Resume n8n Execution": {
+      "main": [[{ "node": "Respond: OK", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "staticData": null,
+  "tags": [{ "name": "oficio" }, { "name": "emergency" }, { "name": "whatsapp" }]
+}

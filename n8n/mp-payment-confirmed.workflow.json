@@ -1,0 +1,270 @@
+{
+  "name": "Oficio — MercadoPago Payment Confirmed",
+  "nodes": [
+    {
+      "id": "mp-trigger",
+      "name": "Webhook: MP Payment Notification",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 200],
+      "parameters": {
+        "path": "mp-payment-confirmed",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "mp-respond-fast",
+      "name": "Respond 200 Immediately",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [240, 0],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"ok\": true }",
+        "options": { "responseCode": 200 }
+      }
+    },
+    {
+      "id": "mp-if-payment-topic",
+      "name": "IF: Topic = Payment?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [240, 400],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-topic",
+              "leftValue": "={{ $json.body.topic ?? $json.body.type }}",
+              "rightValue": "payment",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "mp-get-payment",
+      "name": "MercadoPago: Get Payment Details",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 200],
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.mercadopago.com/v1/payments/{{ $json.body.data?.id ?? $json.body.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.MP_ACCESS_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "mp-if-approved",
+      "name": "IF: Payment Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [720, 200],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-approved",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "approved",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "mp-get-request",
+      "name": "Supabase: Get Emergency Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [960, 0],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/emergency_requests",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey",        "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "select",               "value": "id,client_phone,rubro_id,ciudad_id,matched_provider_id,status" },
+            { "name": "mp_external_reference", "value": "=eq.{{ $json.external_reference }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "mp-get-provider",
+      "name": "Supabase: Get Matched Provider",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 0],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/providers",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey",        "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "select", "value": "id,name,whatsapp_number,phone,rubro_id" },
+            { "name": "id",     "value": "=eq.{{ $('Supabase: Get Emergency Request').first().json.matched_provider_id }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "mp-update-completed",
+      "name": "Supabase: Update — Completed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1440, 0],
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/emergency_requests?id=eq.{{ $('Supabase: Get Emergency Request').first().json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey",        "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"status\": \"completed\",\n  \"mp_payment_id\": \"{{ $('MercadoPago: Get Payment Details').first().json.id }}\"\n}",
+        "options": {}
+      }
+    },
+    {
+      "id": "mp-wa-reveal-to-client",
+      "name": "WhatsApp: Revelá contacto al cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1680, -200],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.WHATSAPP_API_URL }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "D360-API-KEY", "value": "={{ $env.WHATSAPP_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $('Supabase: Get Emergency Request').first().json.client_phone }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"✅ *Pago confirmado* — ¡Tu profesional está en camino!\\n\\n*{{ $('Supabase: Get Matched Provider').first().json.name }}*\\nWhatsApp: wa.me/{{ $('Supabase: Get Matched Provider').first().json.whatsapp_number.replace(/\\\\D/g, '') }}\\n\\nEl profesional ya fue notificado con tu número. Escribile directamente si necesitás coordinar.\"\n  }\n}",
+        "options": {}
+      }
+    },
+    {
+      "id": "mp-wa-notify-provider",
+      "name": "WhatsApp: Notificá al prestador",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1680, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.WHATSAPP_API_URL }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "D360-API-KEY", "value": "={{ $env.WHATSAPP_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $('Supabase: Get Matched Provider').first().json.whatsapp_number }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"💰 *Pago confirmado* — El cliente pagó la solicitud de emergencia.\\n\\nContacto del cliente: {{ $('Supabase: Get Emergency Request').first().json.client_phone }}\\nRubro: {{ $('Supabase: Get Emergency Request').first().json.rubro_id }}\\nCiudad: {{ $('Supabase: Get Emergency Request').first().json.ciudad_id }}\\n\\nEscribile para coordinar la visita.\"\n  }\n}",
+        "options": {}
+      }
+    },
+    {
+      "id": "mp-noop-not-approved",
+      "name": "NoOp: Pago No Aprobado",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [960, 400],
+      "parameters": {}
+    },
+    {
+      "id": "mp-noop-not-payment",
+      "name": "NoOp: Notificación No Relevante",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [480, 600],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Webhook: MP Payment Notification": {
+      "main": [
+        [
+          { "node": "Respond 200 Immediately", "type": "main", "index": 0 },
+          { "node": "IF: Topic = Payment?",    "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "IF: Topic = Payment?": {
+      "main": [
+        [{ "node": "MercadoPago: Get Payment Details", "type": "main", "index": 0 }],
+        [{ "node": "NoOp: Notificación No Relevante",  "type": "main", "index": 0 }]
+      ]
+    },
+    "MercadoPago: Get Payment Details": {
+      "main": [[{ "node": "IF: Payment Approved?", "type": "main", "index": 0 }]]
+    },
+    "IF: Payment Approved?": {
+      "main": [
+        [{ "node": "Supabase: Get Emergency Request", "type": "main", "index": 0 }],
+        [{ "node": "NoOp: Pago No Aprobado",          "type": "main", "index": 0 }]
+      ]
+    },
+    "Supabase: Get Emergency Request": {
+      "main": [[{ "node": "Supabase: Get Matched Provider", "type": "main", "index": 0 }]]
+    },
+    "Supabase: Get Matched Provider": {
+      "main": [[{ "node": "Supabase: Update — Completed", "type": "main", "index": 0 }]]
+    },
+    "Supabase: Update — Completed": {
+      "main": [
+        [
+          { "node": "WhatsApp: Revelá contacto al cliente", "type": "main", "index": 0 },
+          { "node": "WhatsApp: Notificá al prestador",      "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "staticData": null,
+  "tags": [{ "name": "oficio" }, { "name": "emergency" }, { "name": "mercadopago" }]
+}

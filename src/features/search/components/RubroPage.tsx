@@ -41,7 +41,7 @@ export function RubroPage() {
   const ciudadData = ciudades.find(c => c.id === ciudadId)
   const rubroData  = rubros.find(r => r.id === rubro)
 
-  const { providers, total, isEmpty } = useProviders({
+  const { providers, total, isEmpty, loading } = useProviders({
     ciudad: ciudadId ?? undefined,
     rubro:  rubro as RubroId,
   })
@@ -129,7 +129,7 @@ export function RubroPage() {
           </div>
 
           {/* Count */}
-          {!isEmpty && (
+          {!loading && !isEmpty && (
             <p
               className="text-xs text-[--color-muted] mt-5 uppercase tracking-[0.18em] font-semibold"
               style={{ fontFamily: 'var(--font-body)' }}
@@ -141,7 +141,20 @@ export function RubroPage() {
         </section>
 
         {/* ── Provider list ──────────────────────────────────────────────────────── */}
-        {isEmpty ? (
+        {loading ? (
+          <div className="grid gap-5">
+            {[1, 2, 3].map(n => (
+              <div key={n} className="rounded-xl overflow-hidden animate-pulse" style={{ backgroundColor: '#1a2026' }}>
+                <div className="h-48 w-full" style={{ backgroundColor: '#252b30' }} />
+                <div className="p-5 flex flex-col gap-3">
+                  <div className="h-5 w-2/3 rounded-md" style={{ backgroundColor: '#252b30' }} />
+                  <div className="h-3 w-1/2 rounded-md" style={{ backgroundColor: '#252b30' }} />
+                  <div className="h-12 w-full rounded-full mt-2" style={{ backgroundColor: '#252b30' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : isEmpty ? (
           <EmptyState
             rubro={rubroData?.label}
             ciudad={ciudadData?.label}

@@ -281,6 +281,25 @@ export function HomePage() {
           </div>
         </section>
 
+        {/* ── Provider Footer CTA ──────────────────────────────────────────────── */}
+        <div
+          className="mt-14 flex items-center justify-between px-6 py-5 border-t border-[#1E2E1E]"
+          style={{ backgroundColor: 'var(--color-sombra)' }}
+        >
+          <div>
+            <p className="text-sm font-bold text-[--color-nieve]">¿Sos prestador?</p>
+            <p className="text-xs text-[--color-muted] mt-0.5">
+              Sumáte a la red de oficios de la Patagonia.
+            </p>
+          </div>
+          <Link
+            to="/registro/prestador"
+            className="px-4 py-2 rounded-[--radius-full] text-xs font-bold bg-[--color-bosque-lt] text-white active:scale-95 transition-all"
+          >
+            Registrate →
+          </Link>
+        </div>
+
       </main>
 
       {/* ── Bottom Nav ────────────────────────────────────────────────────────── */}
