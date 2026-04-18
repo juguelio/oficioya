@@ -5,10 +5,7 @@ import { cn } from '@/shared/utils/cn'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
 
 // ─── Local images (downloaded from Stitch) ───────────────────────────────────
-const HERO_IMG            = '/images/hero-lanin.png'
-const IMG_PROVIDER_ELEC   = '/images/provider-electricista.png'
-const IMG_PROVIDER_CARP   = '/images/provider-carpintera.png'
-const IMG_PROVIDER_JARD   = '/images/provider-jardinero.png'
+const HERO_IMG = '/images/hero-lanin.png'
 
 
 // ─── HomePage ─────────────────────────────────────────────────────────────────
@@ -130,6 +127,39 @@ export function HomePage() {
           </div>
         </section>
 
+        {/* ── Emergency Banner ──────────────────────────────────────────────────── */}
+        <section className="px-6 mt-6">
+          <button
+            onClick={() => navigate('/emergencias')}
+            className="w-full flex items-center justify-between py-4 px-5 rounded-[--radius-lg] text-left transition-all duration-150 active:scale-[0.98] hover:-translate-y-0.5"
+            style={{
+              backgroundColor: 'var(--color-sombra)',
+              borderLeft: '3px solid #ffb4ab',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#1E2E1E' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-sombra)' }}
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className="w-2 h-2 rounded-full shrink-0 animate-pulse"
+                style={{ backgroundColor: '#ffb4ab' }}
+              />
+              <div>
+                <p
+                  className="text-base font-bold text-[--color-nieve]"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  ¿Es una urgencia?
+                </p>
+                <p className="text-xs text-[--color-muted] mt-0.5">
+                  Conectate ya con alguien de guardia
+                </p>
+              </div>
+            </div>
+            <IconChevronRight />
+          </button>
+        </section>
+
         {/* ── Category Grid ─────────────────────────────────────────────────────── */}
         <section className="px-6 mt-6">
           <h3
@@ -197,62 +227,6 @@ export function HomePage() {
               Elegí tu ciudad arriba para ver los prestadores disponibles
             </p>
           )}
-        </section>
-
-        {/* ── Profesionales Destacados ──────────────────────────────────────────── */}
-        <section className="px-6 mt-14">
-          <div className="flex justify-between items-end mb-6">
-            <div>
-              <h3
-                className="text-2xl font-bold text-[--color-nieve]"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                Profesionales Destacados
-              </h3>
-              <p className="text-sm text-[--color-muted]">Los mejor calificados en tu zona</p>
-            </div>
-            <button
-              onClick={() => ciudadId ? navigate(`/${ciudadId}/electricista`) : undefined}
-              className={cn(
-                'text-[--color-bosque-lt] text-xs font-bold uppercase tracking-widest border-b border-[--color-bosque-lt] pb-1 hover:opacity-80 transition-opacity',
-                !ciudadId && 'opacity-40 cursor-not-allowed',
-              )}
-            >
-              Ver todos
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FeaturedCard
-              img={IMG_PROVIDER_ELEC}
-              name="Mateo Fernández"
-              rubro="Electricista"
-              ciudad="Bariloche"
-              rating={4.9}
-              phone="+5492944000001"
-              bio="Especialista en instalaciones smart home y sistemas solares off-grid para cabañas de montaña."
-            />
-            <FeaturedCard
-              img={IMG_PROVIDER_CARP}
-              name="Sofía Lagos"
-              rubro="Carpintera"
-              ciudad="San Martín de los Andes"
-              rating={5.0}
-              phone="+5492972000002"
-              bio="Especializada en muebles artesanales de lenga y técnicas de construcción alpina tradicional."
-            />
-            <div className="hidden lg:block">
-              <FeaturedCard
-                img={IMG_PROVIDER_JARD}
-                name="Lucas Nahuel"
-                rubro="Jardinero"
-                ciudad="Villa La Angostura"
-                rating={4.8}
-                phone="+5492944000003"
-                bio="Diseño de jardines sustentables con especies nativas patagónicas adaptadas al clima andino."
-              />
-            </div>
-          </div>
         </section>
 
         {/* ── Para prestadores CTA ──────────────────────────────────────────────── */}
@@ -330,59 +304,6 @@ export function HomePage() {
   )
 }
 
-// ─── FeaturedCard ─────────────────────────────────────────────────────────────
-
-type FeaturedCardProps = {
-  img: string
-  name: string
-  rubro: string
-  ciudad: string
-  rating: number
-  phone: string
-  bio: string
-  className?: string
-}
-
-function FeaturedCard({ img, name, rubro, ciudad, rating, phone, bio, className }: FeaturedCardProps) {
-  const waLink = `https://wa.me/${phone.replace(/\D/g, '')}`
-  return (
-    <article className={cn('rounded-[--radius-xl] overflow-hidden group', className)} style={{ backgroundColor: '#1a2026' }}>
-      <div className="relative h-56">
-        <img
-          src={img}
-          alt={rubro}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          style={{ objectPosition: 'center top' }}
-        />
-        <div className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1" style={{ backgroundColor: 'rgba(47,53,59,0.9)', backdropFilter: 'blur(8px)' }}>
-          <span className="text-[--color-bosque-lt] text-sm">★</span>
-          <span className="text-xs font-bold text-[--color-nieve]">{rating.toFixed(1)}</span>
-        </div>
-      </div>
-      <div className="p-5">
-        <div className="flex justify-between items-start mb-1">
-          <h4 className="font-bold text-lg text-[--color-nieve]" style={{ fontFamily: 'var(--font-display)' }}>
-            {name}
-          </h4>
-          <span className="text-xs font-semibold text-[--color-muted] bg-[#2A3A2A] px-2 py-1 rounded-full">{rubro}</span>
-        </div>
-        <p className="text-sm text-[--color-muted] mb-3">{ciudad}</p>
-        <p className="text-sm text-[--color-nieve]/80 line-clamp-2 mb-5">{bio}</p>
-        <a
-          href={waLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full py-3 rounded-[--radius-full] flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-95 transition-all shadow-lg"
-          style={{ background: '#25D366' }}
-        >
-          <IconWhatsApp />
-          Contactar por WhatsApp
-        </a>
-      </div>
-    </article>
-  )
-}
-
 // ─── NavTab ───────────────────────────────────────────────────────────────────
 
 type NavTabProps = {
@@ -455,10 +376,14 @@ function IconPerson() {
   )
 }
 
-function IconWhatsApp() {
+function IconChevronRight() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      className="text-[--color-muted] shrink-0"
+    >
+      <path d="M9 18l6-6-6-6" />
     </svg>
   )
 }
+
