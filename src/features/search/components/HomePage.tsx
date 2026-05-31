@@ -103,7 +103,7 @@ const orderedCiudades = useMemo(
         className="fixed top-0 w-full z-50 h-14 border-b"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
-        <div className="max-w-2xl mx-auto px-5 h-full flex items-center justify-between">
+        <div className="max-w-2xl px-5 h-full flex items-center justify-between">
           <button onClick={clearCiudad} className="active:scale-95 transition-transform" aria-label="Inicio">
             <Logo size={26} withWordmark />
           </button>
@@ -130,7 +130,7 @@ const orderedCiudades = useMemo(
 
         {/* ── HERO ─────────────────────────────────────────────────────────────── */}
         <section style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
-          <div className="max-w-2xl mx-auto px-5 pt-8 pb-8">
+          <div className="max-w-2xl px-5 pt-8 pb-8">
           <h1
             className="text-white font-black leading-none mb-1"
             style={{ fontSize: 30, letterSpacing: '-0.03em' }}
@@ -224,7 +224,7 @@ const orderedCiudades = useMemo(
 
         {/* ── TRUST STRIP ──────────────────────────────────────────────────────── */}
         <section style={{ backgroundColor: '#174F77' }}>
-          <div className="max-w-2xl mx-auto flex divide-x" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+          <div className="max-w-2xl flex divide-x" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
           {[
             { stat: '100%', label: 'Prestadores verificados' },
             { stat: '24/7', label: 'Guardias disponibles' },
@@ -247,7 +247,7 @@ const orderedCiudades = useMemo(
 
         {/* ── CIUDAD ───────────────────────────────────────────────────────────── */}
         <section id="city-section">
-          <div className="max-w-2xl mx-auto px-5 pt-5 pb-1">
+          <div className="max-w-2xl px-5 pt-5 pb-1">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--color-muted)' }}>
             {ciudadId ? 'Tu ciudad' : '¿Dónde estás?'}
           </p>
@@ -281,7 +281,7 @@ const orderedCiudades = useMemo(
 
         {/* ── URGENCIAS — zona oscura full-bleed ───────────────────────────────── */}
         <section className="mt-5" style={{ backgroundColor: 'var(--color-guardia-bg)' }}>
-          <div className="max-w-2xl mx-auto px-5 pt-5 pb-4">
+          <div className="max-w-2xl px-5 pt-5 pb-4">
 
             {/* Label + link */}
             <div className="flex items-center justify-between mb-2">
@@ -321,7 +321,7 @@ const orderedCiudades = useMemo(
           </div>
 
           {/* CTA — separado del contenido, con línea arriba */}
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl">
           <button
             onClick={() => navigate('/emergencias')}
             className="w-full flex items-center justify-between px-5 py-4 active:opacity-70 transition-opacity"
@@ -340,7 +340,7 @@ const orderedCiudades = useMemo(
 
         {/* ── CATEGORÍAS ───────────────────────────────────────────────────────── */}
         <section className="pt-7">
-          <div className="max-w-2xl mx-auto px-5 flex items-center justify-between mb-4">
+          <div className="max-w-2xl px-5 flex items-center justify-between mb-4">
             <h2 className="font-black text-lg" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
               {ciudadId ? `Servicios en ${ciudadData?.label}` : 'Servicios'}
             </h2>
@@ -350,7 +350,7 @@ const orderedCiudades = useMemo(
           </div>
 
           {/* Carrusel — rubros principales */}
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl">
           <div className="flex gap-2.5 overflow-x-auto pl-5 pb-2 scrollbar-hide snap-x">
             {FEATURED_RUBROS.map(r => {
               const count        = ciudadId ? (rubroCounts[r.id] ?? 0) : null
@@ -387,7 +387,7 @@ const orderedCiudades = useMemo(
           </div>
 
           {/* Search box — otros servicios / por descripción del problema */}
-          <div className="max-w-2xl mx-auto px-5 mt-5">
+          <div className="max-w-2xl px-5 mt-5">
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                 <IconSearch size={17} />
@@ -462,7 +462,7 @@ const orderedCiudades = useMemo(
           </div>
 
           {!ciudadId && !isRubroSearching && (
-            <p className="max-w-2xl mx-auto text-xs text-center mt-3 px-5" style={{ color: 'var(--color-muted)' }}>
+            <p className="max-w-2xl text-xs text-center mt-3 px-5" style={{ color: 'var(--color-muted)' }}>
               Elegí tu ciudad para ver disponibilidad
             </p>
           )}
@@ -471,7 +471,7 @@ const orderedCiudades = useMemo(
         {/* ── TOP PRESTADORES ──────────────────────────────────────────────────── */}
         {ciudadId && (providersLoading || topProviders.length > 0) && (
           <section className="pt-8">
-            <div className="max-w-2xl mx-auto px-5 flex items-end justify-between mb-4">
+            <div className="max-w-2xl px-5 flex items-end justify-between mb-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--color-muted)' }}>
                   Cerca tuyo
@@ -487,7 +487,7 @@ const orderedCiudades = useMemo(
                 {providersLoading ? '—' : `${providers.length} activos`}
               </span>
             </div>
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl">
             <div className="flex gap-3 overflow-x-auto pl-5 pb-2 scrollbar-hide snap-x snap-mandatory">
               {providersLoading
                 ? Array.from({ length: 4 }).map((_, i) => <ProviderMiniCardSkeleton key={i} />)
@@ -501,7 +501,7 @@ const orderedCiudades = useMemo(
 
         {/* ── WHY TRUST ────────────────────────────────────────────────────────── */}
         <section>
-          <div className="max-w-2xl mx-auto px-5 pt-8">
+          <div className="max-w-2xl px-5 pt-8">
           <h2 className="font-black text-lg mb-4" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
             ¿Por qué Oficio?
           </h2>
@@ -534,7 +534,7 @@ const orderedCiudades = useMemo(
 
         {/* ── CTA PRESTADORES ──────────────────────────────────────────────────── */}
         <section>
-          <div className="max-w-2xl mx-auto px-5 pt-8">
+          <div className="max-w-2xl px-5 pt-8">
           <div
             className="rounded-2xl p-6"
             style={{ backgroundColor: 'var(--color-bosque-lt)' }}
