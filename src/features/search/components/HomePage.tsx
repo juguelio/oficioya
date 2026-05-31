@@ -113,37 +113,37 @@ export function HomePage() {
 
       {/* ── Header ─────────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center justify-between px-5 h-14 border-b"
+        className="fixed top-0 w-full z-50 h-14 border-b"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
-        <button onClick={clearCiudad} className="active:scale-95 transition-transform" aria-label="Inicio">
-          <Logo size={26} withWordmark />
-        </button>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowLoginSheet(true)}
-            className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors active:scale-95"
-            style={{ color: 'var(--color-muted)' }}
-          >
-            Ingresar
+        <div className="max-w-2xl mx-auto px-5 h-full flex items-center justify-between">
+          <button onClick={clearCiudad} className="active:scale-95 transition-transform" aria-label="Inicio">
+            <Logo size={26} withWordmark />
           </button>
-          <Link
-            to="/registro/prestador"
-            className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white"
-            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
-          >
-            Registrate
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowLoginSheet(true)}
+              className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors active:scale-95"
+              style={{ color: 'var(--color-muted)' }}
+            >
+              Ingresar
+            </button>
+            <Link
+              to="/registro/prestador"
+              className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white"
+              style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+            >
+              Registrate
+            </Link>
+          </div>
         </div>
       </header>
 
       <main className="pt-14 pb-24">
 
         {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-        <section
-          className="px-5 pt-8 pb-8"
-          style={{ backgroundColor: 'var(--color-bosque-lt)' }}
-        >
+        <section style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
+          <div className="max-w-2xl mx-auto px-5 pt-8 pb-8">
           <h1
             className="text-white font-black leading-none mb-1"
             style={{ fontSize: 30, letterSpacing: '-0.03em' }}
@@ -232,13 +232,12 @@ export function HomePage() {
               </div>
             )}
           </div>
+          </div>
         </section>
 
         {/* ── TRUST STRIP ──────────────────────────────────────────────────────── */}
-        <section
-          className="flex divide-x"
-          style={{ backgroundColor: '#174F77', borderColor: 'rgba(255,255,255,0.1)' }}
-        >
+        <section style={{ backgroundColor: '#174F77' }}>
+          <div className="max-w-2xl mx-auto flex divide-x" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
           {[
             { stat: '100%', label: 'Prestadores verificados' },
             { stat: '24/7', label: 'Guardias disponibles' },
@@ -256,10 +255,12 @@ export function HomePage() {
               </p>
             </div>
           ))}
+          </div>
         </section>
 
         {/* ── CIUDAD ───────────────────────────────────────────────────────────── */}
-        <section id="city-section" className="px-5 pt-5 pb-1">
+        <section id="city-section">
+          <div className="max-w-2xl mx-auto px-5 pt-5 pb-1">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--color-muted)' }}>
             {ciudadId ? 'Tu ciudad' : '¿Dónde estás?'}
           </p>
@@ -288,11 +289,12 @@ export function HomePage() {
               </button>
             )}
           </div>
+          </div>
         </section>
 
         {/* ── URGENCIAS — zona oscura full-bleed ───────────────────────────────── */}
         <section className="mt-5" style={{ backgroundColor: 'var(--color-guardia-bg)' }}>
-          <div className="px-5 pt-5 pb-4">
+          <div className="max-w-2xl mx-auto px-5 pt-5 pb-4">
 
             {/* Label + link */}
             <div className="flex items-center justify-between mb-2">
@@ -378,6 +380,7 @@ export function HomePage() {
           </div>
 
           {/* CTA — separado del contenido, con línea arriba */}
+          <div className="max-w-2xl mx-auto">
           <button
             onClick={() => navigate('/emergencias')}
             className="w-full flex items-center justify-between px-5 py-4 active:opacity-70 transition-opacity"
@@ -398,11 +401,12 @@ export function HomePage() {
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
+          </div>
         </section>
 
         {/* ── CATEGORÍAS ───────────────────────────────────────────────────────── */}
         <section className="pt-7">
-          <div className="flex items-center justify-between mb-4 px-5">
+          <div className="max-w-2xl mx-auto px-5 flex items-center justify-between mb-4">
             <h2 className="font-black text-lg" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
               {ciudadId ? `Servicios en ${ciudadData?.label}` : 'Servicios'}
             </h2>
@@ -412,6 +416,7 @@ export function HomePage() {
           </div>
 
           {/* Carrusel — rubros principales */}
+          <div className="max-w-2xl mx-auto">
           <div className="flex gap-2.5 overflow-x-auto pl-5 pb-2 scrollbar-hide snap-x">
             {FEATURED_RUBROS.map(r => {
               const count        = ciudadId ? (rubroCounts[r.id] ?? 0) : null
@@ -445,9 +450,10 @@ export function HomePage() {
             })}
             <div className="shrink-0 w-5" aria-hidden="true" />
           </div>
+          </div>
 
           {/* Search box — otros servicios / por descripción del problema */}
-          <div className="px-5 mt-5">
+          <div className="max-w-2xl mx-auto px-5 mt-5">
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                 <IconSearch size={17} />
@@ -522,7 +528,7 @@ export function HomePage() {
           </div>
 
           {!ciudadId && !isRubroSearching && (
-            <p className="text-xs text-center mt-3 px-5" style={{ color: 'var(--color-muted)' }}>
+            <p className="max-w-2xl mx-auto text-xs text-center mt-3 px-5" style={{ color: 'var(--color-muted)' }}>
               Elegí tu ciudad para ver disponibilidad
             </p>
           )}
@@ -531,7 +537,7 @@ export function HomePage() {
         {/* ── TOP PRESTADORES ──────────────────────────────────────────────────── */}
         {ciudadId && (providersLoading || topProviders.length > 0) && (
           <section className="pt-8">
-            <div className="flex items-end justify-between px-5 mb-4">
+            <div className="max-w-2xl mx-auto px-5 flex items-end justify-between mb-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--color-muted)' }}>
                   Cerca tuyo
@@ -547,6 +553,7 @@ export function HomePage() {
                 {providersLoading ? '—' : `${providers.length} activos`}
               </span>
             </div>
+            <div className="max-w-2xl mx-auto">
             <div className="flex gap-3 overflow-x-auto pl-5 pb-2 scrollbar-hide snap-x snap-mandatory">
               {providersLoading
                 ? Array.from({ length: 4 }).map((_, i) => <ProviderMiniCardSkeleton key={i} />)
@@ -554,11 +561,13 @@ export function HomePage() {
               }
               <div className="shrink-0 w-5" aria-hidden="true" />
             </div>
+            </div>
           </section>
         )}
 
         {/* ── WHY TRUST ────────────────────────────────────────────────────────── */}
-        <section className="px-5 pt-8">
+        <section>
+          <div className="max-w-2xl mx-auto px-5 pt-8">
           <h2 className="font-black text-lg mb-4" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
             ¿Por qué Oficio?
           </h2>
@@ -586,10 +595,12 @@ export function HomePage() {
               </div>
             ))}
           </div>
+          </div>
         </section>
 
         {/* ── CTA PRESTADORES ──────────────────────────────────────────────────── */}
-        <section className="px-5 pt-8">
+        <section>
+          <div className="max-w-2xl mx-auto px-5 pt-8">
           <div
             className="rounded-2xl p-6"
             style={{ backgroundColor: 'var(--color-bosque-lt)' }}
@@ -620,6 +631,7 @@ export function HomePage() {
                 Ver planes
               </Link>
             </div>
+          </div>
           </div>
         </section>
 
