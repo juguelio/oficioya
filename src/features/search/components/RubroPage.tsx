@@ -206,12 +206,12 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
 
   return (
     <article
-      className="rounded-xl overflow-hidden transition-all duration-300 group border border-[--color-line]"
+      className="rounded-xl overflow-hidden transition-all duration-300 group border border-[--color-line] sm:flex sm:flex-row"
       style={{ backgroundColor: 'var(--color-sombra)' }}
     >
-      {/* Photo — tap navigates to full profile */}
+      {/* Photo — mobile: full width banner / desktop: fixed left column */}
       <button
-        className="relative h-48 w-full block text-left"
+        className="relative h-48 w-full block text-left shrink-0 sm:w-52 sm:h-auto"
         onClick={() => navigate(`/prestador/${provider.id}`)}
         aria-label={`Ver perfil de ${provider.name}`}
       >
@@ -224,74 +224,83 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
         />
         {/* Rating badge */}
         <div
-          className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 border border-[--color-line]"
-          style={{ backgroundColor: 'rgba(14,21,16,0.7)' }}
+          className="absolute top-3 right-3 px-2.5 py-1 rounded-full flex items-center gap-1 border border-[--color-line]"
+          style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
         >
-          <span className="text-[--color-bosque-lt] text-sm leading-none">★</span>
-          <span className="text-[--color-nieve] text-sm font-bold">{provider.rating.toFixed(1)}</span>
+          <span className="text-[--color-bosque-lt] text-xs leading-none">★</span>
+          <span className="text-[--color-nieve] text-xs font-bold" style={{ fontFamily: 'var(--font-mono)' }}>
+            {provider.rating.toFixed(1)}
+          </span>
         </div>
         {/* Verified badge */}
         {provider.isVerified && (
           <div
-            className="absolute top-4 left-4 px-2 py-1 rounded-full text-xs font-bold text-[--color-bosque-lt] border border-[--color-line]"
-            style={{ backgroundColor: 'rgba(14,21,16,0.7)' }}
+            className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-bold text-[--color-bosque-lt] border border-[--color-bosque-lt]/40"
+            style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
           >
             ✓ Verificado
           </div>
         )}
       </button>
 
-      {/* Info */}
-      <div className="p-5">
-        <div className="flex justify-between items-start mb-2">
-          {/* Name taps to profile */}
-          <button
-            className="text-left hover:text-[--color-bosque-lt] transition-colors"
-            onClick={() => navigate(`/prestador/${provider.id}`)}
-          >
-            <h2 className="text-xl font-bold text-[--color-nieve]">
-              {provider.name}
-            </h2>
-          </button>
-          {provider.subscription === 'destacado' && (
-            <span className="text-xs font-bold px-2 py-1 rounded-full shrink-0 ml-2" style={{ backgroundColor: '#E8A020', color: '#fff' }}>
-              Destacado
+      {/* Info — flex column so CTAs stay at bottom on desktop */}
+      <div className="p-5 flex flex-col flex-1 min-w-0 sm:justify-between">
+
+        {/* Top: name + meta + bio */}
+        <div>
+          <div className="flex justify-between items-start mb-1.5">
+            <button
+              className="text-left hover:text-[--color-bosque-lt] transition-colors min-w-0"
+              onClick={() => navigate(`/prestador/${provider.id}`)}
+            >
+              <h2 className="text-lg font-bold text-[--color-nieve] truncate">
+                {provider.name}
+              </h2>
+            </button>
+            {provider.subscription === 'destacado' && (
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ml-2 uppercase tracking-wide"
+                style={{ backgroundColor: '#E8A020', color: '#fff' }}>
+                Destacado
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1.5 mb-3 text-[--color-muted]">
+            <IconLocation />
+            <span className="text-xs font-semibold truncate">{provider.barrio ?? ciudadLabel}</span>
+            <span className="text-xs shrink-0">·</span>
+            <span className="text-xs shrink-0" style={{ fontFamily: 'var(--font-mono)' }}>
+              {provider.totalJobs} trabajos
             </span>
+          </div>
+
+          {provider.bio && (
+            <p className="text-sm text-[--color-muted] leading-relaxed line-clamp-2 sm:line-clamp-3">
+              {provider.bio}
+            </p>
           )}
         </div>
 
-        <div className="flex items-center gap-1.5 mb-4 text-[--color-muted]">
-          <IconLocation />
-          <span className="text-xs font-semibold">{provider.barrio ?? ciudadLabel}</span>
-          <span className="text-xs">·</span>
-          <span className="text-xs">{provider.totalJobs} trabajos</span>
+        {/* Bottom: CTAs */}
+        <div className="mt-4">
+          <a
+            href={waLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
+            style={{ background: '#25D366' }}
+          >
+            <IconWhatsApp />
+            Contactar por WhatsApp
+          </a>
+          <button
+            onClick={() => navigate(`/prestador/${provider.id}`)}
+            className="w-full mt-1.5 py-2 text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors text-center active:scale-[0.98]"
+          >
+            Ver perfil completo →
+          </button>
         </div>
 
-        {provider.bio && (
-          <p className="text-sm text-[--color-muted] leading-relaxed mb-5 line-clamp-2">
-            {provider.bio}
-          </p>
-        )}
-
-        {/* Primary CTA — WhatsApp, no navigation required */}
-        <a
-          href={waLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
-          style={{ background: '#25D366' }}
-        >
-          <IconWhatsApp />
-          Contactar por WhatsApp
-        </a>
-
-        {/* Secondary link — full profile for more detail */}
-        <button
-          onClick={() => navigate(`/prestador/${provider.id}`)}
-          className="w-full mt-2 py-2 text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors text-center active:scale-[0.98]"
-        >
-          Ver perfil completo →
-        </button>
       </div>
     </article>
   )
