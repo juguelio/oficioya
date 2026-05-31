@@ -151,34 +151,87 @@ export function HomePage() {
             Encontrá al profesional<br />que necesitás
           </h1>
           <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.7)' }}>
-            Verificados en {ciudades.map(c => c.label.split(' ')[0]).join(', ')} y alrededores.
+            Verificados en San Martín, La Angostura y Bariloche.
           </p>
 
           {/* Search bar grande */}
-          <button
-            onClick={() => document.getElementById('city-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="w-full flex items-center gap-3 bg-white rounded-xl px-4 py-3.5 text-left active:scale-[0.99] transition-all"
-          >
-            <IconSearch />
-            <span className="text-sm flex-1" style={{ color: 'var(--color-muted)' }}>
-              ¿Qué servicio necesitás?
-            </span>
-            {ciudadId ? (
-              <span
-                className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0"
-                style={{ color: 'var(--color-bosque-lt)', backgroundColor: 'var(--color-brand-tint)' }}
+          <div className="relative">
+            <div className="w-full flex items-center gap-3 bg-white rounded-xl px-4 py-3.5">
+              <IconSearch />
+              <input
+                type="text"
+                value={rubroSearch}
+                onChange={e => setRubroSearch(e.target.value)}
+                placeholder="¿Qué servicio necesitás?"
+                className="text-sm flex-1 bg-transparent focus:outline-none min-w-0"
+                style={{ color: 'var(--color-nieve)' }}
+              />
+              {rubroSearch ? (
+                <button
+                  onClick={() => setRubroSearch('')}
+                  className="w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shrink-0"
+                  style={{ backgroundColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+                >
+                  ×
+                </button>
+              ) : ciudadId ? (
+                <span
+                  className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0"
+                  style={{ color: 'var(--color-bosque-lt)', backgroundColor: 'var(--color-brand-tint)' }}
+                >
+                  {ciudadData?.label}
+                </span>
+              ) : (
+                <button
+                  onClick={() => document.getElementById('city-section')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="text-xs font-bold px-3 py-1.5 rounded-full shrink-0 text-white active:scale-95 transition-all"
+                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                >
+                  Elegí ciudad
+                </button>
+              )}
+            </div>
+
+            {/* Dropdown resultados */}
+            {isRubroSearching && (
+              <div
+                className="absolute left-0 right-0 top-full mt-1.5 rounded-xl overflow-hidden z-20 shadow-xl"
+                style={{ backgroundColor: '#fff', border: '1px solid rgba(0,0,0,0.08)' }}
               >
-                {ciudadData?.label}
-              </span>
-            ) : (
-              <span
-                className="text-xs font-bold px-3 py-1.5 rounded-full shrink-0 text-white"
-                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
-              >
-                Elegí ciudad
-              </span>
+                {filteredSearchRubros.length > 0
+                  ? filteredSearchRubros.map(r => {
+                      const count = ciudadId ? (rubroCounts[r.id] ?? 0) : null
+                      return (
+                        <button
+                          key={r.id}
+                          onClick={() => { handleRubro(r.id as RubroId); setRubroSearch('') }}
+                          className="flex items-center gap-3 px-4 py-3 w-full text-left active:bg-gray-50 transition-colors border-b last:border-b-0"
+                          style={{ borderColor: 'rgba(0,0,0,0.06)' }}
+                        >
+                          <span className="text-xl leading-none shrink-0">{r.icon}</span>
+                          <span className="text-sm font-semibold flex-1" style={{ color: 'var(--color-nieve)' }}>
+                            {r.label}
+                          </span>
+                          {count !== null && count > 0 && (
+                            <span
+                              className="text-xs font-black shrink-0 px-1.5 py-0.5 rounded-full text-white"
+                              style={{ backgroundColor: 'var(--color-bosque-lt)', fontFamily: 'var(--font-mono)' }}
+                            >
+                              {count}
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })
+                  : (
+                    <p className="text-xs text-center py-4" style={{ color: 'var(--color-muted)' }}>
+                      Sin resultados para "{rubroSearch}"
+                    </p>
+                  )
+                }
+              </div>
             )}
-          </button>
+          </div>
         </section>
 
         {/* ── TRUST STRIP ──────────────────────────────────────────────────────── */}
@@ -670,14 +723,14 @@ export function HomePage() {
             Urgencias
           </span>
         </button>
-        <button
-          onClick={() => navigate('/trabajos')}
+        <Link
+          to="/planes"
           className="flex flex-col items-center gap-1 active:scale-90 transition-all"
           style={{ color: 'var(--color-muted)' }}
         >
           <IconBriefcase />
-          <span className="text-[10px] font-semibold uppercase tracking-widest">Trabajos</span>
-        </button>
+          <span className="text-[10px] font-semibold uppercase tracking-widest">Sumate</span>
+        </Link>
         <Link
           to="/planes"
           className="flex flex-col items-center gap-1 active:scale-90 transition-all"
