@@ -2,9 +2,8 @@ import { useMemo, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useCityStore } from '@/features/search/store'
-import { useProviders, useGuardiaCount } from '@/features/providers/hooks'
+import { useProviders } from '@/features/providers/hooks'
 import { Logo } from '@/shared/components'
-import { cn } from '@/shared/utils/cn'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
 import type { Provider } from '@/features/providers/types'
 
@@ -46,23 +45,12 @@ export function HomePage() {
   const navigate    = useNavigate()
 
   const ciudadData = ciudades.find(c => c.id === ciudadId)
-  const [emergencyRubro, setEmergencyRubro] = useState<RubroId | null>(null)
   const [emergencySearch, setEmergencySearch] = useState('')
   const [rubroSearch, setRubroSearch]         = useState('')
   const [showLoginSheet, setShowLoginSheet]   = useState(false)
   const isRubroSearching = rubroSearch.trim().length > 0
 
-  const filteredEmergencyRubros = useMemo(() => {
-    const q = emergencySearch.toLowerCase().trim()
-    if (!q) return EMERGENCY_RUBROS.slice(0, 4)
-    return EMERGENCY_RUBROS.filter(r =>
-      r.label.toLowerCase().includes(q) ||
-      r.id.includes(q) ||
-      r.keywords.some(k => k.includes(q))
-    ).slice(0, 5)
-  }, [emergencySearch])
-
-  const orderedCiudades = useMemo(
+const orderedCiudades = useMemo(
     () => ciudadId
       ? [ciudades.find(c => c.id === ciudadId)!, ...ciudades.filter(c => c.id !== ciudadId)]
       : [...ciudades],
@@ -72,7 +60,6 @@ export function HomePage() {
   const { providers, loading: providersLoading } = useProviders(
     ciudadId ? { ciudad: ciudadId } : {},
   )
-  const guardiaCounts = useGuardiaCount(ciudadId)
 
   const topProviders = useMemo<Provider[]>(
     () => providers.slice(0, 8),
@@ -313,70 +300,24 @@ export function HomePage() {
               ¿Qué necesitás ahora?
             </p>
 
-            {/* Search input — styling oscuro */}
-            {emergencyRubro ? (
-              <div
-                className="flex items-center justify-between px-4 py-3 rounded-xl mb-3"
-                style={{ backgroundColor: 'rgba(255,79,59,0.15)', border: '1px solid rgba(255,79,59,0.4)' }}
-              >
-                <span className="text-sm font-bold flex items-center gap-2 text-white">
-                  <span>{EMERGENCY_RUBROS.find(r => r.id === emergencyRubro)?.icon}</span>
-                  {EMERGENCY_RUBROS.find(r => r.id === emergencyRubro)?.label}
-                  {ciudadId && (guardiaCounts[emergencyRubro] ?? 0) > 0 && (
-                    <span className="text-xs px-1.5 py-0.5 rounded-full font-black text-white" style={{ backgroundColor: 'var(--color-emergency)' }}>
-                      {guardiaCounts[emergencyRubro]}
-                    </span>
-                  )}
-                </span>
-                <button onClick={() => setEmergencyRubro(null)} className="text-lg leading-none font-bold ml-2" style={{ color: 'rgba(255,255,255,0.5)' }}>×</button>
+            {/* Search input */}
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                <IconSearch size={16} />
               </div>
-            ) : (
-              <div className="relative mb-3">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <IconSearch size={16} />
-                </div>
-                <input
-                  type="text"
-                  value={emergencySearch}
-                  onChange={e => setEmergencySearch(e.target.value)}
-                  placeholder="Ej: no hay luz, se rompió un caño..."
-                  className="w-full pl-10 pr-4 py-3 rounded-xl text-sm focus:outline-none"
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    color: '#fff',
-                  }}
-                />
-              </div>
-            )}
-
-            {/* Sugerencias en la zona oscura */}
-            {!emergencyRubro && (
-              <div className={cn(emergencySearch ? 'space-y-1.5' : 'grid grid-cols-2 gap-2')}>
-                {filteredEmergencyRubros.map(r => {
-                  const count = ciudadId ? (guardiaCounts[r.id] ?? 0) : null
-                  return (
-                    <button
-                      key={r.id}
-                      onClick={() => { setEmergencyRubro(r.id); setEmergencySearch('') }}
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left active:scale-[0.98] transition-all w-full"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.85)' }}
-                    >
-                      <span className="text-lg leading-none shrink-0">{r.icon}</span>
-                      <span className="text-xs font-semibold flex-1">{r.label}</span>
-                      {count !== null && count > 0 && (
-                        <span className="text-xs font-black shrink-0" style={{ color: 'var(--color-emergency)' }}>{count}</span>
-                      )}
-                    </button>
-                  )
-                })}
-                {emergencySearch && filteredEmergencyRubros.length === 0 && (
-                  <p className="text-xs text-center py-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                    Sin resultados para "{emergencySearch}"
-                  </p>
-                )}
-              </div>
-            )}
+              <input
+                type="text"
+                value={emergencySearch}
+                onChange={e => setEmergencySearch(e.target.value)}
+                placeholder="Ej: no hay luz, se rompió un caño..."
+                className="w-full pl-10 pr-4 py-3 rounded-xl text-sm focus:outline-none"
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.08)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  color: '#fff',
+                }}
+              />
+            </div>
           </div>
 
           {/* CTA — separado del contenido, con línea arriba */}
@@ -388,14 +329,7 @@ export function HomePage() {
           >
             <span className="text-sm font-bold flex items-center gap-2" style={{ color: 'var(--color-emergency)' }}>
               <IconBolt />
-              {emergencyRubro && ciudadId
-                ? (() => {
-                    const c = guardiaCounts[emergencyRubro] ?? 0
-                    const lbl = EMERGENCY_RUBROS.find(r => r.id === emergencyRubro)?.label ?? ''
-                    return c > 0 ? `Ver ${c} guardia${c !== 1 ? 's' : ''} de ${lbl.toLowerCase()}` : `Sin guardias de ${lbl.toLowerCase()} ahora`
-                  })()
-                : 'Ver todos los guardias disponibles'
-              }
+              Ver todos los guardias disponibles
             </span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-emergency)' }}>
               <path d="M9 18l6-6-6-6" />
