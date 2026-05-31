@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/shared/utils/cn'
 
 const MAP_IMG      = '/images/emergency-map.png'
@@ -7,146 +9,143 @@ const PROVIDER_IMG = '/images/provider-marcos.png'
 
 type EmergencyCategory = 'electricidad' | 'plomeria' | 'gas' | 'cerrajeria'
 
-const categories: { id: EmergencyCategory; label: string; icon: React.ReactNode }[] = [
-  { id: 'electricidad', label: 'Electricidad', icon: <IconBolt /> },
-  { id: 'plomeria',     label: 'Plomería',     icon: <IconPlumbing /> },
-  { id: 'gas',          label: 'Gas',          icon: <IconGas /> },
-  { id: 'cerrajeria',   label: 'Cerrajería',   icon: <IconLock /> },
+const categories: { id: EmergencyCategory; label: string; icon: string }[] = [
+  { id: 'electricidad', label: 'Electricidad', icon: '⚡' },
+  { id: 'plomeria',     label: 'Plomería',     icon: '🔧' },
+  { id: 'gas',          label: 'Gas',          icon: '🔥' },
+  { id: 'cerrajeria',   label: 'Cerrajería',   icon: '🔑' },
 ]
 
 // ─── EmergencyPage ────────────────────────────────────────────────────────────
 
 export function EmergencyPage() {
-  const navigate                    = useNavigate()
-  const [active, setActive]         = useState<EmergencyCategory>('electricidad')
-  const [guardiaOn, setGuardiaOn]   = useState(false)
+  const navigate       = useNavigate()
+  const { user }       = useAuth()
+  const [active, setActive] = useState<EmergencyCategory>('electricidad')
+
+  const [providerId,     setProviderId]     = useState<string | null>(null)
+  const [guardiaOn,      setGuardiaOn]      = useState(false)
+  const [togglePending,  setTogglePending]  = useState(false)
+  const [toggleError,    setToggleError]    = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!user) return
+    supabase
+      .from('providers')
+      .select('id, is_emergency_available')
+      .eq('auth_user_id', user.id)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setProviderId(data.id)
+          setGuardiaOn(data.is_emergency_available)
+        }
+      })
+  }, [user])
+
+  async function handleToggleGuardia() {
+    if (!providerId || togglePending) return
+    const next = !guardiaOn
+    setGuardiaOn(next)
+    setTogglePending(true)
+    setToggleError(null)
+    const { error } = await supabase
+      .from('providers')
+      .update({ is_emergency_available: next })
+      .eq('id', providerId)
+    setTogglePending(false)
+    if (error) {
+      setGuardiaOn(!next)
+      setToggleError('No se pudo guardar el cambio. Intentá de nuevo.')
+    }
+  }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0e1419' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
 
-      {/* ── TopAppBar ───────────────────────────────────────────────────────── */}
+      {/* ── Header ─────────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 backdrop-blur-xl flex items-center gap-4 px-6 h-16"
-        style={{ backgroundColor: 'rgba(14,20,25,0.80)' }}
+        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
         <button
-          onClick={() => navigate('/')}
-          className="text-[--color-bosque-lt] p-2 rounded-xl hover:bg-white/5 transition-colors active:scale-95"
+          onClick={() => navigate(-1)}
+          className="p-2 rounded-xl hover:bg-black/5 transition-colors active:scale-95"
+          style={{ color: 'var(--color-bosque-lt)' }}
           aria-label="Volver"
         >
           <IconArrowLeft />
         </button>
-        <h1
-          className="text-xl font-bold text-[--color-nieve]"
-          style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
-        >
-          Auxilio Inmediato
-        </h1>
+        <div className="flex items-center gap-2">
+          <span
+            className="w-2 h-2 rounded-full animate-pulse"
+            style={{ backgroundColor: 'var(--color-emergency)' }}
+          />
+          <h1 className="font-bold text-base" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
+            Urgencias 24/7
+          </h1>
+        </div>
       </header>
 
-      <main className="pt-16 pb-24 flex flex-col min-h-screen">
+      <main className="pt-14 pb-24 max-w-xl mx-auto">
 
-        {/* ── Map section ─────────────────────────────────────────────────────── */}
-        <section className="relative flex-grow min-h-[500px] overflow-hidden">
-
-          {/* Map background */}
+        {/* ── Hero map ─────────────────────────────────────────────────────────── */}
+        <section className="relative h-[360px] overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
               backgroundImage: `url(${MAP_IMG})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'grayscale(1) brightness(0.5)',
-              opacity: 0.8,
+              filter: 'grayscale(0.3) brightness(0.7)',
             }}
           />
-
-          {/* Gradient overlay */}
+          {/* gradient to page bg */}
           <div
             className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(to bottom, #0e1419 0%, transparent 30%, rgba(14,20,25,0.4) 100%)',
-            }}
+            style={{ background: 'linear-gradient(to bottom, rgba(14,31,20,0.3) 0%, transparent 40%, var(--color-noche) 100%)' }}
           />
 
-          {/* Filter pills */}
-          <div className="absolute top-4 left-0 right-0 z-20 px-4 flex gap-2 overflow-x-auto no-scrollbar">
+          {/* Category pills — sobre el mapa */}
+          <div className="absolute top-4 left-0 right-0 z-20 px-4 flex gap-2 overflow-x-auto scrollbar-hide">
             {categories.map(cat => (
               <button
                 key={cat.id}
                 onClick={() => setActive(cat.id)}
                 className={cn(
-                  'flex-none backdrop-blur px-4 py-2.5 rounded-full flex items-center gap-2 font-bold text-sm shadow-lg active:scale-95 transition-all',
+                  'flex-none px-3 py-2 rounded-full flex items-center gap-1.5 font-semibold text-sm active:scale-95 transition-all border',
                   active === cat.id
-                    ? 'border border-[#ffb4ab]/50 text-[#ffb4ab]'
-                    : 'border border-[#414845]/30 text-[--color-nieve]',
+                    ? 'text-white'
+                    : 'text-white/80',
                 )}
-                style={{ backgroundColor: active === cat.id ? 'rgba(47,53,59,0.9)' : 'rgba(26,32,38,0.9)' }}
+                style={
+                  active === cat.id
+                    ? { backgroundColor: 'var(--color-emergency)', borderColor: 'transparent' }
+                    : { backgroundColor: 'rgba(0,0,0,0.45)', borderColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)' }
+                }
               >
-                {cat.icon}
+                <span>{cat.icon}</span>
                 {cat.label}
               </button>
             ))}
           </div>
 
           {/* Map pins */}
-          <div className="absolute top-[35%] left-[25%] z-10 cursor-pointer">
-            <div className="relative">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white"
-                style={{
-                  backgroundColor: '#ffb4ab',
-                  boxShadow: '0 0 20px rgba(255,180,171,0.6)',
-                  animation: 'pulse 2s infinite',
-                }}
-              >
-                <IconBoltFilled />
-              </div>
-              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0"
-                style={{ borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderTop: '8px solid #ffb4ab' }}
-              />
-            </div>
-          </div>
+          <MapPin top="38%" left="22%" size="lg" />
+          <MapPin top="52%" left="60%" size="sm" />
+          <MapPin top="42%" right="18%" size="md" />
 
-          <div className="absolute top-[55%] left-[65%] z-10 cursor-pointer opacity-80">
-            <div className="relative scale-90">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-lg"
-                style={{ backgroundColor: '#3de273' }}
-              >
-                <IconPlumbingFilled />
-              </div>
-              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0"
-                style={{ borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderTop: '8px solid #3de273' }}
-              />
-            </div>
-          </div>
-
-          <div className="absolute top-[45%] right-[20%] z-10 cursor-pointer">
-            <div className="relative">
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center border-4 border-white"
-                style={{
-                  backgroundColor: '#ffb4ab',
-                  boxShadow: '0 0 30px rgba(255,180,171,0.8)',
-                }}
-              >
-                <IconBoltFilled size={24} />
-              </div>
-              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0"
-                style={{ borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: '10px solid #ffb4ab' }}
-              />
-            </div>
-          </div>
-
-          {/* Provider card */}
-          <div className="absolute bottom-6 left-4 right-4 z-40">
+          {/* Provider card — bottom of map */}
+          <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 z-30">
             <div
-              className="rounded-2xl p-4 shadow-2xl border border-white/10 flex items-center justify-between gap-4"
-              style={{ backgroundColor: 'rgba(47,53,59,0.95)', backdropFilter: 'blur(16px)' }}
+              className="rounded-[--radius-xl] p-4 border flex items-center justify-between gap-3"
+              style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
             >
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl overflow-hidden border border-white/20 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-14 h-14 rounded-[--radius-lg] overflow-hidden border flex-shrink-0"
+                  style={{ borderColor: 'var(--color-line)' }}
+                >
                   <img
                     src={PROVIDER_IMG}
                     alt="Marcos Zúñiga"
@@ -156,123 +155,206 @@ export function EmergencyPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h3
-                      className="font-bold text-base text-[--color-nieve]"
-                      style={{ fontFamily: 'var(--font-display)' }}
-                    >
+                    <h3 className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>
                       Marcos Zúñiga
                     </h3>
                     <span
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: '#ffb4ab', animation: 'pulse 2s infinite' }}
+                      className="w-2 h-2 rounded-full animate-pulse"
+                      style={{ backgroundColor: 'var(--color-guardia)' }}
                     />
                   </div>
-                  <p className="text-xs text-[--color-muted]">Electricista · A 1.2 km</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <IconTimer />
-                    <span
-                      className="text-[10px] font-bold uppercase tracking-wider"
-                      style={{ color: '#3de273' }}
-                    >
-                      Llegada en 15 min
-                    </span>
-                  </div>
+                  <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                    Electricista · A 1.2 km
+                  </p>
+                  <p
+                    className="text-xs font-bold mt-0.5 flex items-center gap-1"
+                    style={{ color: 'var(--color-bosque-lt)' }}
+                  >
+                    <IconClock />
+                    Llegada en ~15 min
+                  </p>
                 </div>
               </div>
               <a
                 href="tel:+5492944000010"
-                className="flex flex-col items-center justify-center px-5 py-3 rounded-xl active:scale-95 transition-transform shadow-lg flex-shrink-0"
-                style={{ backgroundColor: '#ffb4ab' }}
+                className="flex flex-col items-center justify-center px-4 py-3 rounded-[--radius-lg] active:scale-95 transition-transform flex-shrink-0"
+                style={{ backgroundColor: 'var(--color-emergency)', color: '#fff' }}
               >
                 <IconPhone />
-                <span className="text-[10px] uppercase font-bold mt-0.5" style={{ color: '#690005' }}>
-                  Llamar
-                </span>
+                <span className="text-[10px] font-bold mt-0.5 uppercase">Llamar</span>
               </a>
             </div>
           </div>
-
         </section>
 
-        {/* ── ¿Sos prestador? ─────────────────────────────────────────────────── */}
-        <section className="mt-4 px-6 mb-6">
-          <div
-            className="rounded-2xl p-6 relative overflow-hidden"
-            style={{
-              backgroundColor: '#161c22',
-              borderLeft: '4px solid #3de273',
-            }}
-          >
-            <h2
-              className="text-xl font-bold text-[--color-nieve] mb-4"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              ¿Sos prestador?
-            </h2>
-
-            {/* Guardia toggle */}
-            <div
-              className="rounded-xl p-3 flex items-center justify-between mb-4 border border-[#414845]/20"
-              style={{ backgroundColor: '#2f353b' }}
-            >
-              <div className="flex items-center gap-3">
-                <IconBell color="#3de273" />
-                <span className="font-bold text-sm text-[--color-nieve]">Activá tu modo guardia</span>
-              </div>
-              <button
-                onClick={() => setGuardiaOn(v => !v)}
-                className="w-10 h-5 rounded-full relative p-0.5 flex items-center transition-colors"
-                style={{ backgroundColor: guardiaOn ? '#3de273' : '#1a2026' }}
-                aria-pressed={guardiaOn}
+        {/* ── Cómo funciona ────────────────────────────────────────────────────── */}
+        <section className="px-4 mt-6">
+          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--color-muted)' }}>
+            Cómo funciona
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { n: '1', text: 'Elegís el rubro que necesitás' },
+              { n: '2', text: 'Ves quién está de guardia ahora' },
+              { n: '3', text: 'Contactás directo — llega en minutos' },
+            ].map(step => (
+              <div
+                key={step.n}
+                className="rounded-[--radius-lg] p-3 border text-center"
+                style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
               >
                 <div
-                  className="w-4 h-4 rounded-full transition-transform"
-                  style={{
-                    backgroundColor: guardiaOn ? '#003915' : '#8b928e',
-                    transform: guardiaOn ? 'translateX(20px)' : 'translateX(0)',
-                  }}
-                />
-              </button>
-            </div>
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black mx-auto mb-2 text-white"
+                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                >
+                  {step.n}
+                </div>
+                <p className="text-xs leading-tight" style={{ color: 'var(--color-muted)' }}>
+                  {step.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
 
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                className="py-3 rounded-lg font-bold text-xs text-[#9ab8d6] active:scale-95 transition-transform"
-                style={{ backgroundColor: '#2b4963', fontFamily: 'var(--font-display)' }}
-              >
-                Iniciar Sesión
-              </button>
-              <button
-                className="py-3 border rounded-lg font-bold text-xs text-[--color-nieve] active:scale-95 transition-transform"
-                style={{ borderColor: '#414845', fontFamily: 'var(--font-display)' }}
-              >
-                Registrarme
-              </button>
-            </div>
+        {/* ── Panel prestador ──────────────────────────────────────────────────── */}
+        <section className="px-4 mt-6">
+          <div
+            className="rounded-[--radius-xl] p-5 border"
+            style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)', borderLeft: '3px solid var(--color-bosque-lt)' }}
+          >
+            <h2 className="font-bold text-base mb-1" style={{ color: 'var(--color-nieve)' }}>
+              ¿Sos prestador?
+            </h2>
+            <p className="text-xs mb-4" style={{ color: 'var(--color-muted)' }}>
+              Activá el modo guardia y recibí contactos de urgencia en tu zona.
+            </p>
+
+            {user && providerId ? (
+              <>
+                {/* Toggle row — conectado a Supabase */}
+                <div
+                  className="flex items-center justify-between p-3 rounded-[--radius-lg] border mb-2"
+                  style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-line)' }}
+                >
+                  <div>
+                    <p className="text-sm font-bold" style={{ color: 'var(--color-nieve)' }}>
+                      Modo guardia
+                    </p>
+                    <p className="text-xs" style={{ color: guardiaOn ? 'var(--color-guardia)' : 'var(--color-muted)' }}>
+                      {guardiaOn ? 'Activo — recibís contactos ahora' : 'Inactivo'}
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleToggleGuardia}
+                    disabled={togglePending}
+                    className="w-11 h-6 rounded-full relative flex items-center p-0.5 transition-colors flex-shrink-0 border disabled:opacity-60"
+                    style={{
+                      backgroundColor: guardiaOn ? 'var(--color-bosque-lt)' : 'transparent',
+                      borderColor: guardiaOn ? 'var(--color-bosque-lt)' : 'var(--color-muted)',
+                    }}
+                    role="switch"
+                    aria-checked={guardiaOn}
+                    aria-label="Activar modo guardia"
+                  >
+                    <div
+                      className="w-5 h-5 rounded-full transition-transform"
+                      style={{
+                        backgroundColor: guardiaOn ? '#fff' : 'var(--color-muted)',
+                        transform: guardiaOn ? 'translateX(20px)' : 'translateX(0)',
+                      }}
+                    />
+                  </button>
+                </div>
+                {toggleError && (
+                  <p className="text-xs font-semibold mb-2" style={{ color: '#ffb4ab' }}>{toggleError}</p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => navigate('/dashboard')}
+                  className="w-full py-3 rounded-[--radius-lg] font-bold text-xs text-center border transition-all active:scale-95"
+                  style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+                >
+                  Ir a mi panel
+                </button>
+              </>
+            ) : (
+              /* CTAs para no autenticados */
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  to="/login"
+                  className="py-3 rounded-[--radius-lg] font-bold text-xs text-center text-white active:scale-95 transition-transform"
+                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                >
+                  Iniciar sesión
+                </Link>
+                <Link
+                  to="/registro/prestador"
+                  className="py-3 border rounded-[--radius-lg] font-bold text-xs text-center active:scale-95 transition-transform"
+                  style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+                >
+                  Registrarme
+                </Link>
+              </div>
+            )}
           </div>
         </section>
 
       </main>
 
-      {/* ── Bottom Nav ──────────────────────────────────────────────────────────── */}
+      {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full z-50 backdrop-blur-xl border-t border-white/5 flex justify-around items-center h-20 px-4"
-        style={{ backgroundColor: 'rgba(14,20,25,0.90)' }}
+        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
-        <NavTab icon={<IconExplore />}    label="Explorar"  onClick={() => navigate('/')} />
-        <NavTab icon={<IconEmergency />}  label="Urgencias" active />
-        <NavTab icon={<IconChat />}       label="Mensajes" />
-        <NavTab icon={<IconPerson />}     label="Perfil" />
+        <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />
+        <NavTab icon={<IconEmergency />} label="Urgencias" active />
+        <NavTab icon={<IconChat />} label="Mensajes" />
+        <NavTab icon={<IconPerson />} label="Perfil" />
       </nav>
 
       <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
+    </div>
+  )
+}
+
+// ─── MapPin ───────────────────────────────────────────────────────────────────
+
+type MapPinProps = {
+  top?: string; left?: string; right?: string
+  size: 'sm' | 'md' | 'lg'
+}
+
+function MapPin({ top, left, right, size }: MapPinProps) {
+  const dim = size === 'lg' ? 48 : size === 'md' ? 40 : 32
+  const pulse = size === 'lg'
+  return (
+    <div
+      className={cn('absolute z-10 flex flex-col items-center', pulse && 'animate-pulse')}
+      style={{ top, left, right }}
+    >
+      <div
+        className="rounded-full border-2 border-white flex items-center justify-center"
+        style={{
+          width: dim,
+          height: dim,
+          backgroundColor: 'var(--color-emergency)',
+          boxShadow: size === 'lg' ? '0 0 20px rgba(255,79,59,0.5)' : undefined,
+        }}
+      >
+        <IconBoltFill size={dim * 0.45} />
+      </div>
+      <div
+        style={{
+          width: 0, height: 0,
+          borderLeft: `${dim * 0.15}px solid transparent`,
+          borderRight: `${dim * 0.15}px solid transparent`,
+          borderTop: `${dim * 0.2}px solid var(--color-emergency)`,
+        }}
+      />
     </div>
   )
 }
@@ -286,13 +368,12 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
     <button
       onClick={onClick}
       className={cn(
-        'flex flex-col items-center justify-center px-4 py-2 rounded-xl transition-all active:scale-90 duration-150',
-        active ? '' : 'text-[--color-muted] hover:text-[--color-bosque-lt]',
+        'flex flex-col items-center gap-1 px-3 py-1 rounded-[--radius-lg] transition-all active:scale-90',
       )}
-      style={active ? { color: '#ffb4ab', backgroundColor: 'rgba(255,180,171,0.1)' } : undefined}
+      style={{ color: active ? 'var(--color-emergency)' : 'var(--color-muted)' }}
     >
       {icon}
-      <span className="text-[10px] font-semibold uppercase tracking-widest mt-1">{label}</span>
+      <span className="text-[10px] font-semibold uppercase tracking-widest">{label}</span>
     </button>
   )
 }
@@ -307,77 +388,26 @@ function IconArrowLeft() {
   )
 }
 
-function IconBolt() {
+function IconBoltFill({ size = 16 }: { size?: number }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
     </svg>
   )
 }
 
-function IconBoltFilled({ size = 20 }: { size?: number }) {
+function IconClock() {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="white" stroke="none">
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-    </svg>
-  )
-}
-
-function IconPlumbing() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-    </svg>
-  )
-}
-
-function IconPlumbingFilled() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="none">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-    </svg>
-  )
-}
-
-function IconGas() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2c0 6-8 6-8 12a8 8 0 0 0 16 0c0-6-8-6-8-12z" />
-    </svg>
-  )
-}
-
-function IconLock() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-    </svg>
-  )
-}
-
-function IconTimer() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3de273" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
     </svg>
   )
 }
 
 function IconPhone() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#690005" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.75a16 16 0 0 0 8.34 8.34l.94-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  )
-}
-
-function IconBell({ color = 'currentColor' }: { color?: string }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
     </svg>
   )
 }
@@ -393,9 +423,10 @@ function IconExplore() {
 
 function IconEmergency() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-      <path d="M10.01 3.22L2.5 17A2 2 0 0 0 4.24 20h15.52A2 2 0 0 0 21.5 17L13.99 3.22a2.25 2.25 0 0 0-3.98 0z" opacity="0.2"/>
-      <path d="M12 9v4m0 4h.01M10.01 3.22L2.5 17A2 2 0 0 0 4.24 20h15.52A2 2 0 0 0 21.5 17L13.99 3.22a2.25 2.25 0 0 0-3.98 0z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
     </svg>
   )
 }

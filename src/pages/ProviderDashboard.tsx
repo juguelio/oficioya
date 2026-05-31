@@ -1,442 +1,223 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { ciudades, rubros } from '@/design-system/tokens'
+import { useRef } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { mockProviders } from '@/data/mock-providers'
+import { useDashboardStore, getCertScore, getProviderReviews, getAverageRating } from '@/features/dashboard/store'
+import { CERT_CONFIGS, TRUST_BADGES, getTrustBadge, MAX_CERT_SCORE } from '@/features/dashboard/types'
 import { formatARS } from '@/shared/utils/formatARS'
-import { cn } from '@/shared/utils/cn'
-import type { DbProvider, DbSubscriptionTier } from '@/lib/database.types'
+import type { CertType, Review, Certification } from '@/features/dashboard/types'
+import type { Provider } from '@/features/providers/types'
+import { useState } from 'react'
+
+const FALLBACK_PHOTO = '/images/user-avatar.png'
+
+function timeAgo(iso: string): string {
+  const diff  = Date.now() - new Date(iso).getTime()
+  const mins  = Math.floor(diff / 60000)
+  if (mins < 60)  return `hace ${mins}m`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `hace ${hours}h`
+  return `hace ${Math.floor(hours / 24)}d`
+}
 
 // ─── ProviderDashboard ────────────────────────────────────────────────────────
 
 export function ProviderDashboard() {
-  const navigate            = useNavigate()
-  const { user, loading: authLoading, signOut } = useAuth()
+  const activeProviderId = useDashboardStore(s => s.activeProviderId)
+  const setActiveProvider = useDashboardStore(s => s.setActiveProvider)
+  const clearActiveProvider = useDashboardStore(s => s.clearActiveProvider)
 
-  const [provider,     setProvider]     = useState<DbProvider | null>(null)
-  const [tier,         setTier]         = useState<DbSubscriptionTier | null>(null)
-  const [fetchLoading, setFetchLoading] = useState(true)
-  const [fetchError,   setFetchError]   = useState<string | null>(null)
+  const provider = mockProviders.find(p => p.id === activeProviderId) ?? null
 
-  // Emergency toggle state
-  const [isEmergency,    setIsEmergency]    = useState(false)
-  const [togglePending,  setTogglePending]  = useState(false)
-  const [toggleError,    setToggleError]    = useState<string | null>(null)
-
-  // Auth guard
-  useEffect(() => {
-    if (!authLoading && user === null) {
-      navigate('/login', { replace: true })
-    }
-  }, [authLoading, user, navigate])
-
-  // Fetch provider row
-  useEffect(() => {
-    if (authLoading || user === null) return
-
-    let cancelled = false
-
-    async function fetchProvider() {
-      setFetchLoading(true)
-      setFetchError(null)
-
-      const { data, error } = await supabase
-        .from('providers')
-        .select('*')
-        .eq('auth_user_id', user!.id)
-        .single()
-
-      if (cancelled) return
-
-      if (error || !data) {
-        setFetchError('No encontramos tu perfil. Puede que haya sido eliminado.')
-        setFetchLoading(false)
-        return
-      }
-
-      setProvider(data)
-      setIsEmergency(data.is_emergency_available)
-
-      if (data.subscription_tier_id) {
-        const { data: tierData } = await supabase
-          .from('subscription_tiers')
-          .select('*')
-          .eq('id', data.subscription_tier_id)
-          .single()
-
-        if (!cancelled && tierData) {
-          setTier(tierData)
-        }
-      }
-
-      setFetchLoading(false)
-    }
-
-    fetchProvider()
-    return () => { cancelled = true }
-  }, [authLoading, user])
-
-  async function handleSignOut() {
-    await signOut()
-    navigate('/')
+  if (!provider) {
+    return <ProviderSelector onSelect={setActiveProvider} />
   }
 
-  async function handleToggleEmergency() {
-    if (!provider || togglePending) return
+  return <DashboardMain provider={provider} onExit={clearActiveProvider} />
+}
 
-    const next = !isEmergency
-    setIsEmergency(next)   // optimistic
-    setTogglePending(true)
-    setToggleError(null)
+// ─── ProviderSelector ─────────────────────────────────────────────────────────
 
-    const { error } = await supabase
-      .from('providers')
-      .update({ is_emergency_available: next })
-      .eq('id', provider.id)
+type ProviderSelectorProps = { onSelect: (id: string) => void }
 
-    setTogglePending(false)
-
-    if (error) {
-      setIsEmergency(!next)  // revert
-      setToggleError('No se pudo guardar el cambio. Intentá de nuevo.')
-    }
-  }
-
-  // ─── Auth loading / redirecting ────────────────────────────────────────────
-  if (authLoading || (!authLoading && user === null)) {
-    return <FullSkeleton />
-  }
-
-  // ─── Provider fetching ─────────────────────────────────────────────────────
-  if (fetchLoading) {
-    return <FullSkeleton />
-  }
-
-  // ─── Error state ───────────────────────────────────────────────────────────
-  if (fetchError || !provider) {
-    return (
-      <div
-        className="min-h-screen flex flex-col items-center justify-center px-6 text-center gap-6"
-        style={{ backgroundColor: '#0e1419' }}
-      >
-        <div
-          className="w-16 h-16 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: '#ffb4ab18' }}
-        >
-          <IconAlert />
-        </div>
-        <div>
-          <h2
-            className="text-xl font-bold text-[--color-nieve] mb-2"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            Perfil no encontrado
-          </h2>
-          <p className="text-sm text-[--color-muted] max-w-xs mx-auto">
-            {fetchError ?? 'No encontramos tu perfil. Puede que haya sido eliminado.'}
-          </p>
-        </div>
-        <a
-          href="mailto:soporte@oficio.ar"
-          className="h-12 px-6 rounded-[--radius-full] font-bold text-sm flex items-center gap-2 transition-all active:scale-95"
-          style={{ backgroundColor: '#ffb4ab18', color: '#ffb4ab', border: '1px solid #ffb4ab30' }}
-        >
-          Contactar soporte
-        </a>
-      </div>
-    )
-  }
-
-  // ─── Derived display data ──────────────────────────────────────────────────
-  const rubroData  = rubros.find(r => r.id === provider.rubro_id)
-  const ciudadData = ciudades.find(c => c.id === provider.ciudad_id)
-
-  const tierId = provider.subscription_tier_id as 'basico' | 'profesional' | 'destacado' | null
-
-  const tierStyles = {
-    destacado:    { bg: '#F5C842',   text: '#0e1419', label: 'Destacado' },
-    profesional:  { bg: '#2E6E8A22', text: '#2E6E8A', label: 'Profesional' },
-    basico:       { bg: '#4A8C4922', text: '#4A8C49', label: 'Básico' },
-  } as const
-
-  const statusStyles = {
-    active:  { color: '#4A8C49', label: 'Activo' },
-    pending: { color: '#F5C842', label: 'Pendiente de verificación' },
-    inactive:{ color: '#7A9A79', label: 'Inactivo' },
-  } as const
-
-  const providerStatus = (provider.status as keyof typeof statusStyles) in statusStyles
-    ? (provider.status as keyof typeof statusStyles)
-    : 'inactive'
-
-  const statusInfo = statusStyles[providerStatus]
+function ProviderSelector({ onSelect }: ProviderSelectorProps) {
+  const navigate = useNavigate()
 
   return (
-    <div
-      className="min-h-screen text-[--color-nieve]"
-      style={{ backgroundColor: '#0e1419' }}
-    >
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
       <header
-        className="fixed top-0 w-full z-50 backdrop-blur-xl flex items-center justify-between px-6 h-16"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
-        <h1
-          className="text-lg font-bold text-[--color-nieve]"
-          style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
-        >
-          Mi perfil
-        </h1>
+        <button onClick={() => navigate(-1)} className="w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition-all" style={{ backgroundColor: 'var(--color-noche)' }}>
+          <IconBack />
+        </button>
+        <div>
+          <p className="font-black text-sm" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.01em' }}>¿Quién sos?</p>
+          <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>Elegí tu perfil para acceder al panel</p>
+        </div>
+      </header>
 
+      <main className="pt-14 pb-8">
+        <div className="px-5 pt-5 space-y-2">
+          {mockProviders.filter(p => p.status === 'active').map(p => (
+            <button
+              key={p.id}
+              onClick={() => onSelect(p.id)}
+              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border text-left active:scale-[0.99] transition-all"
+              style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+            >
+              <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border" style={{ borderColor: 'var(--color-line)' }}>
+                <img src={p.photos?.[0] ?? FALLBACK_PHOTO} alt={p.name} className="w-full h-full object-cover object-top" onError={e => { (e.target as HTMLImageElement).src = FALLBACK_PHOTO }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{p.name}</p>
+                <p className="text-xs truncate" style={{ color: 'var(--color-muted)' }}>
+                  {p.rubro.replace(/-/g, ' ')} · {p.ciudad.replace(/-/g, ' ')}
+                </p>
+              </div>
+              {p.subscription && (
+                <span
+                  className="text-[10px] font-bold px-2 py-0.5 rounded-full capitalize shrink-0"
+                  style={{
+                    backgroundColor: p.subscription === 'destacado' ? '#F5C84222' : 'var(--color-brand-tint)',
+                    color: p.subscription === 'destacado' ? '#C48A00' : 'var(--color-bosque-lt)',
+                  }}
+                >
+                  {p.subscription}
+                </span>
+              )}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-muted)', flexShrink: 0 }}>
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          ))}
+        </div>
+      </main>
+    </div>
+  )
+}
+
+// ─── DashboardMain ────────────────────────────────────────────────────────────
+
+type DashboardMainProps = { provider: Provider; onExit: () => void }
+
+function DashboardMain({ provider, onExit }: DashboardMainProps) {
+  const [tab, setTab] = useState<'resumen' | 'certs' | 'resenas'>('resumen')
+  const navigate = useNavigate()
+
+  const certifications = useDashboardStore(s => s.certifications)
+  const reviews        = useDashboardStore(s => s.reviews)
+  const guardiaState   = useDashboardStore(s => s.guardiaState)
+  const toggleGuardia  = useDashboardStore(s => s.toggleGuardia)
+
+  const myCerts   = certifications.filter(c => c.providerId === provider.id)
+  const myReviews = getProviderReviews(reviews, provider.id)
+  const score     = getCertScore(certifications, provider.id)
+  const badge     = getTrustBadge(score)
+  const isOnGuardia = provider.id in guardiaState ? guardiaState[provider.id] : provider.isEmergencyAvailable
+  const avgRating = getAverageRating(myReviews)
+
+  const photo = provider.photos?.[0] ?? FALLBACK_PHOTO
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+
+      {/* ── Header ─────────────────────────────────────────────────────────────── */}
+      <header
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-5 h-14 border-b"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-8 h-8 rounded-full overflow-hidden border shrink-0" style={{ borderColor: 'var(--color-line)' }}>
+            <img src={photo} alt={provider.name} className="w-full h-full object-cover object-top" onError={e => { (e.target as HTMLImageElement).src = FALLBACK_PHOTO }} />
+          </div>
+          <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{provider.name}</p>
+        </div>
         <button
-          type="button"
-          onClick={handleSignOut}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-[--radius-lg] text-sm font-semibold text-[--color-muted] hover:text-[#ffb4ab] hover:bg-white/5 transition-all active:scale-95"
+          onClick={onExit}
+          className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
+          style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
         >
-          <IconLogOut />
           Salir
         </button>
       </header>
 
-      {/* ── Main ───────────────────────────────────────────────────────────── */}
-      <main className="pt-24 pb-32 px-4 max-w-xl mx-auto space-y-4">
+      <main className="pt-14 pb-6">
 
-        {/* ── Status chip ──────────────────────────────────────────────────── */}
-        <div className="flex items-center gap-2">
-          <div
-            className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: statusInfo.color }}
-          />
-          <span
-            className="text-xs font-bold tracking-[0.12em] uppercase"
-            style={{ color: statusInfo.color }}
-          >
-            {statusInfo.label}
-          </span>
-        </div>
-
-        {/* ── Tier / plan card ─────────────────────────────────────────────── */}
+        {/* ── Hero — score ring + badge ─────────────────────────────────────────── */}
         <div
-          className="rounded-[--radius-xl] border p-5 space-y-4 hover:border-[#2A3A2A] transition-colors"
-          style={{ backgroundColor: '#1a2026', borderColor: '#1E2E1E' }}
+          className="px-5 py-6 flex items-center gap-5"
+          style={{ backgroundColor: 'var(--color-sombra)', borderBottom: `1px solid var(--color-line)` }}
         >
-          <div className="flex items-start justify-between gap-3">
-            <div className="space-y-1">
-              <p className="text-xs font-bold tracking-[0.15em] text-[--color-muted] uppercase">
-                Tu plan actual
-              </p>
-              {tierId ? (
-                <span
-                  className="inline-block text-sm font-bold px-3 py-1 rounded-[--radius-full]"
-                  style={{
-                    backgroundColor: tierStyles[tierId].bg,
-                    color:           tierStyles[tierId].text,
-                  }}
-                >
-                  {tierStyles[tierId].label}
-                </span>
-              ) : (
-                <span className="text-sm text-[--color-muted]">Sin plan activo</span>
-              )}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => navigate('/planes')}
-              className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-[--radius-lg] transition-all active:scale-95"
-              style={{ backgroundColor: '#4A8C4922', color: '#4A8C49' }}
-            >
-              Cambiar plan
-            </button>
-          </div>
-
-          {/* Contacts per month */}
-          <div className="flex items-center gap-2 text-sm text-[--color-muted]">
-            <IconUsers />
-            <span>
-              {tierId === null
-                ? 'Sin plan — sin contactos habilitados'
-                : tier === null
-                  ? '—'
-                  : tier.contacts_per_month === null
-                    ? 'Contactos ilimitados'
-                    : (
-                      <>
-                        <span
-                          className="font-bold"
-                          style={{ fontFamily: 'var(--font-mono)', color: '#EFF3EE' }}
-                        >
-                          {tier.contacts_per_month}
-                        </span>
-                        {' contactos por mes'}
-                      </>
-                    )
-              }
-            </span>
-          </div>
-
-          {!tierId && (
-            <button
-              type="button"
-              onClick={() => navigate('/planes')}
-              className="w-full h-11 rounded-[--radius-full] font-bold text-sm transition-all active:scale-[0.98]"
-              style={{ backgroundColor: '#4A8C49', color: '#fff' }}
-            >
-              Elegí un plan para aparecer en búsquedas
-            </button>
-          )}
-        </div>
-
-        {/* ── Emergency toggle card ─────────────────────────────────────────── */}
-        <div
-          className="rounded-[--radius-xl] border p-5 hover:border-[#2A3A2A] transition-colors"
-          style={{ backgroundColor: '#1a2026', borderColor: '#1E2E1E' }}
-        >
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-1 flex-1 min-w-0">
-              <p className="font-bold text-[--color-nieve] text-sm">Modo guardia 🔴</p>
-              <p className="text-xs text-[--color-muted] leading-relaxed">
-                Aparecés primero en búsquedas de emergencia. Se cobran{' '}
-                <span style={{ fontFamily: 'var(--font-mono)', color: '#EFF3EE' }}>
-                  {formatARS(20000)}
-                </span>{' '}
-                ARS por contacto.
-              </p>
-            </div>
-
-            {/* Toggle switch */}
-            <button
-              type="button"
-              role="switch"
-              aria-checked={isEmergency}
-              disabled={togglePending}
-              onClick={handleToggleEmergency}
-              className={cn(
-                'relative shrink-0 w-14 h-7 rounded-[--radius-full] transition-all duration-200 active:scale-95 disabled:opacity-60',
-                isEmergency ? 'bg-[#3de273]/30' : 'bg-[#1E2E1E]',
-              )}
-            >
-              <span
-                className={cn(
-                  'absolute top-1 w-5 h-5 rounded-full shadow transition-all duration-200',
-                  isEmergency ? 'left-8 bg-[#3de273]' : 'left-1 bg-[#7A9A79]',
-                )}
-              />
-            </button>
-          </div>
-
-          {toggleError && (
-            <p
-              className="mt-3 text-xs font-semibold px-3 py-2 rounded-[--radius-lg]"
-              style={{ backgroundColor: '#ffb4ab18', color: '#ffb4ab' }}
-            >
-              {toggleError}
+          <ScoreRing score={score} max={MAX_CERT_SCORE} />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--color-muted)' }}>
+              Puntuación de confianza
             </p>
-          )}
+            <div
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold mb-2"
+              style={{ backgroundColor: badge.bgColor, color: badge.color }}
+            >
+              {badge.icon} {badge.label}
+            </div>
+            <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+              {score < MAX_CERT_SCORE
+                ? `Sumá ${MAX_CERT_SCORE - score} pts más subiendo tus certificaciones`
+                : '¡Perfil completo al 100%!'
+              }
+            </p>
+          </div>
         </div>
 
-        {/* ── Profile preview card ──────────────────────────────────────────── */}
+        {/* ── Tab bar ──────────────────────────────────────────────────────────── */}
         <div
-          className="rounded-[--radius-xl] border p-5 space-y-4 hover:border-[#2A3A2A] transition-colors"
-          style={{ backgroundColor: '#1a2026', borderColor: '#1E2E1E' }}
+          className="sticky top-14 z-40 flex border-b"
+          style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
         >
-          <p className="text-xs font-bold tracking-[0.15em] text-[--color-muted] uppercase">
-            Así te ven los clientes
-          </p>
-
-          {/* Avatar + name */}
-          <div className="flex items-center gap-4">
-            <div
-              className="w-16 h-16 rounded-[--radius-xl] overflow-hidden shrink-0 flex items-center justify-center"
-              style={{ backgroundColor: '#0e1419' }}
+          {[
+            { key: 'resumen', label: 'Resumen' },
+            { key: 'certs',   label: `Certificaciones${myCerts.length > 0 ? ` (${myCerts.length})` : ''}` },
+            { key: 'resenas', label: `Reseñas${myReviews.length > 0 ? ` (${myReviews.length})` : ''}` },
+          ].map(t => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key as typeof tab)}
+              className="flex-1 py-3 text-xs font-bold transition-all active:scale-95"
+              style={{
+                color: tab === t.key ? 'var(--color-bosque-lt)' : 'var(--color-muted)',
+                borderBottom: tab === t.key ? '2px solid var(--color-bosque-lt)' : '2px solid transparent',
+              }}
             >
-              {provider.photos.length > 0 ? (
-                <img
-                  src={provider.photos[0]}
-                  alt={provider.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <IconUserCircle />
-              )}
-            </div>
+              {t.label}
+            </button>
+          ))}
+        </div>
 
-            <div className="min-w-0 flex-1 space-y-1">
-              <h2
-                className="text-xl font-bold text-[--color-nieve] truncate"
-                style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
-              >
-                {provider.name}
-              </h2>
-
-              {/* Rubro + ciudad */}
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[--color-muted]">
-                {rubroData && (
-                  <span className="flex items-center gap-1">
-                    <span>{rubroData.icon}</span>
-                    <span>{rubroData.label}</span>
-                  </span>
-                )}
-                {rubroData && ciudadData && <span className="opacity-40">·</span>}
-                {ciudadData && <span>{ciudadData.label}</span>}
-              </div>
-
-              {provider.barrio && (
-                <p className="text-xs text-[--color-muted]">{provider.barrio}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Stats row */}
-          <div className="flex items-center gap-4">
-            {/* Rating */}
-            <div className="flex items-center gap-1.5">
-              <IconStar />
-              <span
-                className="text-sm font-bold text-[--color-nieve]"
-                style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
-              >
-                {provider.rating.toFixed(1)}
-              </span>
-            </div>
-
-            <span className="text-[--color-muted] opacity-40">·</span>
-
-            {/* Total jobs */}
-            <span className="text-sm text-[--color-muted]">
-              <span
-                className="font-bold text-[--color-nieve]"
-                style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
-              >
-                {provider.total_jobs}
-              </span>
-              {' trabajos'}
-            </span>
-
-            {/* Verified badge */}
-            {provider.is_verified && (
-              <>
-                <span className="text-[--color-muted] opacity-40">·</span>
-                <span
-                  className="flex items-center gap-1 text-xs font-bold"
-                  style={{ color: '#4A8C49' }}
-                >
-                  <IconCheckCircle />
-                  Verificado
-                </span>
-              </>
-            )}
-          </div>
-
-          {/* CTA */}
-          <button
-            type="button"
-            onClick={() => navigate(`/prestador/${provider.id}`)}
-            className="w-full h-11 rounded-[--radius-full] font-bold text-sm border transition-all active:scale-[0.98] hover:bg-white/5"
-            style={{ borderColor: '#2A3A2A', color: '#EFF3EE' }}
-          >
-            Ver perfil público
-          </button>
+        {/* ── Tab content ──────────────────────────────────────────────────────── */}
+        <div className="px-5 pt-5">
+          {tab === 'resumen' && (
+            <ResumenTab
+              provider={provider}
+              isOnGuardia={isOnGuardia}
+              onToggleGuardia={() => toggleGuardia(provider.id, provider.isEmergencyAvailable)}
+              avgRating={avgRating}
+              reviewCount={myReviews.length}
+              score={score}
+              onNavigate={navigate}
+            />
+          )}
+          {tab === 'certs' && (
+            <CertificacionesTab
+              providerId={provider.id}
+              certifications={myCerts}
+            />
+          )}
+          {tab === 'resenas' && (
+            <ResenasTab
+              reviews={myReviews}
+              providerId={provider.id}
+            />
+          )}
         </div>
 
       </main>
@@ -444,142 +225,440 @@ export function ProviderDashboard() {
   )
 }
 
-// ─── Full-screen skeleton ──────────────────────────────────────────────────────
+// ─── ResumenTab ───────────────────────────────────────────────────────────────
 
-function FullSkeleton() {
+type ResumenTabProps = {
+  provider: Provider
+  isOnGuardia: boolean
+  onToggleGuardia: () => void
+  avgRating: number
+  reviewCount: number
+  score: number
+  onNavigate: (path: string) => void
+}
+
+function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewCount, score, onNavigate }: ResumenTabProps) {
+  return (
+    <div className="space-y-4">
+
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { value: avgRating > 0 ? avgRating.toFixed(1) : '—', label: 'Rating', mono: true, icon: '★', color: '#E8A020' },
+          { value: String(reviewCount), label: 'Reseñas', mono: true, icon: '💬', color: 'var(--color-bosque-lt)' },
+          { value: String(provider.totalJobs), label: 'Trabajos', mono: true, icon: '🔧', color: 'var(--color-muted)' },
+        ].map(s => (
+          <div
+            key={s.label}
+            className="flex flex-col items-center py-4 rounded-xl border"
+            style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+          >
+            <span className="text-xl mb-1">{s.icon}</span>
+            <p
+              className="font-black text-lg leading-none mb-0.5"
+              style={{ color: s.color, fontFamily: s.mono ? 'var(--font-mono)' : undefined, fontVariantNumeric: 'tabular-nums' }}
+            >
+              {s.value}
+            </p>
+            <p className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-muted)' }}>{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Plan */}
+      <div
+        className="flex items-center justify-between p-4 rounded-xl border"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+      >
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--color-muted)' }}>Plan actual</p>
+          {provider.subscription ? (
+            <span
+              className="font-bold text-sm capitalize px-2.5 py-0.5 rounded-full"
+              style={{
+                backgroundColor: provider.subscription === 'destacado' ? '#F5C84222' : 'var(--color-brand-tint)',
+                color: provider.subscription === 'destacado' ? '#C48A00' : 'var(--color-bosque-lt)',
+              }}
+            >
+              {provider.subscription}
+            </span>
+          ) : (
+            <span className="text-sm" style={{ color: 'var(--color-muted)' }}>Sin plan activo</span>
+          )}
+        </div>
+        <button
+          onClick={() => onNavigate('/planes')}
+          className="text-xs font-bold px-3 py-1.5 rounded-full active:scale-95 transition-all"
+          style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
+        >
+          {provider.subscription ? 'Cambiar' : 'Ver planes'}
+        </button>
+      </div>
+
+      {/* Modo guardia */}
+      <div
+        className="flex items-center justify-between p-4 rounded-xl border"
+        style={{
+          backgroundColor: 'var(--color-sombra)',
+          borderColor: isOnGuardia ? 'var(--color-emergency)' : 'var(--color-line)',
+        }}
+      >
+        <div className="flex-1 min-w-0 pr-4">
+          <div className="flex items-center gap-2 mb-1">
+            {isOnGuardia && <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-emergency)', flexShrink: 0 }} />}
+            <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>Modo guardia 🔴</p>
+          </div>
+          <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+            {isOnGuardia
+              ? `Estás visible en emergencias. Se cobran ${formatARS(20000)} por contacto.`
+              : `Activalo para aparecer primero en urgencias. ${formatARS(20000)} por contacto.`
+            }
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isOnGuardia}
+          onClick={onToggleGuardia}
+          className="relative shrink-0 w-12 h-6 rounded-full transition-all duration-200 active:scale-95"
+          style={{ backgroundColor: isOnGuardia ? 'var(--color-emergency)' : 'var(--color-line)' }}
+        >
+          <span
+            className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-200"
+            style={{ left: isOnGuardia ? '26px' : '2px' }}
+          />
+        </button>
+      </div>
+
+      {/* Ver perfil público */}
+      <Link
+        to={`/prestador/${provider.id}`}
+        className="flex items-center justify-between p-4 rounded-xl border active:scale-[0.99] transition-all"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-xl">👁️</span>
+          <div>
+            <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>Ver perfil público</p>
+            <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Así te ven los clientes</p>
+          </div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-muted)' }}>
+          <path d="M9 18l6-6-6-6" />
+        </svg>
+      </Link>
+
+      {/* Score hint */}
+      {score < 20 && (
+        <div
+          className="flex items-start gap-3 p-4 rounded-xl border"
+          style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
+        >
+          <span className="text-xl shrink-0">💡</span>
+          <p className="text-xs leading-relaxed" style={{ color: 'var(--color-bosque-lt)' }}>
+            Subí el DNI y una certificación más para obtener el badge <strong>Verificado</strong> y aparecer con mayor confianza en los resultados.
+          </p>
+        </div>
+      )}
+
+    </div>
+  )
+}
+
+// ─── CertificacionesTab ───────────────────────────────────────────────────────
+
+type CertificacionesTabProps = { providerId: string; certifications: Certification[] }
+
+function CertificacionesTab({ providerId, certifications }: CertificacionesTabProps) {
+  const addCertification    = useDashboardStore(s => s.addCertification)
+  const removeCertification = useDashboardStore(s => s.removeCertification)
+  const fileInputRefs       = useRef<Record<string, HTMLInputElement | null>>({})
+
+  function handleFileChange(type: CertType, e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    addCertification(providerId, type, file.name)
+    // reset input para permitir re-subir el mismo archivo
+    e.target.value = ''
+  }
+
+  const totalScore = certifications.reduce((s, c) => s + c.points, 0)
+
+  return (
+    <div className="space-y-4">
+
+      {/* Score summary */}
+      <div
+        className="flex items-center justify-between p-4 rounded-xl border"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+      >
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--color-muted)' }}>Puntaje total</p>
+          <p className="font-black text-2xl" style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
+            {totalScore} <span className="text-sm font-semibold" style={{ color: 'var(--color-muted)' }}>/ 100 pts</span>
+          </p>
+        </div>
+        <div className="flex gap-1">
+          {TRUST_BADGES.slice(1).map(b => (
+            <div
+              key={b.minScore}
+              className="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold"
+              style={{
+                backgroundColor: totalScore >= b.minScore ? b.bgColor : 'rgba(0,0,0,0.04)',
+                color: totalScore >= b.minScore ? b.color : 'var(--color-muted)',
+                opacity: totalScore >= b.minScore ? 1 : 0.4,
+              }}
+            >
+              {b.icon}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Cert cards */}
+      <div className="space-y-3">
+        {CERT_CONFIGS.map(config => {
+          const existing = certifications.find(c => c.type === config.type)
+          const isVerified = !!existing
+
+          return (
+            <div
+              key={config.type}
+              className="rounded-xl border overflow-hidden"
+              style={{
+                backgroundColor: 'var(--color-sombra)',
+                borderColor: isVerified ? 'var(--color-bosque-lt)' : 'var(--color-line)',
+              }}
+            >
+              <div className="flex items-center gap-3 p-4">
+                <span
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
+                  style={{ backgroundColor: isVerified ? 'var(--color-brand-tint)' : 'rgba(0,0,0,0.04)' }}
+                >
+                  {config.icon}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>{config.label}</p>
+                  <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                    {isVerified ? existing!.fileName : config.description}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span
+                    className="text-xs font-black px-2 py-0.5 rounded-full"
+                    style={{
+                      backgroundColor: isVerified ? 'var(--color-brand-tint)' : 'rgba(0,0,0,0.05)',
+                      color: isVerified ? 'var(--color-bosque-lt)' : 'var(--color-muted)',
+                      fontFamily: 'var(--font-mono)',
+                    }}
+                  >
+                    +{config.points}pts
+                  </span>
+                  {isVerified ? (
+                    <button
+                      onClick={() => removeCertification(providerId, config.type)}
+                      className="w-7 h-7 flex items-center justify-center rounded-full active:scale-90 transition-all"
+                      style={{ backgroundColor: 'rgba(255,180,171,0.15)', color: '#ffb4ab' }}
+                      title="Eliminar"
+                    >
+                      <IconTrash />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => fileInputRefs.current[config.type]?.click()}
+                      className="text-xs font-bold px-3 py-1.5 rounded-full active:scale-95 transition-all text-white"
+                      style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                    >
+                      Subir
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {isVerified && (
+                <div
+                  className="flex items-center gap-2 px-4 py-2 border-t"
+                  style={{ borderColor: 'var(--color-line)', backgroundColor: 'var(--color-brand-tint)' }}
+                >
+                  <span className="text-[10px] font-bold" style={{ color: 'var(--color-bosque-lt)' }}>✓ Verificado</span>
+                  <span className="text-[10px]" style={{ color: 'var(--color-bosque-lt)', opacity: 0.6 }}>·</span>
+                  <span className="text-[10px]" style={{ color: 'var(--color-bosque-lt)', opacity: 0.7 }}>{timeAgo(existing!.uploadedAt)}</span>
+                </div>
+              )}
+
+              {/* Hidden file input */}
+              <input
+                ref={el => { fileInputRefs.current[config.type] = el }}
+                type="file"
+                accept="image/*,application/pdf"
+                className="hidden"
+                onChange={e => handleFileChange(config.type, e)}
+              />
+            </div>
+          )
+        })}
+      </div>
+
+      <p className="text-xs text-center py-2" style={{ color: 'var(--color-muted)' }}>
+        Los documentos son revisados por el equipo de Oficio en 24-48hs.
+      </p>
+
+    </div>
+  )
+}
+
+// ─── ResenasTab ───────────────────────────────────────────────────────────────
+
+type ResenasTabProps = { reviews: Review[]; providerId: string }
+
+function ResenasTab({ reviews, providerId }: ResenasTabProps) {
+  const avgRating = getAverageRating(reviews)
+
+  if (reviews.length === 0) {
+    return (
+      <div className="flex flex-col items-center py-16 text-center">
+        <span className="text-5xl mb-4">💬</span>
+        <p className="font-bold text-base mb-1" style={{ color: 'var(--color-nieve)' }}>Sin reseñas todavía</p>
+        <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+          Los clientes pueden dejarte una reseña desde tu perfil público.
+        </p>
+        <Link
+          to={`/prestador/${providerId}`}
+          className="mt-5 px-5 py-2.5 rounded-full text-sm font-bold border active:scale-95 transition-all"
+          style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+        >
+          Ver perfil público
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+
+      {/* Summary */}
+      <div
+        className="flex items-center gap-4 p-4 rounded-xl border"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+      >
+        <div className="text-center">
+          <p
+            className="font-black text-3xl leading-none mb-0.5"
+            style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
+          >
+            {avgRating.toFixed(1)}
+          </p>
+          <StarRow rating={avgRating} size={12} />
+          <p className="text-[10px] mt-1" style={{ color: 'var(--color-muted)' }}>{reviews.length} reseñas</p>
+        </div>
+        <div className="flex-1 space-y-1.5">
+          {[5, 4, 3, 2, 1].map(star => {
+            const count = reviews.filter(r => Math.round(r.rating) === star).length
+            const pct   = reviews.length > 0 ? (count / reviews.length) * 100 : 0
+            return (
+              <div key={star} className="flex items-center gap-2">
+                <span className="text-[10px] font-bold w-2" style={{ color: 'var(--color-muted)' }}>{star}</span>
+                <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--color-line)' }}>
+                  <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#E8A020', transition: 'width 0.3s' }} />
+                </div>
+                <span className="text-[10px] w-4 text-right" style={{ color: 'var(--color-muted)', fontFamily: 'var(--font-mono)' }}>{count}</span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Review list */}
+      <div className="space-y-3">
+        {reviews.map(r => (
+          <ReviewCard key={r.id} review={r} />
+        ))}
+      </div>
+
+    </div>
+  )
+}
+
+// ─── ReviewCard ───────────────────────────────────────────────────────────────
+
+function ReviewCard({ review }: { review: Review }) {
   return (
     <div
-      className="min-h-screen"
-      style={{ backgroundColor: '#0e1419' }}
+      className="p-4 rounded-xl border"
+      style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
     >
-      {/* Header skeleton */}
-      <div
-        className="fixed top-0 w-full h-16 z-50"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
-      >
-        <div className="flex items-center justify-between px-6 h-full">
-          <div className="h-5 w-24 rounded-[--radius-md] bg-white/5 animate-pulse" />
-          <div className="h-7 w-16 rounded-[--radius-lg] bg-white/5 animate-pulse" />
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black shrink-0"
+            style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
+          >
+            {review.authorName.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>{review.authorName}</p>
+            <StarRow rating={review.rating} size={11} />
+          </div>
         </div>
+        <span className="text-[10px] shrink-0 mt-0.5" style={{ color: 'var(--color-muted)' }}>{timeAgo(review.createdAt)}</span>
       </div>
+      <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>{review.comment}</p>
+    </div>
+  )
+}
 
-      <div className="pt-24 pb-32 px-4 max-w-xl mx-auto space-y-4">
-        {/* Status chip */}
-        <div className="h-4 w-28 rounded-full bg-white/5 animate-pulse" />
+// ─── ScoreRing ────────────────────────────────────────────────────────────────
 
-        {/* Plan card */}
-        <div
-          className="rounded-[--radius-xl] border p-5 space-y-4"
-          style={{ borderColor: '#1E2E1E', backgroundColor: '#1a2026' }}
-        >
-          <div className="flex justify-between">
-            <div className="space-y-2">
-              <div className="h-3 w-20 rounded bg-white/5 animate-pulse" />
-              <div className="h-6 w-28 rounded-full bg-white/5 animate-pulse" />
-            </div>
-            <div className="h-8 w-24 rounded-[--radius-lg] bg-white/5 animate-pulse" />
-          </div>
-          <div className="h-4 w-44 rounded bg-white/5 animate-pulse" />
-        </div>
+function ScoreRing({ score, max }: { score: number; max: number }) {
+  const r            = 30
+  const circumference = 2 * Math.PI * r
+  const pct          = Math.min(score / max, 1)
+  const fill         = pct * circumference
 
-        {/* Emergency card */}
-        <div
-          className="rounded-[--radius-xl] border p-5 flex items-center justify-between gap-4"
-          style={{ borderColor: '#1E2E1E', backgroundColor: '#1a2026' }}
-        >
-          <div className="space-y-2 flex-1">
-            <div className="h-4 w-36 rounded bg-white/5 animate-pulse" />
-            <div className="h-3 w-full rounded bg-white/5 animate-pulse" />
-          </div>
-          <div className="w-14 h-7 rounded-full bg-white/5 animate-pulse shrink-0" />
-        </div>
+  const badge = getTrustBadge(score)
 
-        {/* Profile card */}
-        <div
-          className="rounded-[--radius-xl] border p-5 space-y-4"
-          style={{ borderColor: '#1E2E1E', backgroundColor: '#1a2026' }}
-        >
-          <div className="h-3 w-40 rounded bg-white/5 animate-pulse" />
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-[--radius-xl] bg-white/5 animate-pulse shrink-0" />
-            <div className="flex-1 space-y-2">
-              <div className="h-5 w-36 rounded bg-white/5 animate-pulse" />
-              <div className="h-3 w-48 rounded bg-white/5 animate-pulse" />
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <div className="h-4 w-12 rounded bg-white/5 animate-pulse" />
-            <div className="h-4 w-20 rounded bg-white/5 animate-pulse" />
-          </div>
-          <div className="h-11 w-full rounded-full bg-white/5 animate-pulse" />
-        </div>
-      </div>
+  return (
+    <svg width="88" height="88" viewBox="0 0 88 88" style={{ flexShrink: 0 }}>
+      {/* Track */}
+      <circle cx="44" cy="44" r={r} fill="none" stroke="var(--color-line)" strokeWidth="7" />
+      {/* Progress */}
+      <circle
+        cx="44" cy="44" r={r}
+        fill="none"
+        stroke={badge.color}
+        strokeWidth="7"
+        strokeLinecap="round"
+        strokeDasharray={`${fill} ${circumference}`}
+        transform="rotate(-90 44 44)"
+        style={{ transition: 'stroke-dasharray 0.5s ease' }}
+      />
+      {/* Score */}
+      <text x="44" y="48" textAnchor="middle" fontSize="18" fontWeight="900" fill="var(--color-nieve)" fontFamily="var(--font-mono)">
+        {score}
+      </text>
+    </svg>
+  )
+}
+
+// ─── StarRow ──────────────────────────────────────────────────────────────────
+
+function StarRow({ rating, size = 12 }: { rating: number; size?: number }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map(i => (
+        <svg key={i} width={size} height={size} viewBox="0 0 24 24" fill={i <= Math.round(rating) ? '#E8A020' : 'var(--color-line)'} style={{ flexShrink: 0 }}>
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ))}
     </div>
   )
 }
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
-function IconLogOut() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <polyline points="16 17 21 12 16 7" />
-      <line x1="21" y1="12" x2="9" y2="12" />
-    </svg>
-  )
+function IconBack() {
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-nieve)' }}><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
 }
-
-function IconAlert() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
-      stroke="#ffb4ab" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="8" x2="12" y2="12" />
-      <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
-  )
-}
-
-function IconUsers() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-      className="shrink-0">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
-  )
-}
-
-function IconStar() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="#4A8C49"
-      stroke="#4A8C49" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  )
-}
-
-function IconCheckCircle() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-      <polyline points="22 4 12 14.01 9 11.01" />
-    </svg>
-  )
-}
-
-function IconUserCircle() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
-      stroke="#7A9A79" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  )
+function IconTrash() {
+  return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
 }

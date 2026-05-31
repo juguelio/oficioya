@@ -17,6 +17,7 @@ export type Provider = {
   bio?: string
   photos: string[]
   createdAt: string
+  isEmergencyAvailable: boolean
 }
 
 export type ProviderStatus = Provider['status']

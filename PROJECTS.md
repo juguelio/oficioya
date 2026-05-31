@@ -5,10 +5,10 @@ Control central de los 3 proyectos activos.
 ---
 
 ## 1. Oficio — Marketplace de oficios Patagonia
-**Estado:** 🟡 En desarrollo activo
+**Estado:** 🟡 En desarrollo activo, con trabajo por ventanas y cowork
 **Stack:** React + Vite + TypeScript + Tailwind
-**Repo:** `~/Documents/oficio`
-**Prioridad ahora:** UI/diseño + RubroPage + PricingPage
+**Repo:** `~/Dev/oficio`
+**Prioridad ahora:** cerrar producto + pagos + guardia + pulir UX
 
 ### Qué está listo
 - Setup completo (Vite, TS, Tailwind, router)
@@ -20,11 +20,14 @@ Control central de los 3 proyectos activos.
 - RubroPage (placeholder)
 - PricingPage (placeholder)
 - Skills + commands en .claude/
+- Supabase auth/dashboard/guardia/realtime base montada
+- Jobs mock + flujo cliente/prestador en in-app
 
 ### Próximo paso
-- Skill de diseño → mejorar calidad visual de todas las páginas
-- RubroPage con grilla real de ProviderCard
-- PricingPage con diseño sólido
+- Cerrar MercadoPago para emergencias + suscripciones
+- Google OAuth + verificación admin
+- Merge del rediseño UX con la base Supabase
+- Refinar dashboard y claims del modo guardia
 
 ### Decisiones tomadas
 - WhatsApp como CTA principal

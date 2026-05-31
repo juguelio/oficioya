@@ -40,17 +40,16 @@ export function ProviderLogin() {
       )
       return
     }
-    // TODO: redirect to /dashboard once it exists
-    navigate('/')
+    navigate('/dashboard')
   }
 
   return (
-    <div className="min-h-screen flex flex-col text-[--color-nieve]" style={{ backgroundColor: '#0e1419' }}>
+    <div className="min-h-screen flex flex-col text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 backdrop-blur-xl flex items-center px-6 h-16 gap-4"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+        className="fixed top-0 w-full z-50 flex items-center px-6 h-16 gap-4 border-b border-[--color-line]"
+        style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <button
           type="button"
@@ -62,7 +61,7 @@ export function ProviderLogin() {
         </button>
         <h1
           className="font-bold text-base text-[--color-nieve]"
-          style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+          style={{ letterSpacing: '-0.02em' }}
         >
           Iniciar sesión
         </h1>
@@ -73,7 +72,7 @@ export function ProviderLogin() {
         <div className="mb-10">
           <h2
             className="text-3xl font-bold text-[--color-nieve] mb-2"
-            style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+            style={{ letterSpacing: '-0.02em' }}
           >
             Bienvenido de vuelta
           </h2>
@@ -126,7 +125,7 @@ export function ProviderLogin() {
               type="submit"
               disabled={isSubmitting}
               className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
-              style={{ backgroundColor: '#4A8C49', color: '#fff' }}
+              style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
             >
               {isSubmitting ? 'Ingresando…' : 'Ingresar'}
               {!isSubmitting && <IconArrowRight />}
@@ -152,7 +151,7 @@ type FieldProps = { label: string; error?: string; children: React.ReactNode }
 function Field({ label, error, children }: FieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-bold tracking-[0.12em] uppercase" style={{ color: '#adcec0' }}>
+      <label className="text-xs font-bold tracking-[0.12em] uppercase text-[--color-muted]">
         {label}
       </label>
       {children}
@@ -165,10 +164,11 @@ function Field({ label, error, children }: FieldProps) {
 
 function inputCls(hasError: boolean) {
   return cn(
-    'w-full h-14 px-4 rounded-xl bg-[#090f14] text-[--color-nieve]',
-    'placeholder:text-[#414845] transition-shadow',
-    'focus:outline-none focus:ring-1 focus:ring-[rgba(173,206,192,0.4)]',
-    hasError ? 'ring-1 ring-[#ffb4ab]/60' : '',
+    'w-full h-14 px-4 rounded-xl text-[--color-nieve]',
+    'bg-[--color-noche] border border-[--color-line]',
+    'placeholder:text-[--color-muted]/60 transition-shadow',
+    'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40',
+    hasError ? 'ring-1 ring-[#ffb4ab]/60 border-[#ffb4ab]/40' : '',
   )
 }
 

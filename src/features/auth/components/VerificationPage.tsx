@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/shared/utils/cn'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -17,7 +19,9 @@ type DocCard = {
 // ─── VerificationPage ─────────────────────────────────────────────────────────
 
 export function VerificationPage() {
-  const navigate = useNavigate()
+  const navigate     = useNavigate()
+  const { user }     = useAuth()
+  const [uploadError, setUploadError] = useState<string | null>(null)
   const [status, setStatus] = useState<Record<string, UploadStatus>>({
     matricula: 'pending',
     dni:       'pending',
@@ -52,41 +56,54 @@ export function VerificationPage() {
     .filter(c => c.required)
     .every(c => status[c.id] === 'uploaded')
 
-  function handleUpload(id: string, file: File) {
-    console.log('upload:', id, file.name, file.size)
+  async function handleUpload(id: string, file: File) {
+    setUploadError(null)
+
+    if (!user) {
+      setStatus(prev => ({ ...prev, [id]: 'uploaded' }))
+      return
+    }
+
+    const ext  = file.name.split('.').pop() ?? 'jpg'
+    const path = `${user.id}/${id}-${Date.now()}.${ext}`
+
+    const { error } = await supabase.storage
+      .from('provider-docs')
+      .upload(path, file, { contentType: file.type, upsert: true })
+
+    if (error) {
+      setUploadError(`Error al subir ${id}: ${error.message}`)
+      return
+    }
+
     setStatus(prev => ({ ...prev, [id]: 'uploaded' }))
   }
 
   function handleSubmit() {
-    console.log('submit for review:', status)
-    // TODO: submit to Supabase
+    navigate('/')
   }
 
   return (
-    <div className="min-h-screen pb-32 text-[--color-nieve]" style={{ backgroundColor: '#0e1419' }}>
+    <div className="min-h-screen pb-32 text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
 
       {/* ── TopAppBar ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed top-0 w-full z-50 backdrop-blur-md flex items-center justify-between px-6 py-4"
-        style={{ backgroundColor: 'rgba(14,20,25,0.70)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 border-b border-[--color-line]"
+        style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="active:scale-95 transition-transform"
-            style={{ color: '#3de273' }}
+            className="active:scale-95 transition-transform text-[--color-bosque-lt]"
             aria-label="Volver"
           >
             <IconArrowLeft />
           </button>
-          <h1
-            className="font-bold text-lg tracking-tight"
-            style={{ fontFamily: 'var(--font-display)', color: '#3de273' }}
-          >
+          <h1 className="font-bold text-lg tracking-tight text-[--color-bosque-lt]">
             Verificá tu perfil
           </h1>
         </div>
-        <span className="text-sm font-black text-[--color-nieve] opacity-80" style={{ fontFamily: 'var(--font-display)' }}>
+        <span className="text-sm font-bold text-[--color-nieve] opacity-80">
           Paso 2 de 2
         </span>
       </nav>
@@ -97,21 +114,14 @@ export function VerificationPage() {
         <section className="flex flex-col items-center text-center mb-10">
           <div className="relative mb-6">
             <div
-              className="absolute inset-0 rounded-full blur-3xl"
-              style={{ backgroundColor: 'rgba(61,226,115,0.2)' }}
-            />
-            <div
-              className="relative p-6 rounded-full shadow-[0px_20px_40px_rgba(0,0,0,0.4)]"
-              style={{ backgroundColor: '#1a2026' }}
+              className="relative p-6 rounded-full border border-[--color-line]"
+              style={{ backgroundColor: 'var(--color-sombra)' }}
             >
               <IconCheckCircle />
             </div>
           </div>
 
-          <h2
-            className="text-3xl font-bold mb-2 tracking-tight text-[--color-nieve]"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
+          <h2 className="text-3xl font-bold mb-2 tracking-tight text-[--color-nieve]">
             ¡Tu perfil está listo!
           </h2>
           <p className="text-sm text-[--color-muted] mb-8 leading-relaxed px-4">
@@ -120,21 +130,18 @@ export function VerificationPage() {
 
           {/* Badge preview */}
           <div
-            className="px-5 py-3 rounded-xl flex items-center gap-3 border border-[#414845]/10 shadow-[0px_20px_40px_rgba(0,0,0,0.4)]"
-            style={{ backgroundColor: '#252b30' }}
+            className="px-5 py-3 rounded-xl flex items-center gap-3 border border-[--color-line]"
+            style={{ backgroundColor: 'var(--color-sombra)' }}
           >
             <div
               className="p-1.5 rounded-full"
-              style={{
-                background: 'linear-gradient(135deg, #3de273 0%, #19ce61 100%)',
-                boxShadow: '0 0 15px rgba(61,226,115,0.4)',
-              }}
+              style={{ backgroundColor: 'var(--color-bosque-lt)' }}
             >
               <IconVerified />
             </div>
             <span
               className="font-bold text-sm tracking-wide"
-              style={{ color: '#3de273', fontFamily: 'var(--font-display)' }}
+              style={{ color: 'var(--color-bosque-lt)' }}
             >
               ✓ Verificado
             </span>
@@ -155,25 +162,31 @@ export function VerificationPage() {
 
         {/* ── Bottom actions ────────────────────────────────────────────────────── */}
         <div className="space-y-4 text-center">
+          {uploadError && (
+            <div
+              className="px-4 py-3 rounded-xl text-sm font-semibold text-left"
+              style={{ backgroundColor: '#ffb4ab18', color: '#ffb4ab', border: '1px solid #ffb4ab30' }}
+            >
+              {uploadError}
+            </div>
+          )}
           <button
             onClick={handleSubmit}
             disabled={!requiredUploaded}
             className={cn(
               'w-full py-4 rounded-full font-bold transition-all',
               requiredUploaded
-                ? 'active:scale-95 shadow-[0px_20px_40px_rgba(0,0,0,0.4)]'
+                ? 'active:scale-95'
                 : 'cursor-not-allowed opacity-40',
             )}
             style={requiredUploaded ? {
-              background: 'linear-gradient(135deg, #3de273 0%, #19ce61 100%)',
-              color: '#003915',
-              fontFamily: 'var(--font-display)',
+              backgroundColor: 'var(--color-bosque-lt)',
+              color: '#fff',
               fontSize: '1rem',
               fontWeight: 700,
             } : {
-              backgroundColor: 'rgba(45,75,65,0.3)',
-              color: 'rgba(24,54,45,0.4)',
-              fontFamily: 'var(--font-display)',
+              backgroundColor: 'var(--color-sombra)',
+              color: 'var(--color-muted)',
               fontSize: '1rem',
             }}
           >
@@ -183,7 +196,7 @@ export function VerificationPage() {
           <button
             onClick={() => navigate('/')}
             className="block w-full text-sm font-bold hover:underline transition-colors"
-            style={{ color: '#3de273' }}
+            style={{ color: 'var(--color-bosque-lt)' }}
           >
             Hacerlo más tarde
           </button>
@@ -215,22 +228,22 @@ function UploadCard({ card, status, onUpload }: UploadCardProps) {
 
   return (
     <div
-      className="p-5 rounded-2xl transition-colors hover:brightness-110 group"
-      style={{ backgroundColor: '#1a2026' }}
+      className="p-5 rounded-2xl transition-colors group border border-[--color-line]"
+      style={{ backgroundColor: 'var(--color-sombra)' }}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-4">
           <div
-            className="p-3 rounded-xl transition-colors"
+            className="p-3 rounded-xl transition-colors border border-[--color-line]"
             style={{
-              backgroundColor: '#090f14',
-              color: uploaded ? '#3de273' : '#c1c8c4',
+              backgroundColor: 'var(--color-noche)',
+              color: uploaded ? 'var(--color-bosque-lt)' : 'var(--color-nieve)',
             }}
           >
             {card.icon}
           </div>
           <div>
-            <h3 className="font-bold text-[--color-nieve]" style={{ fontFamily: 'var(--font-display)' }}>
+            <h3 className="font-bold text-[--color-nieve]">
               {card.title}
             </h3>
             <p className="text-xs text-[--color-muted]">{card.subtitle}</p>
@@ -241,21 +254,21 @@ function UploadCard({ card, status, onUpload }: UploadCardProps) {
         {uploaded ? (
           <span
             className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded"
-            style={{ color: '#3de273', backgroundColor: 'rgba(0,81,33,0.3)' }}
+            style={{ color: '#fff', backgroundColor: 'var(--color-bosque-lt)' }}
           >
             Subido ✓
           </span>
         ) : card.required ? (
           <span
             className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded"
-            style={{ color: 'rgba(193,200,196,0.5)', backgroundColor: '#090f14' }}
+            style={{ color: 'var(--color-muted)', backgroundColor: 'var(--color-noche)' }}
           >
             Pendiente
           </span>
         ) : (
           <span
             className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded"
-            style={{ color: 'rgba(61,226,115,0.7)', backgroundColor: 'rgba(0,81,33,0.3)' }}
+            style={{ color: '#fff', backgroundColor: 'var(--color-bosque-lt)' }}
           >
             Opcional
           </span>
@@ -277,13 +290,13 @@ function UploadCard({ card, status, onUpload }: UploadCardProps) {
         type="button"
         onClick={() => inputRef.current?.click()}
         className={cn(
-          'w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2',
+          'w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 border',
           'active:scale-[0.98] transition-all',
-          uploaded ? 'border border-[#3de273]/30' : '',
+          uploaded ? 'border-[--color-bosque-lt]/40' : 'border-[--color-line]',
         )}
         style={{
-          backgroundColor: uploaded ? 'rgba(0,81,33,0.2)' : '#2f353b',
-          color: uploaded ? '#3de273' : '#dde3eb',
+          backgroundColor: 'var(--color-noche)',
+          color: uploaded ? 'var(--color-bosque-lt)' : 'var(--color-nieve)',
         }}
       >
         {uploaded ? <IconCheck /> : <IconCamera size={18} />}
@@ -305,18 +318,18 @@ function IconArrowLeft() {
 
 function IconCheckCircle() {
   return (
-    <svg width="56" height="56" viewBox="0 0 24 24" fill="#3de273" stroke="none">
-      <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" opacity="0.2" />
-      <path d="M9 12l2 2 4-4" fill="none" stroke="#3de273" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="12" cy="12" r="10" fill="none" stroke="#3de273" strokeWidth="2" />
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ color: 'var(--color-bosque-lt)' }}>
+      <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2" />
+      <path d="M9 12l2 2 4-4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="12" r="10" strokeWidth="2" />
     </svg>
   )
 }
 
 function IconVerified() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="#003915" stroke="none">
-      <path d="M9 12l2 2 4-4" fill="none" stroke="#003915" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ color: '#fff' }}>
+      <path d="M9 12l2 2 4-4" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }

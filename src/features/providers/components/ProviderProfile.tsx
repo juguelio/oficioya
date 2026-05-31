@@ -1,6 +1,11 @@
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { mockProviders } from '@/data/mock-providers'
 import { ciudades, rubros } from '@/design-system/tokens'
+import { useDashboardStore, getProviderReviews, getAverageRating } from '@/features/dashboard/store'
 import { cn } from '@/shared/utils/cn'
 
 // ─── Placeholder images per rubro ────────────────────────────────────────────
@@ -17,20 +22,38 @@ const RUBRO_IMAGES: Partial<Record<RubroId, string>> = {
 
 // ─── ProviderProfile ──────────────────────────────────────────────────────────
 
+const reviewSchema = z.object({
+  authorName: z.string().min(2, 'Ingresá tu nombre'),
+  rating:     z.number().min(1).max(5),
+  comment:    z.string().min(10, 'Escribí al menos 10 caracteres'),
+})
+type ReviewFormData = z.infer<typeof reviewSchema>
+
 export function ProviderProfile() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
+  const { id }     = useParams<{ id: string }>()
+  const navigate   = useNavigate()
+  const allReviews = useDashboardStore(s => s.reviews)
+  const addReview  = useDashboardStore(s => s.addReview)
+
+  const [showReviewSheet, setShowReviewSheet] = useState(false)
+  const [hoverStar, setHoverStar]             = useState(0)
+  const [reviewSent, setReviewSent]           = useState(false)
+
+  const { register, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } =
+    useForm<ReviewFormData>({ resolver: zodResolver(reviewSchema), defaultValues: { rating: 0 } })
+
+  const selectedRating = watch('rating')
 
   const provider = mockProviders.find(p => p.id === id)
 
   if (!provider) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-[--color-nieve]" style={{ backgroundColor: '#0e1419' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
         <p className="text-[--color-muted]">Prestador no encontrado.</p>
         <button
           onClick={() => navigate(-1)}
           className="px-5 py-2.5 rounded-[--radius-lg] text-sm font-semibold border border-[--color-bosque-lt]/40 hover:border-[--color-bosque-lt] transition-all active:scale-95"
-          style={{ backgroundColor: '#1a2026', color: '#EFF3EE' }}
+          style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-nieve)' }}
         >
           ← Volver
         </button>
@@ -38,36 +61,45 @@ export function ProviderProfile() {
     )
   }
 
-  const ciudadData = ciudades.find(c => c.id === provider.ciudad)
-  const rubroData  = rubros.find(r => r.id === provider.rubro)
-  const img        = provider.photos?.[0] ?? (RUBRO_IMAGES[provider.rubro] ?? FALLBACK_IMG)
-  const waLink     = `https://wa.me/${provider.phone.replace(/\D/g, '')}`
+  const ciudadData  = ciudades.find(c => c.id === provider.ciudad)
+  const rubroData   = rubros.find(r => r.id === provider.rubro)
+  const img         = provider.photos?.[0] ?? (RUBRO_IMAGES[provider.rubro] ?? FALLBACK_IMG)
+  const waLink      = `https://wa.me/${provider.phone.replace(/\D/g, '')}`
+  const myReviews   = getProviderReviews(allReviews, provider.id)
+  const avgRating   = getAverageRating(myReviews)
+
+  function onSubmitReview(data: ReviewFormData) {
+    addReview({ providerId: provider!.id, authorName: data.authorName, rating: data.rating, comment: data.comment })
+    setShowReviewSheet(false)
+    setReviewSent(true)
+    reset()
+  }
 
   return (
-    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: '#0e1419' }}>
+    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
 
       {/* ── TopAppBar ──────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 backdrop-blur-xl shadow-2xl shadow-black/40 flex items-center justify-between px-6 h-16"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-[--color-line]"
+        style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="text-[--color-bosque-lt] hover:bg-white/5 transition-colors active:scale-95 p-2 rounded-xl"
+            className="text-[--color-bosque-lt] hover:bg-black/5 transition-colors active:scale-95 p-2 rounded-xl"
             aria-label="Volver"
           >
             <IconArrowLeft />
           </button>
           <h1
             className="font-bold text-base text-[--color-nieve] leading-tight truncate"
-            style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+            style={{ letterSpacing: '-0.02em' }}
           >
             {provider.name}
           </h1>
         </div>
         {provider.subscription === 'destacado' && (
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0" style={{ backgroundColor: '#F5C842', color: '#0e1419' }}>
+          <span className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0" style={{ backgroundColor: '#E8A020', color: '#fff' }}>
             Destacado
           </span>
         )}
@@ -76,7 +108,7 @@ export function ProviderProfile() {
       <main className="pt-16 pb-32 max-w-xl mx-auto">
 
         {/* ── Hero photo ─────────────────────────────────────────────────────────── */}
-        <div className="relative h-64 w-full">
+        <div className="relative h-72 w-full">
           <img
             src={img}
             alt={provider.name}
@@ -84,12 +116,12 @@ export function ProviderProfile() {
             style={{ objectPosition: 'center top' }}
             onError={e => { (e.target as HTMLImageElement).src = FALLBACK_IMG }}
           />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0e1419 0%, transparent 60%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 50%)' }} />
 
           {/* Rating badge */}
           <div
-            className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1"
-            style={{ backgroundColor: 'rgba(14,20,25,0.75)', backdropFilter: 'blur(8px)' }}
+            className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 border border-[--color-line]"
+            style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
           >
             <span className="text-[--color-bosque-lt] text-sm leading-none">★</span>
             <span className="text-[--color-nieve] text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>
@@ -100,8 +132,8 @@ export function ProviderProfile() {
           {/* Verified badge */}
           {provider.isVerified && (
             <div
-              className="absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-bold"
-              style={{ backgroundColor: 'rgba(14,20,25,0.75)', backdropFilter: 'blur(8px)', color: '#4A8C49' }}
+              className="absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-bold border border-[--color-line]"
+              style={{ backgroundColor: 'rgba(14,21,16,0.75)', color: 'var(--color-bosque-lt)' }}
             >
               ✓ Verificado
             </div>
@@ -115,7 +147,7 @@ export function ProviderProfile() {
           <div className="mb-4">
             <h2
               className="text-2xl font-bold text-[--color-nieve] mb-1"
-              style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+              style={{ letterSpacing: '-0.02em' }}
             >
               {provider.name}
             </h2>
@@ -133,7 +165,7 @@ export function ProviderProfile() {
           {/* Stats row */}
           <div
             className="flex gap-6 py-4 border-y mb-5"
-            style={{ borderColor: '#1E2E1E', fontFamily: 'var(--font-mono)' }}
+            style={{ borderColor: 'var(--color-line)', fontFamily: 'var(--font-mono)' }}
           >
             <div>
               <p className="text-xl font-bold text-[--color-nieve]">{provider.totalJobs}</p>
@@ -144,10 +176,10 @@ export function ProviderProfile() {
               <p className="text-xs text-[--color-muted] uppercase tracking-widest">Calificación</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-[--color-nieve]">
-                {provider.subscription ? provider.subscription.charAt(0).toUpperCase() + provider.subscription.slice(1) : 'Sin plan'}
+              <p className="text-xl font-bold" style={{ color: provider.isVerified ? 'var(--color-bosque-lt)' : 'var(--color-muted)' }}>
+                {provider.isVerified ? '✓' : '—'}
               </p>
-              <p className="text-xs text-[--color-muted] uppercase tracking-widest">Plan</p>
+              <p className="text-xs text-[--color-muted] uppercase tracking-widest">Verificado</p>
             </div>
           </div>
 
@@ -178,13 +210,177 @@ export function ProviderProfile() {
           </a>
 
           {/* Secondary: phone number visible */}
-          <p className="text-center text-xs text-[--color-muted] mt-3" style={{ fontFamily: 'var(--font-mono)' }}>
+          <p className="text-center text-xs text-[--color-muted] mt-3 mb-8" style={{ fontFamily: 'var(--font-mono)' }}>
             {provider.phone.replace(/(\+54)(9)(\d{4})(\d{3})(\d{4})/, '$1 $2 $3 $4-$5')}
           </p>
 
         </div>
 
+        {/* ── Reseñas ──────────────────────────────────────────────────────────── */}
+        <div className="px-6 pb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-black text-lg" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
+                Reseñas
+              </h3>
+              {avgRating > 0 && (
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span style={{ color: '#E8A020' }}>★</span>
+                  <span className="text-sm font-bold" style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)' }}>{avgRating.toFixed(1)}</span>
+                  <span className="text-sm" style={{ color: 'var(--color-muted)' }}>({myReviews.length})</span>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => { setShowReviewSheet(true); setReviewSent(false) }}
+              className="text-xs font-bold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
+              style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)', backgroundColor: 'var(--color-sombra)' }}
+            >
+              + Dejar reseña
+            </button>
+          </div>
+
+          {reviewSent && (
+            <div
+              className="flex items-center gap-2 px-4 py-3 rounded-xl mb-4 border"
+              style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
+            >
+              <span>✅</span>
+              <p className="text-sm font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>¡Reseña publicada! Gracias.</p>
+            </div>
+          )}
+
+          {myReviews.length === 0 ? (
+            <div
+              className="flex flex-col items-center py-10 rounded-xl border text-center"
+              style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+            >
+              <span className="text-4xl mb-2">💬</span>
+              <p className="text-sm font-bold mb-1" style={{ color: 'var(--color-nieve)' }}>Sin reseñas todavía</p>
+              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Sé el primero en compartir tu experiencia</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {myReviews.map(r => (
+                <div
+                  key={r.id}
+                  className="p-4 rounded-xl border"
+                  style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black shrink-0"
+                        style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
+                      >
+                        {r.authorName.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>{r.authorName}</p>
+                        <div className="flex items-center gap-0.5">
+                          {[1,2,3,4,5].map(i => (
+                            <svg key={i} width="11" height="11" viewBox="0 0 24 24" fill={i <= r.rating ? '#E8A020' : 'var(--color-line)'}>
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] shrink-0 mt-1" style={{ color: 'var(--color-muted)' }}>
+                      {new Date(r.createdAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
+                    </span>
+                  </div>
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>{r.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
       </main>
+
+      {/* ── Sheet: Dejar reseña ─────────────────────────────────────────────────── */}
+      {showReviewSheet && (
+        <div
+          className="fixed inset-0 z-[200] flex flex-col justify-end"
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          onClick={() => setShowReviewSheet(false)}
+        >
+          <div
+            className="rounded-t-2xl px-5 pt-4 pb-10"
+            style={{ backgroundColor: 'var(--color-sombra)' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ backgroundColor: 'var(--color-line)' }} />
+            <h3 className="font-black text-lg mb-1" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
+              Dejar reseña
+            </h3>
+            <p className="text-sm mb-5" style={{ color: 'var(--color-muted)' }}>
+              Tu opinión ayuda a otros clientes a elegir.
+            </p>
+            <form onSubmit={handleSubmit(onSubmitReview)} className="space-y-4">
+
+              {/* Estrellas */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+                  Calificación
+                </label>
+                <div className="flex items-center gap-2">
+                  {[1,2,3,4,5].map(i => (
+                    <button
+                      key={i}
+                      type="button"
+                      onMouseEnter={() => setHoverStar(i)}
+                      onMouseLeave={() => setHoverStar(0)}
+                      onClick={() => setValue('rating', i, { shouldValidate: true })}
+                      className="active:scale-90 transition-all"
+                    >
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill={i <= (hoverStar || selectedRating) ? '#E8A020' : 'var(--color-line)'} style={{ transition: 'fill 0.1s' }}>
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+                {errors.rating && <p className="text-xs mt-1" style={{ color: '#ffb4ab' }}>Elegí una puntuación</p>}
+              </div>
+
+              {/* Nombre */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Tu nombre</label>
+                <input
+                  {...register('authorName')}
+                  placeholder="Ej: Marcela R."
+                  className="w-full h-11 px-3 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
+                  style={{ backgroundColor: 'var(--color-noche)', border: `1px solid ${errors.authorName ? '#ffb4ab' : 'var(--color-line)'}`, color: 'var(--color-nieve)' }}
+                />
+                {errors.authorName && <p className="text-xs mt-0.5" style={{ color: '#ffb4ab' }}>{errors.authorName.message}</p>}
+              </div>
+
+              {/* Comentario */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Tu experiencia</label>
+                <textarea
+                  {...register('comment')}
+                  rows={3}
+                  placeholder="Contá cómo fue el trabajo, puntualidad, precio..."
+                  className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none resize-none placeholder:text-[var(--color-muted)]"
+                  style={{ backgroundColor: 'var(--color-noche)', border: `1px solid ${errors.comment ? '#ffb4ab' : 'var(--color-line)'}`, color: 'var(--color-nieve)' }}
+                />
+                {errors.comment && <p className="text-xs mt-0.5" style={{ color: '#ffb4ab' }}>{errors.comment.message}</p>}
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all disabled:opacity-60"
+                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+              >
+                Publicar reseña
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   )

@@ -12,7 +12,7 @@ export function Card({ children, hoverable = false, onClick, className }: CardPr
     <div
       onClick={onClick}
       className={cn(
-        'rounded-[--radius-lg] border border-[#1E2E1E] bg-[--color-sombra] p-4',
+        'rounded-[--radius-lg] border border-[--color-line] bg-[--color-sombra] p-4',
         'transition-all duration-200',
         hoverable && 'hover:-translate-y-1 hover:border-[--color-bosque-lt] cursor-pointer',
         onClick && 'cursor-pointer',

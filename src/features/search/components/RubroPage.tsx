@@ -49,17 +49,17 @@ export function RubroPage() {
   if (!ciudadId || !ciudadData) return <Navigate to="/" replace />
 
   return (
-    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: '#0e1419' }}>
+    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
 
       {/* ── TopAppBar ──────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 backdrop-blur-xl shadow-2xl shadow-black/40 flex items-center justify-between px-6 h-16"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-[--color-line]"
+        style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="text-[--color-bosque-lt] hover:bg-white/5 transition-colors active:scale-95 p-2 rounded-xl"
+            className="text-[--color-bosque-lt] hover:bg-black/5 transition-colors active:scale-95 p-2 rounded-xl"
             aria-label="Volver"
           >
             <IconArrowLeft />
@@ -67,7 +67,7 @@ export function RubroPage() {
           <div className="min-w-0">
             <h1
               className="font-bold text-base text-[--color-nieve] leading-tight truncate"
-              style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+              style={{ letterSpacing: '-0.02em' }}
             >
               {rubroData?.icon} {rubroData?.label}
             </h1>
@@ -99,28 +99,24 @@ export function RubroPage() {
               </div>
               <input
                 readOnly
-                className="w-full rounded-xl py-4 pl-12 pr-4 text-[--color-nieve] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40 transition-all"
-                style={{ backgroundColor: '#090f14' }}
+                className="w-full rounded-xl py-4 pl-12 pr-4 text-[--color-nieve] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40 transition-all border border-[--color-line]"
+                style={{ backgroundColor: 'var(--color-sombra)' }}
                 placeholder={`Buscar ${rubroData?.label?.toLowerCase() ?? 'profesionales'} en ${ciudadData?.label}…`}
               />
             </div>
 
             {/* Rubro filter pills */}
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-              {rubros.slice(0, 6).map(r => (
+              {rubros.map(r => (
                 <button
                   key={r.id}
                   onClick={() => { setRubro(r.id); navigate(`/${ciudadId}/${r.id}`) }}
                   className={cn(
-                    'px-4 py-2 rounded-md text-sm font-semibold whitespace-nowrap transition-all shrink-0',
+                    'px-4 py-2 rounded-md text-sm font-semibold whitespace-nowrap transition-all shrink-0 border',
                     r.id === rubro
-                      ? 'text-[--color-nieve]'
-                      : 'text-[--color-muted] hover:text-[--color-bosque-lt]',
+                      ? 'bg-[--color-bosque-lt] text-white border-transparent'
+                      : 'bg-[--color-sombra] text-[--color-muted] border-[--color-line] hover:text-[--color-nieve]',
                   )}
-                  style={{
-                    backgroundColor: r.id === rubro ? '#2b4963' : '#252b30',
-                    color: r.id === rubro ? '#9ab8d6' : undefined,
-                  }}
                 >
                   {r.icon} {r.label}
                 </button>
@@ -144,12 +140,12 @@ export function RubroPage() {
         {loading ? (
           <div className="grid gap-5">
             {[1, 2, 3].map(n => (
-              <div key={n} className="rounded-xl overflow-hidden animate-pulse" style={{ backgroundColor: '#1a2026' }}>
-                <div className="h-48 w-full" style={{ backgroundColor: '#252b30' }} />
+              <div key={n} className="rounded-xl overflow-hidden animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }}>
+                <div className="h-48 w-full" style={{ backgroundColor: 'var(--color-noche)' }} />
                 <div className="p-5 flex flex-col gap-3">
-                  <div className="h-5 w-2/3 rounded-md" style={{ backgroundColor: '#252b30' }} />
-                  <div className="h-3 w-1/2 rounded-md" style={{ backgroundColor: '#252b30' }} />
-                  <div className="h-12 w-full rounded-full mt-2" style={{ backgroundColor: '#252b30' }} />
+                  <div className="h-5 w-2/3 rounded-md" style={{ backgroundColor: 'var(--color-noche)' }} />
+                  <div className="h-3 w-1/2 rounded-md" style={{ backgroundColor: 'var(--color-noche)' }} />
+                  <div className="h-12 w-full rounded-full mt-2" style={{ backgroundColor: 'var(--color-noche)' }} />
                 </div>
               </div>
             ))}
@@ -176,8 +172,8 @@ export function RubroPage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 backdrop-blur-xl z-50 rounded-t-xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)]"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-[--color-line]"
+        style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />
         <NavTab icon={<IconSearch />}  label="Buscar" active />
@@ -210,8 +206,8 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
 
   return (
     <article
-      className="rounded-xl overflow-hidden transition-all duration-300 group"
-      style={{ backgroundColor: '#1a2026' }}
+      className="rounded-xl overflow-hidden transition-all duration-300 group border border-[--color-line]"
+      style={{ backgroundColor: 'var(--color-sombra)' }}
     >
       {/* Photo — tap navigates to full profile */}
       <button
@@ -228,8 +224,8 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
         />
         {/* Rating badge */}
         <div
-          className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 border"
-          style={{ backgroundColor: 'rgba(14,20,25,0.7)', backdropFilter: 'blur(8px)', borderColor: 'rgba(65,72,69,0.3)' }}
+          className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 border border-[--color-line]"
+          style={{ backgroundColor: 'rgba(14,21,16,0.7)' }}
         >
           <span className="text-[--color-bosque-lt] text-sm leading-none">★</span>
           <span className="text-[--color-nieve] text-sm font-bold">{provider.rating.toFixed(1)}</span>
@@ -237,8 +233,8 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
         {/* Verified badge */}
         {provider.isVerified && (
           <div
-            className="absolute top-4 left-4 px-2 py-1 rounded-full text-xs font-bold text-[--color-bosque-lt]"
-            style={{ backgroundColor: 'rgba(14,20,25,0.7)', backdropFilter: 'blur(8px)' }}
+            className="absolute top-4 left-4 px-2 py-1 rounded-full text-xs font-bold text-[--color-bosque-lt] border border-[--color-line]"
+            style={{ backgroundColor: 'rgba(14,21,16,0.7)' }}
           >
             ✓ Verificado
           </div>
@@ -253,15 +249,12 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
             className="text-left hover:text-[--color-bosque-lt] transition-colors"
             onClick={() => navigate(`/prestador/${provider.id}`)}
           >
-            <h2
-              className="text-xl font-bold text-[--color-nieve]"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
+            <h2 className="text-xl font-bold text-[--color-nieve]">
               {provider.name}
             </h2>
           </button>
           {provider.subscription === 'destacado' && (
-            <span className="text-xs font-bold px-2 py-1 rounded-full shrink-0 ml-2" style={{ backgroundColor: '#F5C842', color: '#0e1419' }}>
+            <span className="text-xs font-bold px-2 py-1 rounded-full shrink-0 ml-2" style={{ backgroundColor: '#E8A020', color: '#fff' }}>
               Destacado
             </span>
           )}
@@ -285,7 +278,7 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
           href={waLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform shadow-lg"
+          className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
           style={{ background: '#25D366' }}
         >
           <IconWhatsApp />
@@ -310,16 +303,13 @@ function EmptyState({ rubro, ciudad, onBack }: { rubro?: string; ciudad?: string
   return (
     <div className="flex flex-col items-center text-center py-16 gap-5 max-w-xs mx-auto">
       <div
-        className="w-16 h-16 rounded-[--radius-xl] flex items-center justify-center text-3xl border"
-        style={{ backgroundColor: '#1a2026', borderColor: '#1E2E1E' }}
+        className="w-16 h-16 rounded-[--radius-xl] flex items-center justify-center text-3xl border border-[--color-line]"
+        style={{ backgroundColor: 'var(--color-sombra)' }}
       >
         🔍
       </div>
       <div>
-        <h3
-          className="text-lg font-bold text-[--color-nieve] mb-2"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
+        <h3 className="text-lg font-bold text-[--color-nieve] mb-2">
           Sin resultados todavía
         </h3>
         <p className="text-sm text-[--color-muted] leading-relaxed">
@@ -332,7 +322,7 @@ function EmptyState({ rubro, ciudad, onBack }: { rubro?: string; ciudad?: string
       <button
         onClick={onBack}
         className="px-6 py-3 rounded-[--radius-lg] text-sm font-semibold text-[--color-nieve] border border-[--color-bosque-lt]/40 hover:border-[--color-bosque-lt] transition-all"
-        style={{ backgroundColor: '#1a2026' }}
+        style={{ backgroundColor: 'var(--color-sombra)' }}
       >
         ← Ver otros rubros
       </button>
@@ -352,7 +342,6 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
         'flex flex-col items-center justify-center px-4 py-2 rounded-xl transition-all active:scale-90 duration-150',
         active ? 'text-[--color-bosque-lt]' : 'text-[--color-muted] hover:text-[--color-bosque-lt]',
       )}
-      style={active ? { backgroundColor: '#1a2026' } : undefined}
     >
       {icon}
       <span className="text-[10px] font-semibold uppercase tracking-widest mt-1">{label}</span>
@@ -416,7 +405,7 @@ function IconPerson() {
 function IconWhatsApp() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.628 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
     </svg>
   )
 }

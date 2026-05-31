@@ -41,8 +41,9 @@ function toProvider(row: DbProvider): Provider {
     lat:          row.lat ?? undefined,
     lng:          row.lng ?? undefined,
     bio:          row.bio ?? undefined,
-    photos:       row.photos,
-    createdAt:    row.created_at.slice(0, 10),
+    photos:                row.photos,
+    createdAt:             row.created_at.slice(0, 10),
+    isEmergencyAvailable:  row.is_emergency_available,
   }
 }
 
@@ -80,7 +81,9 @@ export function useProviders(filters: Filters = {}): UseProvidersReturn {
       const sorted = (data as DbProvider[])
         .map(toProvider)
         .sort((a, b) => {
-          // TODO: add is_emergency_available as first sort key when field lands on Provider
+          if (a.isEmergencyAvailable !== b.isEmergencyAvailable) {
+            return a.isEmergencyAvailable ? -1 : 1
+          }
           const pa = planOrder[a.subscription ?? ''] ?? 3
           const pb = planOrder[b.subscription ?? ''] ?? 3
           if (pa !== pb) return pa - pb

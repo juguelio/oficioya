@@ -1,5 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom'
 import { formatARS } from '@/shared/utils/formatARS'
+import { Logo } from '@/shared/components'
 import { cn } from '@/shared/utils/cn'
 import type { SubscriptionPlan } from '@/features/subscriptions/types'
 
@@ -66,31 +67,26 @@ export function PricingPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: '#0e1419' }}>
+    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
 
       {/* ── TopAppBar ──────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 backdrop-blur-xl shadow-2xl shadow-black/40 flex items-center justify-between px-6 h-16"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-[--color-line]"
+        style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(-1)}
             className="text-[--color-bosque-lt] hover:bg-white/5 transition-colors active:scale-95 p-2 rounded-xl"
             aria-label="Volver"
           >
             <IconArrowLeft />
           </button>
-          <span
-            className="font-bold text-xl text-[--color-nieve]"
-            style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}
-          >
-            OFICIO
-          </span>
+          <Logo size={28} withWordmark />
         </div>
         <Link
           to="/"
-          className="text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors"
+          className="text-xs font-semibold text-[--color-muted] hover:text-[--color-bosque-lt] transition-colors"
         >
           Soy cliente →
         </Link>
@@ -105,7 +101,7 @@ export function PricingPage() {
           </p>
           <h1
             className="text-5xl font-black text-[--color-nieve] leading-[1.05] mb-4"
-            style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}
+            style={{ letterSpacing: '-0.03em' }}
           >
             Elegí tu<br />plan
           </h1>
@@ -142,8 +138,8 @@ export function PricingPage() {
           ].map(({ q, a }) => (
             <details
               key={q}
-              className="rounded-[--radius-xl] p-4 group cursor-pointer"
-              style={{ backgroundColor: '#1a2026' }}
+              className="rounded-[--radius-xl] p-4 group cursor-pointer border border-[--color-line]"
+              style={{ backgroundColor: 'var(--color-sombra)' }}
             >
               <summary className="list-none flex items-center justify-between text-sm font-semibold text-[--color-nieve] select-none">
                 {q}
@@ -158,8 +154,8 @@ export function PricingPage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 backdrop-blur-xl z-50 rounded-t-xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)]"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-[--color-line]"
+        style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />
         <NavTab icon={<IconSearch />}  label="Buscar" />
@@ -183,13 +179,13 @@ function PlanCard({ plan, onSelect }: { plan: SubscriptionPlan; onSelect: () => 
       className={cn(
         'rounded-[--radius-xl] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30',
       )}
-      style={isDestacado ? {
-        backgroundColor: '#1a2026',
-        border: '1px solid transparent',
-        background: 'linear-gradient(#1a2026, #1a2026) padding-box, linear-gradient(135deg, #F5C842 0%, #4A8C49 100%) border-box',
-      } : {
-        backgroundColor: '#1a2026',
-        border: `1px solid ${isProfesional ? 'rgba(74,140,73,0.4)' : '#1E2E1E'}`,
+      style={{
+        backgroundColor: 'var(--color-sombra)',
+        border: `1px solid ${
+          isDestacado     ? '#F5C842'
+          : isProfesional ? 'var(--color-bosque-lt)'
+          : 'var(--color-line)'
+        }`,
       }}
     >
       {/* Plan label + badge */}
@@ -200,7 +196,7 @@ function PlanCard({ plan, onSelect }: { plan: SubscriptionPlan; onSelect: () => 
         {isDestacado && (
           <span
             className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
-            style={{ backgroundColor: '#F5C842', color: '#0e1419' }}
+            style={{ backgroundColor: '#E8A020', color: '#fff' }}
           >
             Popular
           </span>
@@ -229,9 +225,9 @@ function PlanCard({ plan, onSelect }: { plan: SubscriptionPlan; onSelect: () => 
 
       {/* Separator */}
       <div className="flex items-center gap-3 mb-5">
-        <div className="flex-1 h-px" style={{ backgroundColor: '#2A3A2A' }} />
+        <div className="flex-1 h-px bg-[--color-line]" />
         <span className="text-[10px] font-bold tracking-widest text-[--color-muted] uppercase">Incluye</span>
-        <div className="flex-1 h-px" style={{ backgroundColor: '#2A3A2A' }} />
+        <div className="flex-1 h-px bg-[--color-line]" />
       </div>
 
       {/* Features */}
@@ -248,17 +244,15 @@ function PlanCard({ plan, onSelect }: { plan: SubscriptionPlan; onSelect: () => 
       <button
         onClick={onSelect}
         className={cn(
-          'w-full py-3.5 rounded-full font-bold text-sm transition-all active:scale-[0.98] shadow-lg',
-          isDestacado || isProfesional
-            ? 'text-white'
-            : 'text-[--color-nieve] border',
+          'w-full py-3.5 rounded-full font-bold text-sm transition-all active:scale-[0.98]',
+          'border',
         )}
         style={
           isDestacado
-            ? { background: 'linear-gradient(135deg, #F5C842 0%, #4A8C49 100%)' }
+            ? { backgroundColor: '#E8A020', color: '#fff', borderColor: 'transparent' }
             : isProfesional
-            ? { background: 'var(--color-bosque-lt)' }
-            : { backgroundColor: '#252b30', borderColor: '#2A3A2A' }
+            ? { backgroundColor: 'var(--color-bosque-lt)', color: '#fff', borderColor: 'transparent' }
+            : { backgroundColor: 'var(--color-noche)', color: 'var(--color-nieve)', borderColor: 'var(--color-line)' }
         }
       >
         Empezar con {plan.label}
@@ -279,7 +273,7 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
         'flex flex-col items-center justify-center px-4 py-2 rounded-xl transition-all active:scale-90 duration-150',
         active ? 'text-[--color-bosque-lt]' : 'text-[--color-muted] hover:text-[--color-bosque-lt]',
       )}
-      style={active ? { backgroundColor: '#1a2026' } : undefined}
+      style={undefined}
     >
       {icon}
       <span className="text-[10px] font-semibold uppercase tracking-widest mt-1">{label}</span>

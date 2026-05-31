@@ -2,7 +2,7 @@ import { cn } from '@/shared/utils/cn'
 
 const variants = {
   primary:   'bg-[--color-bosque-lt] text-white hover:opacity-90',
-  secondary: 'bg-[--color-sombra] text-[--color-nieve] border border-[#2A3A2A] hover:border-[--color-bosque-lt]',
+  secondary: 'bg-[--color-sombra] text-[--color-nieve] border border-[--color-line] hover:border-[--color-bosque-lt]',
   ghost:     'bg-transparent text-[--color-muted] hover:text-[--color-nieve]',
   whatsapp:  'bg-[#25D366] text-white hover:opacity-90',
   danger:    'bg-red-700 text-white hover:opacity-90',

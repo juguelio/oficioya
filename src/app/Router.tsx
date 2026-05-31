@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { lazy } from 'react'
-import { ProtectedRoute } from '@/shared/components/ProtectedRoute'
 
 const HomePage           = lazy(() => import('@/features/search/components/HomePage').then(m => ({ default: m.HomePage })))
 const RubroPage          = lazy(() => import('@/features/search/components/RubroPage').then(m => ({ default: m.RubroPage })))
@@ -12,6 +11,9 @@ const VerificationPage   = lazy(() => import('@/features/auth/components/Verific
 const ProviderSignup     = lazy(() => import('@/pages/ProviderSignup').then(m => ({ default: m.ProviderSignup })))
 const ProviderLogin      = lazy(() => import('@/pages/ProviderLogin').then(m => ({ default: m.ProviderLogin })))
 const ProviderDashboard  = lazy(() => import('@/pages/ProviderDashboard').then(m => ({ default: m.ProviderDashboard })))
+const JobsPage           = lazy(() => import('@/features/jobs/components/JobsPage').then(m => ({ default: m.JobsPage })))
+const PostJobPage        = lazy(() => import('@/features/jobs/components/PostJobPage').then(m => ({ default: m.PostJobPage })))
+const JobDetailPage      = lazy(() => import('@/features/jobs/components/JobDetailPage').then(m => ({ default: m.JobDetailPage })))
 
 export const router = createBrowserRouter([
   // Auth
@@ -27,7 +29,10 @@ export const router = createBrowserRouter([
   { path: '/prestador/:id',      element: <ProviderProfile /> },
   { path: '/planes',             element: <PricingPage /> },
   { path: '/emergencias',        element: <EmergencyPage /> },
+  { path: '/trabajos',           element: <JobsPage /> },
+  { path: '/trabajos/nuevo',     element: <PostJobPage /> },
+  { path: '/trabajos/:id',       element: <JobDetailPage /> },
 
-  // Protected
-  { path: '/dashboard',          element: <ProtectedRoute><ProviderDashboard /></ProtectedRoute> },
+  // Dashboard prestador (fase 1: auth mock vía store)
+  { path: '/dashboard',          element: <ProviderDashboard /> },
 ])

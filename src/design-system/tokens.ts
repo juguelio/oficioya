@@ -34,10 +34,28 @@ export type RubroId = typeof rubros[number]['id']
 // ─── Colores (JS mirror de theme.css) ────────────────────────────────────────
 
 export const colors = {
-  bosqueDk: '#1E3A1E',
-  bosqueLt: '#4A8C49',
-  sombra:   '#141E14',
-  nieve:    '#EFF3EE',
-  muted:    '#7A9A79',
-  lago:     '#2E6E8A',
+  // Brand: Azul Andino
+  bosqueLt:   '#1E6FA5',   // brand principal
+  bosqueDk:   '#174F77',   // brand hover
+  brandTint:  '#E6F3FF',   // tint azul suave
+
+  // Superficies
+  noche:      '#F7F6F2',   // fondo página
+  sombra:     '#FFFFFF',   // cards
+
+  // Texto
+  nieve:      '#1A1714',   // texto principal
+  muted:      '#9C9589',   // texto secundario
+
+  // Semánticos
+  lago:       '#2563EB',   // info
+  amber:      '#E8A020',   // ratings
+
+  // Emergencias
+  emergency:  '#FF4F3B',   // rojo urgencia
+  guardia:    '#4AE87B',   // verde en línea
+  guardiaBg:  '#0A1628',   // fondo oscuro hero emergencias — navy profundo
+
+  // Bordes
+  line:       '#ECEAE4',
 } as const

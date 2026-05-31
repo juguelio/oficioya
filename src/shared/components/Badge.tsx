@@ -3,8 +3,8 @@ import { cn } from '@/shared/utils/cn'
 const variants = {
   verified:  'bg-[--color-bosque-lt] text-white',
   destacado: 'bg-amber-500 text-white',
-  rubro:     'bg-[--color-sombra] text-[--color-muted] border border-[#2A3A2A]',
-  status:    'bg-[#1A2A1A] text-[--color-bosque-lt] border border-[#2A3A2A]',
+  rubro:     'bg-[--color-sombra] text-[--color-muted] border border-[--color-line]',
+  status:    'bg-[--color-sombra] text-[--color-bosque-lt] border border-[--color-line]',
   new:       'bg-[--color-lago] text-white',
 } as const
 

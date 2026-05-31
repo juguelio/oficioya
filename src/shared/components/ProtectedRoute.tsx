@@ -12,9 +12,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: '#0e1419' }}
+        style={{ backgroundColor: 'var(--color-noche)' }}
       >
-        <div className="w-48 h-4 rounded-full animate-pulse" style={{ backgroundColor: '#1a2026' }} />
+        <div className="w-48 h-4 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
       </div>
     )
   }

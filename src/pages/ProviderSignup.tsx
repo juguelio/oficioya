@@ -16,8 +16,7 @@ const schema = z.object({
   name:                 z.string().min(2, 'Ingresá tu nombre completo'),
   email:                z.string().email('Email inválido'),
   password:             z.string().min(8, 'Mínimo 8 caracteres'),
-  phone:                z.string().min(10, 'Número inválido').startsWith('+54', 'Incluí el código +54'),
-  whatsapp_number:      z.string().min(10, 'Número inválido'),
+  whatsapp_number:      z.string().min(10, 'Número inválido').startsWith('+54', 'Incluí el código +54'),
   barrio:               z.string().min(2, 'Ingresá tu barrio o zona'),
   ciudad_id:            z.string().min(1, 'Elegí tu ciudad'),
   rubro_id:             z.string().min(1, 'Elegí tu rubro'),
@@ -29,7 +28,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 const STEP_FIELDS: Record<number, (keyof FormData)[]> = {
-  1: ['name', 'email', 'password', 'phone', 'whatsapp_number', 'barrio'],
+  1: ['name', 'email', 'password', 'whatsapp_number', 'barrio'],
   2: ['ciudad_id', 'rubro_id'],
   3: [],
   4: ['subscription_tier_id'],
@@ -79,7 +78,7 @@ export function ProviderSignup() {
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
-    defaultValues: { phone: '+549', whatsapp_number: '+549' },
+    defaultValues: { whatsapp_number: '+549' },
   })
 
   const { register, handleSubmit, trigger, watch, setValue, formState: { errors, isSubmitting } } = form
@@ -107,7 +106,7 @@ export function ProviderSignup() {
     // 1. Create auth user — trigger inserts provider row from metadata
     const { data: authData, error: authError } = await signUp(data.email, data.password, {
       name:                 data.name,
-      phone:                data.phone,
+      phone:                data.whatsapp_number,
       whatsapp_number:      data.whatsapp_number,
       barrio:               data.barrio,
       ciudad_id:            data.ciudad_id,
@@ -149,12 +148,12 @@ export function ProviderSignup() {
   }
 
   return (
-    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: '#0e1419' }}>
+    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 backdrop-blur-xl flex items-center justify-between px-6 h-16"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-[--color-line]"
+        style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <button
           type="button"
@@ -173,7 +172,7 @@ export function ProviderSignup() {
                 'h-1 rounded-full transition-all duration-300',
                 s === step  ? 'w-8 bg-[--color-bosque-lt]'      :
                 s < step    ? 'w-4 bg-[--color-bosque-lt]/50'    :
-                              'w-4 bg-[#1E2E1E]',
+                              'w-4 bg-[--color-line]',
               )}
             />
           ))}
@@ -194,7 +193,7 @@ export function ProviderSignup() {
                 <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-1">Paso 1 de 4</p>
                 <h1
                   className="text-3xl font-bold text-[--color-nieve] mb-2"
-                  style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+                  style={{ letterSpacing: '-0.02em' }}
                 >
                   Tus datos personales
                 </h1>
@@ -214,14 +213,10 @@ export function ProviderSignup() {
                   <input {...register('password')} type="password" placeholder="Mínimo 8 caracteres" className={inputCls(!!errors.password)} autoComplete="new-password" />
                 </Field>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Teléfono" error={errors.phone?.message}>
-                    <input {...register('phone')} type="tel" placeholder="+5492944..." className={inputCls(!!errors.phone)} />
-                  </Field>
-                  <Field label="WhatsApp" error={errors.whatsapp_number?.message}>
-                    <input {...register('whatsapp_number')} type="tel" placeholder="+5492944..." className={inputCls(!!errors.whatsapp_number)} />
-                  </Field>
-                </div>
+                <Field label="WhatsApp" error={errors.whatsapp_number?.message}>
+                  <input {...register('whatsapp_number')} type="tel" placeholder="+5492972..." className={inputCls(!!errors.whatsapp_number)} />
+                  <p className="text-xs text-[--color-muted] mt-1">Este número va a recibir los mensajes de los clientes.</p>
+                </Field>
 
                 <Field label="Barrio / Zona" error={errors.barrio?.message}>
                   <input {...register('barrio')} type="text" placeholder="Ej: Melipal, El Cruce, Centro" className={inputCls(!!errors.barrio)} />
@@ -237,7 +232,7 @@ export function ProviderSignup() {
                 <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-1">Paso 2 de 4</p>
                 <h1
                   className="text-3xl font-bold text-[--color-nieve] mb-2"
-                  style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+                  style={{ letterSpacing: '-0.02em' }}
                 >
                   Tu especialidad
                 </h1>
@@ -257,7 +252,7 @@ export function ProviderSignup() {
                         'flex items-center justify-between px-5 py-4 rounded-[--radius-xl] border text-left transition-all active:scale-[0.98]',
                         ciudadId === c.id
                           ? 'border-[--color-bosque-lt] bg-[--color-bosque-lt]/10 text-[--color-nieve]'
-                          : 'border-[#1E2E1E] bg-[--color-sombra] text-[--color-muted] hover:border-[--color-bosque-lt]/40',
+                          : 'border-[--color-line] bg-[--color-sombra] text-[--color-muted] hover:border-[--color-bosque-lt]/40',
                       )}
                     >
                       <span className="font-semibold text-sm">{c.label}</span>
@@ -281,7 +276,7 @@ export function ProviderSignup() {
                         'flex items-center gap-2.5 px-4 py-3 rounded-[--radius-lg] border text-left transition-all active:scale-[0.98]',
                         rubroId === r.id
                           ? 'border-[--color-bosque-lt] bg-[--color-bosque-lt]/10'
-                          : 'border-[#1E2E1E] bg-[--color-sombra] hover:border-[--color-bosque-lt]/40',
+                          : 'border-[--color-line] bg-[--color-sombra] hover:border-[--color-bosque-lt]/40',
                       )}
                     >
                       <span className="text-xl leading-none">{r.icon}</span>
@@ -303,7 +298,7 @@ export function ProviderSignup() {
                 <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-1">Paso 3 de 4</p>
                 <h1
                   className="text-3xl font-bold text-[--color-nieve] mb-2"
-                  style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+                  style={{ letterSpacing: '-0.02em' }}
                 >
                   Tu foto de perfil
                 </h1>
@@ -323,9 +318,9 @@ export function ProviderSignup() {
                 onClick={() => fileInputRef.current?.click()}
                 className={cn(
                   'w-full aspect-square max-h-72 rounded-[--radius-xl] border-2 border-dashed flex flex-col items-center justify-center gap-3 transition-all active:scale-[0.98]',
-                  photoPreview ? 'border-[--color-bosque-lt]/40 p-0 overflow-hidden' : 'border-[#1E2E1E] hover:border-[--color-bosque-lt]/40',
+                  photoPreview ? 'border-[--color-bosque-lt]/40 p-0 overflow-hidden' : 'border-[--color-line] hover:border-[--color-bosque-lt]/40',
                 )}
-                style={{ backgroundColor: '#090f14' }}
+                style={{ backgroundColor: 'var(--color-noche)' }}
               >
                 {photoPreview ? (
                   <img src={photoPreview} alt="Vista previa" className="w-full h-full object-cover" />
@@ -363,7 +358,7 @@ export function ProviderSignup() {
                 <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-1">Paso 4 de 4</p>
                 <h1
                   className="text-3xl font-bold text-[--color-nieve] mb-2"
-                  style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+                  style={{ letterSpacing: '-0.02em' }}
                 >
                   Elegí tu plan
                 </h1>
@@ -382,7 +377,7 @@ export function ProviderSignup() {
                         'w-full text-left rounded-[--radius-xl] border p-5 transition-all active:scale-[0.98]',
                         selected
                           ? 'border-[--color-bosque-lt] bg-[--color-bosque-lt]/10'
-                          : 'border-[#1E2E1E] bg-[--color-sombra] hover:border-[--color-bosque-lt]/30',
+                          : 'border-[--color-line] bg-[--color-sombra] hover:border-[--color-bosque-lt]/30',
                       )}
                     >
                       <div className="flex items-start justify-between gap-3 mb-3">
@@ -392,7 +387,7 @@ export function ProviderSignup() {
                               className="text-xs font-bold px-2 py-0.5 rounded-full"
                               style={{
                                 backgroundColor: plan.id === 'destacado' ? '#F5C842' : plan.accent + '22',
-                                color: plan.id === 'destacado' ? '#0e1419' : plan.accent,
+                                color: plan.id === 'destacado' ? 'var(--color-noche)' : plan.accent,
                               }}
                             >
                               {plan.label}
@@ -421,7 +416,7 @@ export function ProviderSignup() {
                       {selected && (
                         <div
                           className="mt-3 pt-3 border-t text-xs font-semibold flex items-center gap-1.5"
-                          style={{ borderColor: '#1E2E1E', color: plan.accent }}
+                          style={{ borderColor: 'var(--color-line)', color: plan.accent }}
                         >
                           <IconCheck size={12} /> Plan seleccionado
                         </div>
@@ -449,8 +444,8 @@ export function ProviderSignup() {
 
         {/* ── Bottom action bar ──────────────────────────────────────────────── */}
         <div
-          className="fixed bottom-0 left-0 w-full px-6 py-4 backdrop-blur-xl"
-          style={{ backgroundColor: 'rgba(14,20,25,0.92)' }}
+          className="fixed bottom-0 left-0 w-full px-6 py-4 border-t border-[--color-line]"
+          style={{ backgroundColor: 'var(--color-noche)' }}
         >
           <div className="max-w-xl mx-auto space-y-2">
             {step < 4 ? (
@@ -458,7 +453,7 @@ export function ProviderSignup() {
                 type="button"
                 onClick={goNext}
                 className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-                style={{ backgroundColor: '#4A8C49', color: '#fff' }}
+                style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
               >
                 {step === 3 && !photoFile ? 'Saltar por ahora' : 'Siguiente'}
                 <IconArrowRight />
@@ -468,7 +463,7 @@ export function ProviderSignup() {
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
-                style={{ backgroundColor: '#4A8C49', color: '#fff' }}
+                style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
               >
                 {isSubmitting ? 'Creando tu perfil…' : 'Crear mi perfil'}
                 {!isSubmitting && <IconArrowRight />}
@@ -497,7 +492,7 @@ type FieldProps = { label: string; error?: string; children: React.ReactNode }
 function Field({ label, error, children }: FieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-bold tracking-[0.12em] uppercase" style={{ color: '#adcec0' }}>
+      <label className="text-xs font-bold tracking-[0.12em] uppercase text-[--color-muted]">
         {label}
       </label>
       {children}
@@ -510,10 +505,11 @@ function Field({ label, error, children }: FieldProps) {
 
 function inputCls(hasError: boolean) {
   return cn(
-    'w-full h-14 px-4 rounded-xl bg-[#090f14] text-[--color-nieve]',
-    'placeholder:text-[#414845] transition-shadow',
-    'focus:outline-none focus:ring-1 focus:ring-[rgba(173,206,192,0.4)]',
-    hasError ? 'ring-1 ring-[#ffb4ab]/60' : '',
+    'w-full h-14 px-4 rounded-xl text-[--color-nieve]',
+    'bg-[--color-noche] border border-[--color-line]',
+    'placeholder:text-[--color-muted]/60 transition-shadow',
+    'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40',
+    hasError ? 'ring-1 ring-[#ffb4ab]/60 border-[#ffb4ab]/40' : '',
   )
 }
 
@@ -545,7 +541,7 @@ function IconCheck({ size = 16 }: { size?: number }) {
 
 function IconCamera() {
   return (
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#4A8C49' }}>
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-bosque-lt)' }}>
       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
       <circle cx="12" cy="13" r="4" />
     </svg>

@@ -1,14 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  /* ── Fondos en capas ────────────────────────────────────────────────────── */
-  --color-noche:     #0E1510;   /* fondo base absoluto */
-  --color-bosque-dk: #1E3A1E;   /* verde bosque oscuro — nav, headers */
-  --color-bosque-lt: #4A8C49;   /* acción primaria — botones, highlights */
-  --color-sombra:    #1A2A1A;   /* cards, panels */
-  --color-nieve:     #EFF3EE;   /* texto principal */
-  --color-muted:     #7A9A79;   /* texto secundario, captions */
-  --color-lago:      #2E6E8A;   /* acento azul */
+  /* ── Superficies (light mode) ───────────────────────────────────────────── */
+  --color-noche:     #F7F6F2;   /* fondo de página — crema cálido */
+  --color-sombra:    #FFFFFF;   /* cards, panels — blanco puro */
+
+  /* ── Texto ──────────────────────────────────────────────────────────────── */
+  --color-nieve:     #1A1714;   /* texto principal — near-black cálido */
+  --color-muted:     #9C9589;   /* texto secundario — gris cálido */
+
+  /* ── Brand: Azul Andino ─────────────────────────────────────────────────── */
+  --color-bosque-lt: #1E6FA5;   /* brand — CTAs, links activos, iconos */
+  --color-bosque-dk: #174F77;   /* hover/active de brand */
+  --color-brand-tint:#E6F3FF;   /* tint suave para fondos de badges */
+
+  /* ── Semánticos ─────────────────────────────────────────────────────────── */
+  --color-lago:      #2563EB;   /* info — azul eléctrico, uso raro */
+  --color-amber:     #E8A020;   /* ratings — solo para estrellas */
+
+  /* ── Emergencias (bloque oscuro dentro de la UI light) ─────────────────── */
+  --color-emergency: #FF4F3B;   /* rojo urgencia */
+  --color-guardia:   #4AE87B;   /* verde "en línea ahora" */
+  --color-guardia-bg:#0A1628;   /* fondo oscuro del hero — navy profundo */
+
+  /* ── Bordes ─────────────────────────────────────────────────────────────── */
+  --color-line:      #ECEAE4;   /* border estándar — warm light gray */
 
   /* ── Tipografía ─────────────────────────────────────────────────────────── */
   --font-display: 'Playfair Display', Georgia, serif;
