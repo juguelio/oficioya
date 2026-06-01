@@ -349,9 +349,8 @@ const orderedCiudades = useMemo(
             )}
           </div>
 
-          {/* Carrusel — rubros principales */}
-          <div className="">
-          <div className="flex gap-2.5 overflow-x-auto pl-5 pb-2 scrollbar-hide snap-x">
+          {/* Categorías — carrusel en mobile, grid en desktop */}
+          <div className="flex gap-2.5 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x sm:grid sm:grid-cols-4 md:grid-cols-8 sm:overflow-visible sm:px-5 sm:gap-3">
             {FEATURED_RUBROS.map(r => {
               const count        = ciudadId ? (rubroCounts[r.id] ?? 0) : null
               const hasProviders = count === null || count > 0
@@ -359,9 +358,8 @@ const orderedCiudades = useMemo(
                 <button
                   key={r.id}
                   onClick={() => handleRubro(r.id as RubroId)}
-                  className="snap-start shrink-0 relative flex flex-col items-center gap-2 pt-5 pb-4 px-2 rounded-2xl border text-center active:scale-[0.97] transition-all"
+                  className="snap-start shrink-0 w-[76px] sm:w-full relative flex flex-col items-center gap-2 pt-5 pb-4 px-2 rounded-2xl border text-center active:scale-[0.97] transition-all"
                   style={{
-                    width: 76,
                     backgroundColor: 'var(--color-sombra)',
                     borderColor: 'var(--color-line)',
                     opacity: hasProviders ? 1 : 0.45,
@@ -382,8 +380,6 @@ const orderedCiudades = useMemo(
                 </button>
               )
             })}
-            <div className="shrink-0 w-5" aria-hidden="true" />
-          </div>
           </div>
 
           {/* Search box — otros servicios / por descripción del problema */}
@@ -487,14 +483,11 @@ const orderedCiudades = useMemo(
                 {providersLoading ? '—' : `${providers.length} activos`}
               </span>
             </div>
-            <div className="">
-            <div className="flex gap-3 overflow-x-auto pl-5 pb-2 scrollbar-hide snap-x snap-mandatory">
+            <div className="flex gap-3 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x snap-mandatory sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-5 sm:gap-4">
               {providersLoading
                 ? Array.from({ length: 4 }).map((_, i) => <ProviderMiniCardSkeleton key={i} />)
                 : topProviders.map(p => <ProviderMiniCard key={p.id} provider={p} />)
               }
-              <div className="shrink-0 w-5" aria-hidden="true" />
-            </div>
             </div>
           </section>
         )}
@@ -702,10 +695,10 @@ function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
   return (
     <button
       onClick={() => navigate(`/prestador/${provider.id}`)}
-      className="snap-start shrink-0 w-36 text-left active:scale-[0.98] transition-transform"
+      className="snap-start shrink-0 w-36 sm:w-full text-left active:scale-[0.98] transition-transform"
     >
       <div
-        className="relative aspect-square w-36 rounded-xl overflow-hidden border"
+        className="relative aspect-square w-36 sm:w-full rounded-xl overflow-hidden border"
         style={{ borderColor: 'var(--color-line)' }}
       >
         <img
