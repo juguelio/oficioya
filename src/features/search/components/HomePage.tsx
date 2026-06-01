@@ -130,7 +130,7 @@ const orderedCiudades = useMemo(
 
         {/* ── HERO ─────────────────────────────────────────────────────────────── */}
         <section style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
-          <div className="px-5 pt-8 pb-8">
+          <div className="px-5 sm:px-10 lg:px-16 pt-8 pb-8">
           <h1
             className="text-white font-black leading-none mb-1"
             style={{ fontSize: 30, letterSpacing: '-0.03em' }}
@@ -247,7 +247,7 @@ const orderedCiudades = useMemo(
 
         {/* ── CIUDAD ───────────────────────────────────────────────────────────── */}
         <section id="city-section">
-          <div className="px-5 pt-5 pb-1">
+          <div className="px-5 sm:px-10 lg:px-16 pt-5 pb-1">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--color-muted)' }}>
             {ciudadId ? 'Tu ciudad' : '¿Dónde estás?'}
           </p>
@@ -281,7 +281,7 @@ const orderedCiudades = useMemo(
 
         {/* ── URGENCIAS — zona oscura full-bleed ───────────────────────────────── */}
         <section className="mt-5" style={{ backgroundColor: 'var(--color-guardia-bg)' }}>
-          <div className="px-5 pt-5 pb-4">
+          <div className="px-5 sm:px-10 lg:px-16 pt-5 pb-4">
 
             {/* Label + link */}
             <div className="flex items-center justify-between mb-2">
@@ -340,7 +340,7 @@ const orderedCiudades = useMemo(
 
         {/* ── CATEGORÍAS ───────────────────────────────────────────────────────── */}
         <section className="pt-7">
-          <div className="px-5 flex items-center justify-between mb-4">
+          <div className="px-5 sm:px-10 lg:px-16 flex items-center justify-between mb-4">
             <h2 className="font-black text-lg" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
               {ciudadId ? `Servicios en ${ciudadData?.label}` : 'Servicios'}
             </h2>
@@ -350,7 +350,7 @@ const orderedCiudades = useMemo(
           </div>
 
           {/* Categorías — carrusel en mobile, grid en desktop */}
-          <div className="flex gap-2.5 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x sm:grid sm:grid-cols-4 md:grid-cols-8 sm:overflow-visible sm:px-5 sm:gap-3">
+          <div className="flex gap-2.5 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x sm:grid sm:grid-cols-4 md:grid-cols-8 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-3">
             {FEATURED_RUBROS.map(r => {
               const count        = ciudadId ? (rubroCounts[r.id] ?? 0) : null
               const hasProviders = count === null || count > 0
@@ -383,7 +383,7 @@ const orderedCiudades = useMemo(
           </div>
 
           {/* Search box — otros servicios / por descripción del problema */}
-          <div className="px-5 mt-5">
+          <div className="px-5 sm:px-10 lg:px-16 mt-5">
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                 <IconSearch size={17} />
@@ -467,7 +467,7 @@ const orderedCiudades = useMemo(
         {/* ── TOP PRESTADORES ──────────────────────────────────────────────────── */}
         {ciudadId && (providersLoading || topProviders.length > 0) && (
           <section className="pt-8">
-            <div className="px-5 flex items-end justify-between mb-4">
+            <div className="px-5 sm:px-10 lg:px-16 flex items-end justify-between mb-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--color-muted)' }}>
                   Cerca tuyo
@@ -483,7 +483,7 @@ const orderedCiudades = useMemo(
                 {providersLoading ? '—' : `${providers.length} activos`}
               </span>
             </div>
-            <div className="flex gap-3 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x snap-mandatory sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-5 sm:gap-4">
+            <div className="flex gap-3 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x snap-mandatory sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-4">
               {providersLoading
                 ? Array.from({ length: 4 }).map((_, i) => <ProviderMiniCardSkeleton key={i} />)
                 : topProviders.map(p => <ProviderMiniCard key={p.id} provider={p} />)
@@ -663,7 +663,7 @@ const orderedCiudades = useMemo(
           </span>
         </button>
         <Link
-          to="/planes"
+          to="/registro/prestador"
           className="flex flex-col items-center gap-1 active:scale-90 transition-all"
           style={{ color: 'var(--color-muted)' }}
         >
@@ -671,12 +671,12 @@ const orderedCiudades = useMemo(
           <span className="text-[10px] font-semibold uppercase tracking-widest">Sumate</span>
         </Link>
         <Link
-          to="/planes"
+          to="/onboarding"
           className="flex flex-col items-center gap-1 active:scale-90 transition-all"
           style={{ color: 'var(--color-muted)' }}
         >
           <IconPerson />
-          <span className="text-[10px] font-semibold uppercase tracking-widest">Prestador</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest">Ingresar</span>
         </Link>
       </nav>
 
