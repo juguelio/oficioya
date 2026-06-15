@@ -43,10 +43,11 @@ Nunca mencionar "Junín de los Andes" — la ciudad correcta es San Martín de l
 | Routing | React Router v7 | lazy loading en todas las páginas |
 | Estado global | Zustand v5 + persist | solo para estado inter-sesión |
 | Forms | React Hook Form v7 + Zod + `@hookform/resolvers` | |
-| Backend fase 1 | Mock data local en `src/data/` | |
-| Backend fase 2 | Supabase (Auth, DB, Storage, Realtime) | no empezado aún |
+| Backend (en producción) | Supabase (Auth, DB, Storage privado/KYC, Realtime para guardia) | 9 migraciones aplicadas. Cliente en `src/lib/supabase.ts` |
+| Datos legacy mock | `src/data/` | directorio de prestadores aún lee mock; trabajos/reseñas mock — migración pendiente |
+| Analytics | PostHog (`src/lib/analytics.ts`) | conteo de clics de WhatsApp (ADR-001). Key en `.env.local` |
 | Pagos | MercadoPago | no implementado aún |
-| Deploy | Vercel | |
+| Deploy | Vercel — `oficioya.app` | |
 
 ---
 
@@ -508,39 +509,15 @@ Error: `ring-1 ring-[#ffb4ab]/60` + mensaje `text-xs` en `#ffb4ab`
 
 ---
 
-## 16. Integración Stitch
+## 16. Integración Stitch (deprecado)
 
-Las pantallas de diseño vienen de Stitch (Google). Al adaptar HTML de Stitch a React:
+Stitch fue la herramienta de diseño original. **Ya no se usa.** Las pantallas que
+vinieron de ahí ya están adaptadas en `src/`; las referencias históricas a la paleta
+Stitch en §10 quedan solo como documentación de los valores de color actuales.
 
-1. Reemplazar clases de color de Stitch por las equivalentes del proyecto (ver §10)
-2. Reemplazar `material-symbols-outlined` por SVG inline
-3. Mantener estructuras de layout y espaciados exactos
-4. Reemplazar fuentes de Google Fonts por las variables CSS del proyecto
-5. Usar `useNavigate` para todos los links
-6. Nombrar componentes según el patrón del proyecto (named export, Props type, etc.)
-7. Descargar imágenes de CDN con `curl -L [url]=w1600` → `public/images/nombre.png`
-
-### Cómo obtener código de Stitch (CLI)
-```bash
-# Requiere STITCH_ACCESS_TOKEN + GOOGLE_CLOUD_PROJECT="api-project-299278099823"
-# El token se obtiene refrescando con las credenciales en:
-# ~/.stitch-mcp/config/application_default_credentials.json
-
-ACCESS_TOKEN=$(curl -s -X POST https://oauth2.googleapis.com/token \
-  -d "client_id=764086051850-...&client_secret=d-FL95Q19...&refresh_token=1//0h...&grant_type=refresh_token" \
-  | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token',''))")
-
-STITCH_ACCESS_TOKEN="$ACCESS_TOKEN" GOOGLE_CLOUD_PROJECT="api-project-299278099823" \
-npx @_davideast/stitch-mcp tool get_screen_code \
-  -d '{"projectId":"5611029179870827375","screenId":"SCREEN_ID"}' \
-  -o json 2>/dev/null | python3 -c "
-import sys,json; d=json.load(sys.stdin)
-open('/tmp/stitch-screen.html','w').write(d['htmlContent'])
-print(len(d['htmlContent']), 'chars')
-"
-```
-
-Proyecto Stitch: ID `5611029179870827375`
+No quedan credenciales ni tooling de Stitch en este repo. Si en el futuro se retoma
+una integración externa, las credenciales van en `.env.local` (no trackeado) — nunca
+en este archivo ni en ningún archivo versionado.
 
 ---
 
@@ -636,15 +613,8 @@ npx tsc --noEmit
   --headless=new --screenshot=/tmp/page.png \
   --window-size=390,844 --virtual-time-budget=5000 \
   "http://localhost:3000/ruta"
-
-# Stitch: refrescar token OAuth
-curl -s -X POST https://oauth2.googleapis.com/token \
-  -d "client_id=764086051850-6qr4p6gpi6hn506pt8ejuq83di341hur.apps.googleusercontent.com\
-&client_secret=d-FL95Q19q7MQmFpd7hHD0Ty\
-&refresh_token=1//0hVf6WwQMJm8kCgYIARAAGBESNwF-L9Irg8cWie7D8aAl0a42URa5xbtYxmjpvwbXQnfZRplOjpRimngfGU4KLAXwdnhgzPxRmSs\
-&grant_type=refresh_token" | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token',''))"
 ```
 
 ---
 
-*Última actualización: 2026-03-31*
+*Última actualización: 2026-06-15*

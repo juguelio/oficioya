@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { mockProviders } from '@/data/mock-providers'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useDashboardStore, getProviderReviews, getAverageRating } from '@/features/dashboard/store'
+import { track } from '@/lib/analytics'
 import { cn } from '@/shared/utils/cn'
 
 // ─── Placeholder images per rubro ────────────────────────────────────────────
@@ -198,6 +199,7 @@ export function ProviderProfile() {
             href={waLink}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => track('whatsapp_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'profile' })}
             className={cn(
               'flex w-full items-center justify-center gap-2 rounded-[--radius-full]',
               'py-4 font-bold text-white text-base',

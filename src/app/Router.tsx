@@ -11,9 +11,8 @@ const VerificationPage   = lazy(() => import('@/features/auth/components/Verific
 const ProviderSignup     = lazy(() => import('@/pages/ProviderSignup').then(m => ({ default: m.ProviderSignup })))
 const ProviderLogin      = lazy(() => import('@/pages/ProviderLogin').then(m => ({ default: m.ProviderLogin })))
 const ProviderDashboard  = lazy(() => import('@/pages/ProviderDashboard').then(m => ({ default: m.ProviderDashboard })))
-const JobsPage           = lazy(() => import('@/features/jobs/components/JobsPage').then(m => ({ default: m.JobsPage })))
-const PostJobPage        = lazy(() => import('@/features/jobs/components/PostJobPage').then(m => ({ default: m.PostJobPage })))
-const JobDetailPage      = lazy(() => import('@/features/jobs/components/JobDetailPage').then(m => ({ default: m.JobDetailPage })))
+// Trabajos (jobs/presupuestos) ocultos hasta migrar de mock a Supabase — servían datos
+// falsos a usuarios reales. Componentes en src/features/jobs/ intactos para reactivar.
 
 export const router = createBrowserRouter([
   // Auth
@@ -29,9 +28,11 @@ export const router = createBrowserRouter([
   { path: '/prestador/:id',      element: <ProviderProfile /> },
   { path: '/planes',             element: <PricingPage /> },
   { path: '/emergencias',        element: <EmergencyPage /> },
-  { path: '/trabajos',           element: <JobsPage /> },
-  { path: '/trabajos/nuevo',     element: <PostJobPage /> },
-  { path: '/trabajos/:id',       element: <JobDetailPage /> },
+
+  // Trabajos ocultos en v1 — redirigen a home para no exponer mock data
+  { path: '/trabajos',           element: <Navigate to="/" replace /> },
+  { path: '/trabajos/nuevo',     element: <Navigate to="/" replace /> },
+  { path: '/trabajos/:id',       element: <Navigate to="/" replace /> },
 
   // Dashboard prestador (fase 1: auth mock vía store)
   { path: '/dashboard',          element: <ProviderDashboard /> },

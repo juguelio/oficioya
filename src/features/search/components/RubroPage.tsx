@@ -3,6 +3,7 @@ import { useParams, useNavigate, Navigate, Link } from 'react-router-dom'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useCityStore } from '@/features/search/store'
 import { useProviders } from '@/features/providers/hooks'
+import { track } from '@/lib/analytics'
 import { cn } from '@/shared/utils/cn'
 import type { RubroId, CiudadId } from '@/design-system/tokens'
 import type { Provider } from '@/features/providers/types'
@@ -287,6 +288,7 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
             href={waLink}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => track('whatsapp_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'rubro_list' })}
             className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
             style={{ background: '#25D366' }}
           >

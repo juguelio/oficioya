@@ -2,6 +2,7 @@ import { Card, Avatar, Badge, StarRating, Button } from '@/shared/components'
 import { cn } from '@/shared/utils/cn'
 import { formatDistance } from '@/shared/utils/distance'
 import { rubros } from '@/design-system/tokens'
+import { track } from '@/lib/analytics'
 import type { Provider } from '@/features/providers/types'
 
 type ProviderCardProps = {
@@ -70,7 +71,12 @@ export function ProviderCard({ provider, distanceKm, className }: ProviderCardPr
       </div>
 
       {/* CTA */}
-      <Button variant="whatsapp" size="full" href={waLink}>
+      <Button
+        variant="whatsapp"
+        size="full"
+        href={waLink}
+        onClick={() => track('whatsapp_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'card' })}
+      >
         <WhatsAppIcon />
         Contactar por WhatsApp
       </Button>

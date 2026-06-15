@@ -50,7 +50,7 @@ export function Button({
 
   if (href) {
     return (
-      <a href={href} className={base} target="_blank" rel="noopener noreferrer">
+      <a href={href} onClick={onClick} className={base} target="_blank" rel="noopener noreferrer">
         {children}
       </a>
     )
