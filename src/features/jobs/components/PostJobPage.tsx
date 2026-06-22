@@ -6,7 +6,6 @@ import { z } from 'zod'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useCityStore } from '@/features/search/store'
 import { postJob } from '@/features/jobs/hooks'
-import { sendNewJobAlert } from '@/lib/notifications'
 import { cn } from '@/shared/utils/cn'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
 
@@ -54,8 +53,8 @@ export function PostJobPage() {
       authorPhone: data.authorPhone,
     })
     if (!res) { setError('No se pudo publicar el trabajo. Probá de nuevo.'); return }
-    // fire-and-forget: avisar a prestadores del rubro/ciudad vía n8n
-    sendNewJobAlert({ jobId: res.id, title: data.title, rubro: data.rubro, ciudad: data.ciudad })
+    // El aviso a prestadores se dispara SERVER-SIDE (trigger trg_notify_new_job →
+    // n8n vía pg_net con header secreto). Ya no se llama al webhook desde el browser.
     setResult(res)
   }
 

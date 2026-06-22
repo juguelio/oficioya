@@ -12,17 +12,23 @@
       "name": "Webhook · WhatsApp inbound",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 0]
+      "position": [
+        0,
+        0
+      ]
     },
     {
       "parameters": {
-        "jsCode": "// Extrae teléfono + texto del payload entrante (forma WhatsApp Cloud API / 360dialog).\nconst b = $json.body || $json;\nlet phone = '', text = '';\ntry {\n  const v = b.entry?.[0]?.changes?.[0]?.value;\n  const m = v?.messages?.[0];\n  phone = m?.from || '';\n  text = m?.text?.body || m?.button?.text || m?.interactive?.button_reply?.title || '';\n} catch (e) {}\nif (phone && !phone.startsWith('+')) phone = '+' + phone;\nreturn [{ json: { phone, text } }];"
+        "jsCode": "// Extrae teléfono + texto del payload entrante (forma WhatsApp Cloud API / 360dialog).\nconst b = $json.body || $json;\nlet phone = '', text = '';\ntry {\n  const v = b.entry?.[0]?.changes?.[0]?.value;\n  const m = v?.messages?.[0];\n  phone = m?.from || '';\n  text = m?.text?.body || m?.button?.text || m?.interactive?.button_reply?.title || '';\n} catch (e) {}\nif (phone && !phone.startsWith('+')) phone = '+' + phone;\n// Validación estricta: phone debe ser +<8-15 dígitos>. El phone se interpola\n// en URLs de Supabase aguas abajo (PostgREST); un payload inválido se rechaza.\nif (!/^\\+[0-9]{8,15}$/.test(phone)) {\n  throw new Error('invalid phone in inbound payload');\n}\nreturn [{ json: { phone, text } }];"
       },
       "id": "extract-msg",
       "name": "Extract message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [220, 0]
+      "position": [
+        220,
+        0
+      ]
     },
     {
       "parameters": {
@@ -31,8 +37,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" }
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
           ]
         },
         "options": {}
@@ -41,7 +53,10 @@
       "name": "Supabase · prospect context",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [440, 0]
+      "position": [
+        440,
+        0
+      ]
     },
     {
       "parameters": {
@@ -51,7 +66,10 @@
       "name": "Build context",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [660, 0]
+      "position": [
+        660,
+        0
+      ]
     },
     {
       "parameters": {
@@ -60,9 +78,18 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
-            { "name": "anthropic-version", "value": "2023-06-01" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -74,7 +101,10 @@
       "name": "Claude · clasificar",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [880, 0]
+      "position": [
+        880,
+        0
+      ]
     },
     {
       "parameters": {
@@ -84,7 +114,10 @@
       "name": "Parse + patches",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1100, 0]
+      "position": [
+        1100,
+        0
+      ]
     },
     {
       "parameters": {
@@ -93,8 +126,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "D360-API-KEY", "value": "={{$env.WHATSAPP_API_KEY}}" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "D360-API-KEY",
+              "value": "={{$env.WHATSAPP_API_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -106,7 +145,10 @@
       "name": "WhatsApp · responder",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1320, 0]
+      "position": [
+        1320,
+        0
+      ]
     },
     {
       "parameters": {
@@ -115,10 +157,22 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Content-Type", "value": "application/json" },
-            { "name": "Prefer", "value": "return=minimal" }
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
           ]
         },
         "sendBody": true,
@@ -130,7 +184,10 @@
       "name": "Supabase · update outreach_log",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1540, 0]
+      "position": [
+        1540,
+        0
+      ]
     },
     {
       "parameters": {
@@ -139,10 +196,22 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Content-Type", "value": "application/json" },
-            { "name": "Prefer", "value": "return=minimal" }
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
           ]
         },
         "sendBody": true,
@@ -154,18 +223,103 @@
       "name": "Supabase · update prospects",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1760, 0]
+      "position": [
+        1760,
+        0
+      ]
     }
   ],
   "connections": {
-    "Webhook · WhatsApp inbound": { "main": [[{ "node": "Extract message", "type": "main", "index": 0 }]] },
-    "Extract message": { "main": [[{ "node": "Supabase · prospect context", "type": "main", "index": 0 }]] },
-    "Supabase · prospect context": { "main": [[{ "node": "Build context", "type": "main", "index": 0 }]] },
-    "Build context": { "main": [[{ "node": "Claude · clasificar", "type": "main", "index": 0 }]] },
-    "Claude · clasificar": { "main": [[{ "node": "Parse + patches", "type": "main", "index": 0 }]] },
-    "Parse + patches": { "main": [[{ "node": "WhatsApp · responder", "type": "main", "index": 0 }]] },
-    "WhatsApp · responder": { "main": [[{ "node": "Supabase · update outreach_log", "type": "main", "index": 0 }]] },
-    "Supabase · update outreach_log": { "main": [[{ "node": "Supabase · update prospects", "type": "main", "index": 0 }]] }
+    "Webhook · WhatsApp inbound": {
+      "main": [
+        [
+          {
+            "node": "Extract message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract message": {
+      "main": [
+        [
+          {
+            "node": "Supabase · prospect context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase · prospect context": {
+      "main": [
+        [
+          {
+            "node": "Build context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build context": {
+      "main": [
+        [
+          {
+            "node": "Claude · clasificar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude · clasificar": {
+      "main": [
+        [
+          {
+            "node": "Parse + patches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse + patches": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp · responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp · responder": {
+      "main": [
+        [
+          {
+            "node": "Supabase · update outreach_log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase · update outreach_log": {
+      "main": [
+        [
+          {
+            "node": "Supabase · update prospects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1" }
+  "settings": {
+    "executionOrder": "v1"
+  }
 }

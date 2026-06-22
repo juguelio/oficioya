@@ -15,13 +15,6 @@ export type NewProviderAlertPayload = {
   plan:   string
 }
 
-export type NewJobAlertPayload = {
-  jobId:  string
-  title:  string
-  rubro:  string
-  ciudad: string
-}
-
 // ─── Internal helper ───────────────────────────────────────────────────────────
 
 async function postWebhook(url: string, body: Record<string, string>): Promise<void> {
@@ -76,30 +69,5 @@ export async function sendNewProviderAlert(payload: NewProviderAlertPayload): Pr
     })
   } catch (err) {
     console.error('[notifications] Error al enviar alerta de nuevo prestador:', err)
-  }
-}
-
-// ─── sendNewJobAlert ───────────────────────────────────────────────────────────
-// Avisa a n8n que se publicó un trabajo, para notificar a prestadores activos del
-// mismo rubro/ciudad (workflow 05-job-notify). Fire-and-forget.
-
-export async function sendNewJobAlert(payload: NewJobAlertPayload): Promise<void> {
-  const url = import.meta.env.VITE_N8N_WEBHOOK_NEW_JOB as string | undefined
-
-  if (!url) {
-    console.error('[notifications] VITE_N8N_WEBHOOK_NEW_JOB no está configurado — se omite el aviso de trabajo.')
-    return
-  }
-
-  try {
-    await postWebhook(url, {
-      job_id:    payload.jobId,
-      title:     payload.title,
-      rubro:     payload.rubro,
-      ciudad:    payload.ciudad,
-      timestamp: new Date().toISOString(),
-    })
-  } catch (err) {
-    console.error('[notifications] Error al enviar aviso de nuevo trabajo:', err)
   }
 }

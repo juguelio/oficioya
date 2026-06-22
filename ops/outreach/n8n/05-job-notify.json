@@ -12,17 +12,23 @@
       "name": "Webhook · trabajo nuevo",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 0]
+      "position": [
+        0,
+        0
+      ]
     },
     {
       "parameters": {
-        "jsCode": "const b = $json.body || $json;\nreturn [{ json: { job_id: b.job_id, title: b.title, rubro: b.rubro, ciudad: b.ciudad } }];"
+        "jsCode": "// Auth: este webhook es interno (lo llama el trigger trg_notify_new_job de Supabase\n// vía pg_net con header X-Internal-Secret). Rechazar si no coincide.\nconst hdr = $json.headers || {};\nif ((hdr['x-internal-secret'] || '') !== $env.INTERNAL_WEBHOOK_SECRET) {\n  throw new Error('unauthorized: bad or missing X-Internal-Secret');\n}\nconst b = $json.body || $json;\nreturn [{ json: { job_id: b.job_id, title: b.title, rubro: b.rubro, ciudad: b.ciudad } }];"
       },
       "id": "extract-job",
       "name": "Extract job",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [220, 0]
+      "position": [
+        220,
+        0
+      ]
     },
     {
       "parameters": {
@@ -31,8 +37,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" }
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
           ]
         },
         "options": {}
@@ -41,7 +53,10 @@
       "name": "Supabase · prestadores del rubro/ciudad",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [440, 0]
+      "position": [
+        440,
+        0
+      ]
     },
     {
       "parameters": {
@@ -51,7 +66,10 @@
       "name": "Split prestadores",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [660, 0]
+      "position": [
+        660,
+        0
+      ]
     },
     {
       "parameters": {
@@ -60,8 +78,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "D360-API-KEY", "value": "={{$env.WHATSAPP_API_KEY}}" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "D360-API-KEY",
+              "value": "={{$env.WHATSAPP_API_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -73,14 +97,59 @@
       "name": "WhatsApp · aviso de trabajo",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [880, 0]
+      "position": [
+        880,
+        0
+      ]
     }
   ],
   "connections": {
-    "Webhook · trabajo nuevo": { "main": [[{ "node": "Extract job", "type": "main", "index": 0 }]] },
-    "Extract job": { "main": [[{ "node": "Supabase · prestadores del rubro/ciudad", "type": "main", "index": 0 }]] },
-    "Supabase · prestadores del rubro/ciudad": { "main": [[{ "node": "Split prestadores", "type": "main", "index": 0 }]] },
-    "Split prestadores": { "main": [[{ "node": "WhatsApp · aviso de trabajo", "type": "main", "index": 0 }]] }
+    "Webhook · trabajo nuevo": {
+      "main": [
+        [
+          {
+            "node": "Extract job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract job": {
+      "main": [
+        [
+          {
+            "node": "Supabase · prestadores del rubro/ciudad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase · prestadores del rubro/ciudad": {
+      "main": [
+        [
+          {
+            "node": "Split prestadores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split prestadores": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp · aviso de trabajo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1" }
+  "settings": {
+    "executionOrder": "v1"
+  }
 }
