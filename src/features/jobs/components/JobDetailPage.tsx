@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -27,8 +27,10 @@ const STATUS_COLOR: Record<string, string> = { open: 'var(--color-bosque-lt)', i
 
 export function JobDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const [params] = useSearchParams()
-  const token = params.get('t')
+  // El token va en el fragment (#t=...), no en la query: el fragment no viaja al
+  // server (Referer/logs) ni a PostHog. Ver fix de seguridad IDOR.
+  const { hash } = useLocation()
+  const token = new URLSearchParams(hash.replace(/^#/, '')).get('t')
 
   if (token) return <ClientJobView token={token} />
   return <ProviderJobView jobId={id ?? ''} />

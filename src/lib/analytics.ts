@@ -18,6 +18,18 @@ export function initAnalytics(): void {
     api_host: host,
     capture_pageview: true,
     persistence: 'localStorage',
+    // El token de trabajo viaja en el fragment (#t=...). PostHog captura $current_url
+    // (incluye el fragment), así que lo redactamos antes de enviar. Cubre también el
+    // formato legacy en query (?t= / &t=).
+    sanitize_properties: (props) => {
+      const scrub = (v: unknown) =>
+        typeof v === 'string' ? v.replace(/([#?&]t=)[^#?&]*/gi, '$1REDACTED') : v
+      const p = props as Record<string, unknown>
+      for (const k of ['$current_url', '$referrer', '$initial_current_url', '$initial_referrer']) {
+        if (k in p) p[k] = scrub(p[k])
+      }
+      return props
+    },
   })
   enabled = true
 }

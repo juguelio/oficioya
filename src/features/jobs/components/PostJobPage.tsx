@@ -60,7 +60,8 @@ export function PostJobPage() {
   }
 
   if (result) {
-    const trackUrl = `/trabajos/${result.id}?t=${result.token}`
+    // token en el fragment (#t=), no en la query — no se filtra por Referer/logs/analytics
+    const trackUrl = `/trabajos/${result.id}#t=${result.token}`
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
         <span className="text-6xl mb-5">🎉</span>
