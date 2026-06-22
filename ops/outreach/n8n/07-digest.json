@@ -1,0 +1,65 @@
+{
+  "name": "Oficio · Digest de monitoreo",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [ { "field": "cronExpression", "expression": "0 9 * * *" } ] }
+      },
+      "id": "trigger-digest",
+      "name": "Cron diario (9hs)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/funnel_stats?limit=1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-stats",
+      "name": "Supabase · funnel_stats",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const arr = $json;\nconst s = Array.isArray(arr) ? (arr[0] || {}) : (arr || {});\nconst conv = s.outreach_total ? Math.round(100 * (s.conversiones || 0) / s.outreach_total) : 0;\nconst text =\n`📊 Oficio — resumen diario\\n\\n` +\n`Prestadores activos: ${s.prestadores_activos ?? 0}\\n` +\n`Prospectos: ${s.prospectos_total ?? 0} (nuevos ${s.nuevos ?? 0} · contactados ${s.contactados ?? 0} · interesados ${s.interesados ?? 0} · registrados ${s.registrados ?? 0})\\n` +\n`Outreach: ${s.outreach_total ?? 0} mensajes · ${s.conversiones ?? 0} conversiones (${conv}%)\\n` +\n`Últimos 7 días: ${s.trabajos_7d ?? 0} trabajos · ${s.presupuestos_7d ?? 0} presupuestos`;\nreturn [{ json: { text } }];"
+      },
+      "id": "build-text",
+      "name": "Armar resumen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.MONITOR_WEBHOOK_URL}}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"text\": {{ JSON.stringify($json.text) }} }",
+        "options": {}
+      },
+      "id": "send-digest",
+      "name": "Enviar al canal de monitoreo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    }
+  ],
+  "connections": {
+    "Cron diario (9hs)": { "main": [[{ "node": "Supabase · funnel_stats", "type": "main", "index": 0 }]] },
+    "Supabase · funnel_stats": { "main": [[{ "node": "Armar resumen", "type": "main", "index": 0 }]] },
+    "Armar resumen": { "main": [[{ "node": "Enviar al canal de monitoreo", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

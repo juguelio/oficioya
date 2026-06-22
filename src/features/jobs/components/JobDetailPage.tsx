@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { rubros } from '@/design-system/tokens'
-import { useJob } from '@/features/jobs/hooks'
-import { useJobStore } from '@/features/jobs/store'
+import { useJobTracking, useProviderJobView } from '@/features/jobs/hooks'
 import { formatARS } from '@/shared/utils/formatARS'
 import { cn } from '@/shared/utils/cn'
-import type { Quote } from '@/features/jobs/types'
+import type { CiudadId, RubroId } from '@/design-system/tokens'
+import type { TrackedQuote } from '@/features/jobs/hooks'
 
 function timeAgo(iso: string): string {
   const diff  = Date.now() - new Date(iso).getTime()
@@ -20,140 +20,47 @@ function timeAgo(iso: string): string {
 }
 
 const RUBRO_MAP = Object.fromEntries(rubros.map(r => [r.id, r]))
+const STATUS_LABEL: Record<string, string> = { open: 'Abierto', in_progress: 'En proceso', closed: 'Cerrado' }
+const STATUS_COLOR: Record<string, string> = { open: 'var(--color-bosque-lt)', in_progress: '#E8A020', closed: 'var(--color-muted)' }
 
-const STATUS_LABEL = { open: 'Abierto', in_progress: 'En proceso', closed: 'Cerrado' }
-const STATUS_COLOR = { open: 'var(--color-bosque-lt)', in_progress: '#E8A020', closed: 'var(--color-muted)' }
-
-// ─── Quote form schema ────────────────────────────────────────────────────────
-
-const quoteSchema = z.object({
-  providerName:  z.string().min(2, 'Ingresá tu nombre'),
-  providerPhone: z.string().min(8, 'Ingresá tu teléfono con código de área'),
-  amount:        z.coerce.number().min(1000, 'El monto mínimo es $1.000'),
-  message:       z.string().min(20, 'Escribí un mensaje explicando tu propuesta'),
-  estimatedDays: z.coerce.number().optional(),
-})
-type QuoteFormData = z.infer<typeof quoteSchema>
-
-// ─── JobDetailPage ────────────────────────────────────────────────────────────
+// ─── Router: cliente (con token) vs prestador ─────────────────────────────────
 
 export function JobDetailPage() {
-  const { id }     = useParams<{ id: string }>()
-  const navigate   = useNavigate()
-  const { job, quotes } = useJob(id ?? '')
-  const addQuote    = useJobStore(s => s.addQuote)
-  const acceptQuote = useJobStore(s => s.acceptQuote)
+  const { id } = useParams<{ id: string }>()
+  const [params] = useSearchParams()
+  const token = params.get('t')
 
-  const [showQuoteSheet, setShowQuoteSheet]   = useState(false)
-  const [confirmQuoteId, setConfirmQuoteId]   = useState<string | null>(null)
-  const [quoteSent, setQuoteSent]             = useState(false)
+  if (token) return <ClientJobView token={token} />
+  return <ProviderJobView jobId={id ?? ''} />
+}
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } =
-    useForm<QuoteFormData>({ resolver: zodResolver(quoteSchema) })
+// ─── Vista del cliente (seguimiento por token) ────────────────────────────────
 
-  if (!job) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-noche)' }}>
-        <p style={{ color: 'var(--color-muted)' }}>Trabajo no encontrado.</p>
-      </div>
-    )
-  }
+function ClientJobView({ token }: { token: string }) {
+  const navigate = useNavigate()
+  const { job, quotes, loading, accept } = useJobTracking(token)
+  const [confirmQuoteId, setConfirmQuoteId] = useState<string | null>(null)
+  const [accepting, setAccepting] = useState(false)
 
-  const rubro         = RUBRO_MAP[job.rubro]
+  if (loading) return <CenterMsg text="Cargando…" />
+  if (!job)    return <CenterMsg text="No encontramos este trabajo. Revisá tu link." />
+
   const isOpen = job.status === 'open'
 
-  function onSubmitQuote(data: QuoteFormData) {
-    addQuote({
-      jobId:        job!.id,
-      providerName: data.providerName,
-      providerPhone: data.providerPhone,
-      amount:       data.amount,
-      message:      data.message,
-      estimatedDays: data.estimatedDays || undefined,
-    })
-    setShowQuoteSheet(false)
-    setQuoteSent(true)
-    reset()
-  }
-
-  function handleAccept(quoteId: string) {
-    acceptQuote(quoteId, job!.id)
+  async function handleAccept(quoteId: string) {
+    setAccepting(true)
+    await accept(quoteId)
+    setAccepting(false)
     setConfirmQuoteId(null)
   }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <JobHeader title={job.title} status={job.status} onBack={() => navigate('/')} />
 
-      {/* ── Header ─────────────────────────────────────────────────────────────── */}
-      <header
-        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
-      >
-        <button
-          onClick={() => navigate(-1)}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition-all"
-          style={{ backgroundColor: 'var(--color-noche)' }}
-        >
-          <IconBack />
-        </button>
-        <div className="flex-1 min-w-0">
-          <p className="font-black text-sm truncate" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.01em' }}>
-            {job.title}
-          </p>
-        </div>
-        <span
-          className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shrink-0"
-          style={{ color: STATUS_COLOR[job.status], backgroundColor: 'rgba(0,0,0,0.05)' }}
-        >
-          {STATUS_LABEL[job.status]}
-        </span>
-      </header>
+      <main className="pt-14 pb-10">
+        <JobInfo job={job} />
 
-      <main className="pt-14 pb-32">
-
-        {/* ── Info del trabajo ─────────────────────────────────────────────────── */}
-        <section className="px-5 pt-5 pb-5 border-b" style={{ borderColor: 'var(--color-line)' }}>
-          {/* Rubro badge */}
-          <span
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-3"
-            style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
-          >
-            {rubro?.icon} {rubro?.label}
-          </span>
-
-          <h1
-            className="font-black text-xl leading-tight mb-3"
-            style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}
-          >
-            {job.title}
-          </h1>
-
-          <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--color-muted)' }}>
-            {job.description}
-          </p>
-
-          {/* Meta */}
-          <div className="flex flex-wrap gap-3">
-            <MetaChip icon="📍" label={job.barrio ? `${job.barrio}, ${job.ciudad}` : job.ciudad} />
-            <MetaChip icon="👤" label={job.authorName} />
-            <MetaChip icon="🕐" label={timeAgo(job.createdAt)} />
-            {(job.budgetMin || job.budgetMax) && (
-              <MetaChip
-                icon="💰"
-                label={
-                  job.budgetMin && job.budgetMax
-                    ? `${formatARS(job.budgetMin)} – ${formatARS(job.budgetMax)}`
-                    : job.budgetMax
-                    ? `hasta ${formatARS(job.budgetMax)}`
-                    : `desde ${formatARS(job.budgetMin!)}`
-                }
-                mono
-              />
-            )}
-          </div>
-        </section>
-
-        {/* ── Presupuestos ─────────────────────────────────────────────────────── */}
         <section className="px-5 pt-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-black text-base" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
@@ -167,55 +74,131 @@ export function JobDetailPage() {
             </span>
           </div>
 
-          {quoteSent && (
-            <div
-              className="flex items-center gap-3 px-4 py-3 rounded-xl mb-4 border"
-              style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
-            >
-              <span className="text-xl">✅</span>
-              <p className="text-sm font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>
-                ¡Presupuesto enviado! El cliente lo recibirá pronto.
-              </p>
-            </div>
-          )}
-
           {quotes.length === 0 ? (
-            <div
-              className="flex flex-col items-center py-10 rounded-xl border text-center"
-              style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
-            >
-              <span className="text-4xl mb-3">💬</span>
-              <p className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>
-                Sin presupuestos aún
-              </p>
-              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                {isOpen ? 'Sé el primero en enviar tu propuesta' : 'No se recibieron presupuestos'}
-              </p>
-            </div>
+            <EmptyBox icon="💬" title="Sin presupuestos aún" body="Cuando un prestador te envíe una propuesta, la vas a ver acá." />
           ) : (
             <div className="space-y-3">
               {quotes.map(q => (
-                <QuoteCard
-                  key={q.id}
-                  quote={q}
-                  isOpen={isOpen}
-                  onAccept={() => setConfirmQuoteId(q.id)}
-                />
+                <QuoteCard key={q.id} quote={q} isOpen={isOpen} onAccept={() => setConfirmQuoteId(q.id)} />
               ))}
             </div>
           )}
         </section>
-
       </main>
 
-      {/* ── CTA fijo — enviar presupuesto ──────────────────────────────────────── */}
-      {isOpen && !quoteSent && (
-        <div
-          className="fixed bottom-0 left-0 w-full px-5 py-4 border-t"
-          style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
-        >
+      {confirmQuoteId && (() => {
+        const q = quotes.find(x => x.id === confirmQuoteId)!
+        return (
+          <div className="fixed inset-0 z-[300] flex items-center justify-center px-6" style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}>
+            <div className="w-full max-w-xs rounded-2xl p-6" style={{ backgroundColor: 'var(--color-sombra)' }}>
+              <p className="font-black text-base mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.01em' }}>
+                ¿Aceptar este presupuesto?
+              </p>
+              <p className="text-sm mb-1" style={{ color: 'var(--color-muted)' }}>
+                <strong style={{ color: 'var(--color-nieve)' }}>{q.providerName}</strong> — {formatARS(q.amount)}
+              </p>
+              <p className="text-xs mb-5" style={{ color: 'var(--color-muted)' }}>
+                Los otros quedarán descartados y se te mostrará el WhatsApp del prestador.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setConfirmQuoteId(null)}
+                  className="flex-1 py-2.5 rounded-full text-sm font-bold border active:scale-95 transition-all"
+                  style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => handleAccept(confirmQuoteId)}
+                  disabled={accepting}
+                  className="flex-1 py-2.5 rounded-full text-sm font-bold text-white active:scale-95 transition-all disabled:opacity-60"
+                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                >
+                  {accepting ? 'Aceptando…' : 'Sí, aceptar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+    </div>
+  )
+}
+
+// ─── Vista del prestador (ofertar) ────────────────────────────────────────────
+
+const quoteSchema = z.object({
+  amount:        z.coerce.number().min(1000, 'El monto mínimo es $1.000'),
+  message:       z.string().min(20, 'Escribí un mensaje explicando tu propuesta'),
+  estimatedDays: z.coerce.number().optional(),
+})
+type QuoteFormData = z.infer<typeof quoteSchema>
+
+function ProviderJobView({ jobId }: { jobId: string }) {
+  const navigate = useNavigate()
+  const { job, provider, myQuoteStatus, loading, submitQuote } = useProviderJobView(jobId)
+  const [showSheet, setShowSheet] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [submitErr, setSubmitErr] = useState<string | null>(null)
+
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } =
+    useForm<QuoteFormData>({ resolver: zodResolver(quoteSchema) })
+
+  if (loading) return <CenterMsg text="Cargando…" />
+  if (!job)    return <CenterMsg text="Trabajo no encontrado." />
+
+  const isOpen   = job.status === 'open'
+  const canQuote = isOpen && provider?.active && !myQuoteStatus
+
+  async function onSubmit(data: QuoteFormData) {
+    setSubmitErr(null)
+    const ok = await submitQuote(data.amount, data.message, data.estimatedDays || undefined)
+    if (!ok) { setSubmitErr('No se pudo enviar el presupuesto. ¿Ya enviaste uno?'); return }
+    setShowSheet(false)
+    setSent(true)
+    reset()
+  }
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <JobHeader title={job.title} status={job.status} onBack={() => navigate(-1)} />
+
+      <main className="pt-14 pb-32">
+        <JobInfo job={job} />
+
+        <section className="px-5 pt-6">
+          {sent ? (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl border" style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}>
+              <span className="text-xl">✅</span>
+              <p className="text-sm font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>
+                ¡Presupuesto enviado! El cliente lo verá en su panel.
+              </p>
+            </div>
+          ) : myQuoteStatus ? (
+            <InfoBox title="Ya enviaste un presupuesto" body={`Estado: ${myQuoteStatus === 'accepted' ? 'aceptado 🎉' : myQuoteStatus === 'rejected' ? 'no seleccionado' : 'pendiente de respuesta'}.`} />
+          ) : !isOpen ? (
+            <InfoBox title="Este trabajo ya no recibe presupuestos" body="El cliente ya eligió o cerró el trabajo." />
+          ) : !provider ? (
+            <div className="text-center py-6">
+              <InfoBox title="Iniciá sesión para ofertar" body="Necesitás tu cuenta de prestador para enviar un presupuesto." />
+              <button
+                onClick={() => navigate('/login')}
+                className="mt-4 px-6 py-3 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
+                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+              >
+                Iniciar sesión
+              </button>
+            </div>
+          ) : !provider.active ? (
+            <InfoBox title="Tu perfil todavía no está activo" body="Completá la verificación para poder enviar presupuestos." />
+          ) : null}
+        </section>
+      </main>
+
+      {canQuote && !sent && (
+        <div className="fixed bottom-0 left-0 w-full px-5 py-4 border-t" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
           <button
-            onClick={() => setShowQuoteSheet(true)}
+            onClick={() => setShowSheet(true)}
             className="w-full py-4 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
             style={{ backgroundColor: 'var(--color-bosque-lt)' }}
           >
@@ -224,48 +207,12 @@ export function JobDetailPage() {
         </div>
       )}
 
-      {/* ── Sheet: Enviar presupuesto ───────────────────────────────────────────── */}
-      {showQuoteSheet && (
-        <div
-          className="fixed inset-0 z-[200] flex flex-col justify-end"
-          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-          onClick={() => setShowQuoteSheet(false)}
-        >
-          <div
-            className="rounded-t-2xl px-5 pt-4 pb-8 max-h-[90vh] overflow-y-auto"
-            style={{ backgroundColor: 'var(--color-sombra)' }}
-            onClick={e => e.stopPropagation()}
-          >
+      {showSheet && (
+        <div className="fixed inset-0 z-[200] flex flex-col justify-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} onClick={() => setShowSheet(false)}>
+          <div className="rounded-t-2xl px-5 pt-4 pb-8 max-h-[90vh] overflow-y-auto" style={{ backgroundColor: 'var(--color-sombra)' }} onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ backgroundColor: 'var(--color-line)' }} />
-            <h3 className="font-black text-lg mb-4" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
-              Tu presupuesto
-            </h3>
-            <form onSubmit={handleSubmit(onSubmitQuote)} className="space-y-4">
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Tu nombre</label>
-                  <input
-                    {...register('providerName')}
-                    placeholder="Rodolfo A."
-                    className="w-full h-11 px-3 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
-                    style={{ backgroundColor: 'var(--color-noche)', border: `1px solid ${errors.providerName ? '#ffb4ab' : 'var(--color-line)'}`, color: 'var(--color-nieve)' }}
-                  />
-                  {errors.providerName && <p className="text-[10px] mt-0.5" style={{ color: '#ffb4ab' }}>{errors.providerName.message}</p>}
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Tu teléfono</label>
-                  <input
-                    {...register('providerPhone')}
-                    placeholder="+549 2972..."
-                    type="tel"
-                    className="w-full h-11 px-3 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
-                    style={{ backgroundColor: 'var(--color-noche)', border: `1px solid ${errors.providerPhone ? '#ffb4ab' : 'var(--color-line)'}`, color: 'var(--color-nieve)' }}
-                  />
-                  {errors.providerPhone && <p className="text-[10px] mt-0.5" style={{ color: '#ffb4ab' }}>{errors.providerPhone.message}</p>}
-                </div>
-              </div>
-
+            <h3 className="font-black text-lg mb-4" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>Tu presupuesto</h3>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Monto (ARS)</label>
@@ -292,7 +239,6 @@ export function JobDetailPage() {
                   />
                 </div>
               </div>
-
               <div>
                 <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Tu propuesta</label>
                 <textarea
@@ -304,7 +250,7 @@ export function JobDetailPage() {
                 />
                 {errors.message && <p className="text-[10px] mt-0.5" style={{ color: '#ffb4ab' }}>{errors.message.message}</p>}
               </div>
-
+              {submitErr && <p className="text-xs" style={{ color: '#ffb4ab' }}>{submitErr}</p>}
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -317,91 +263,107 @@ export function JobDetailPage() {
           </div>
         </div>
       )}
+    </div>
+  )
+}
 
-      {/* ── Confirm accept dialog ───────────────────────────────────────────────── */}
-      {confirmQuoteId && (() => {
-        const q = quotes.find(x => x.id === confirmQuoteId)!
-        return (
-          <div
-            className="fixed inset-0 z-[300] flex items-center justify-center px-6"
-            style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
-          >
-            <div className="w-full max-w-xs rounded-2xl p-6" style={{ backgroundColor: 'var(--color-sombra)' }}>
-              <p className="font-black text-base mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.01em' }}>
-                ¿Aceptar este presupuesto?
-              </p>
-              <p className="text-sm mb-1" style={{ color: 'var(--color-muted)' }}>
-                <strong style={{ color: 'var(--color-nieve)' }}>{q.providerName}</strong> — {formatARS(q.amount)}
-              </p>
-              <p className="text-xs mb-5" style={{ color: 'var(--color-muted)' }}>
-                Los otros presupuestos quedarán descartados y se te mostrará el contacto del prestador.
-              </p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setConfirmQuoteId(null)}
-                  className="flex-1 py-2.5 rounded-full text-sm font-bold border active:scale-95 transition-all"
-                  style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={() => handleAccept(confirmQuoteId)}
-                  className="flex-1 py-2.5 rounded-full text-sm font-bold text-white active:scale-95 transition-all"
-                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
-                >
-                  Sí, aceptar
-                </button>
-              </div>
-            </div>
-          </div>
-        )
-      })()}
+// ─── Piezas compartidas ───────────────────────────────────────────────────────
 
+type JobInfoData = {
+  rubro: RubroId; title: string; description: string; ciudad: CiudadId
+  barrio?: string; authorName: string; createdAt: string; budgetMin?: number; budgetMax?: number
+}
+
+function JobHeader({ title, status, onBack }: { title: string; status: string; onBack: () => void }) {
+  return (
+    <header className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+      <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition-all" style={{ backgroundColor: 'var(--color-noche)' }}>
+        <IconBack />
+      </button>
+      <div className="flex-1 min-w-0">
+        <p className="font-black text-sm truncate" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.01em' }}>{title}</p>
+      </div>
+      <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shrink-0" style={{ color: STATUS_COLOR[status], backgroundColor: 'rgba(0,0,0,0.05)' }}>
+        {STATUS_LABEL[status]}
+      </span>
+    </header>
+  )
+}
+
+function JobInfo({ job }: { job: JobInfoData }) {
+  const rubro = RUBRO_MAP[job.rubro]
+  return (
+    <section className="px-5 pt-5 pb-5 border-b" style={{ borderColor: 'var(--color-line)' }}>
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-3" style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}>
+        {rubro?.icon} {rubro?.label}
+      </span>
+      <h1 className="font-black text-xl leading-tight mb-3" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>{job.title}</h1>
+      <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--color-muted)' }}>{job.description}</p>
+      <div className="flex flex-wrap gap-3">
+        <MetaChip icon="📍" label={job.barrio ? `${job.barrio}, ${job.ciudad}` : job.ciudad} />
+        <MetaChip icon="👤" label={job.authorName} />
+        <MetaChip icon="🕐" label={timeAgo(job.createdAt)} />
+        {(job.budgetMin || job.budgetMax) && (
+          <MetaChip
+            icon="💰"
+            label={job.budgetMin && job.budgetMax ? `${formatARS(job.budgetMin)} – ${formatARS(job.budgetMax)}` : job.budgetMax ? `hasta ${formatARS(job.budgetMax)}` : `desde ${formatARS(job.budgetMin!)}`}
+            mono
+          />
+        )}
+      </div>
+    </section>
+  )
+}
+
+function CenterMsg({ text }: { text: string }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <p style={{ color: 'var(--color-muted)' }}>{text}</p>
+    </div>
+  )
+}
+
+function EmptyBox({ icon, title, body }: { icon: string; title: string; body: string }) {
+  return (
+    <div className="flex flex-col items-center py-10 rounded-xl border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+      <span className="text-4xl mb-3">{icon}</span>
+      <p className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>{title}</p>
+      <p className="text-xs px-6" style={{ color: 'var(--color-muted)' }}>{body}</p>
+    </div>
+  )
+}
+
+function InfoBox({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="rounded-xl border p-4" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+      <p className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>{title}</p>
+      <p className="text-xs" style={{ color: 'var(--color-muted)' }}>{body}</p>
     </div>
   )
 }
 
 // ─── QuoteCard ─────────────────────────────────────────────────────────────────
 
-type QuoteCardProps = { quote: Quote; isOpen: boolean; onAccept: () => void }
+type QuoteCardProps = { quote: TrackedQuote; isOpen: boolean; onAccept: () => void }
 
 function QuoteCard({ quote, isOpen, onAccept }: QuoteCardProps) {
   const isAccepted = quote.status === 'accepted'
   const isRejected = quote.status === 'rejected'
-
   return (
-    <div
-      className={cn('rounded-xl border overflow-hidden')}
-      style={{
-        backgroundColor: 'var(--color-sombra)',
-        borderColor: isAccepted ? 'var(--color-bosque-lt)' : 'var(--color-line)',
-        opacity: isRejected ? 0.5 : 1,
-      }}
-    >
+    <div className={cn('rounded-xl border overflow-hidden')} style={{ backgroundColor: 'var(--color-sombra)', borderColor: isAccepted ? 'var(--color-bosque-lt)' : 'var(--color-line)', opacity: isRejected ? 0.5 : 1 }}>
       <div className="p-4">
-        {/* Provider row */}
         <div className="flex items-center gap-2.5 mb-3">
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black shrink-0"
-            style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
-          >
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}>
             {quote.providerName.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>
-                {quote.providerName}
-              </p>
+              <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{quote.providerName}</p>
               {quote.providerVerified && (
-                <span
-                  className="text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0"
-                  style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
-                >
-                  ✓ VER
-                </span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}>✓ VER</span>
               )}
             </div>
-            {quote.providerRating && (
+            {quote.providerRating != null && (
               <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
                 <span style={{ color: '#E8A020' }}>★</span>{' '}
                 <span style={{ fontFamily: 'var(--font-mono)' }}>{quote.providerRating.toFixed(1)}</span>
@@ -409,32 +371,17 @@ function QuoteCard({ quote, isOpen, onAccept }: QuoteCardProps) {
               </p>
             )}
           </div>
-          <p
-            className="font-black text-base shrink-0"
-            style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
-          >
+          <p className="font-black text-base shrink-0" style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
             {formatARS(quote.amount)}
           </p>
         </div>
-
-        {/* Mensaje */}
-        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
-          {quote.message}
-        </p>
+        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>{quote.message}</p>
       </div>
-
-      {/* Footer */}
-      <div
-        className="flex items-center justify-between px-4 py-2.5 border-t"
-        style={{ borderColor: 'var(--color-line)', backgroundColor: 'rgba(0,0,0,0.02)' }}
-      >
-        <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>
-          {timeAgo(quote.createdAt)}
-        </span>
-
-        {isAccepted ? (
+      <div className="flex items-center justify-between px-4 py-2.5 border-t" style={{ borderColor: 'var(--color-line)', backgroundColor: 'rgba(0,0,0,0.02)' }}>
+        <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>{timeAgo(quote.createdAt)}</span>
+        {isAccepted && quote.providerPhone ? (
           <a
-            href={`https://wa.me/${(quote.providerPhone ?? '').replace(/\D/g, '')}`}
+            href={`https://wa.me/${quote.providerPhone.replace(/\D/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white active:scale-95 transition-all"
@@ -443,15 +390,9 @@ function QuoteCard({ quote, isOpen, onAccept }: QuoteCardProps) {
             <IconWhatsApp /> Contactar
           </a>
         ) : isRejected ? (
-          <span className="text-xs font-bold" style={{ color: 'var(--color-muted)' }}>
-            No seleccionado
-          </span>
+          <span className="text-xs font-bold" style={{ color: 'var(--color-muted)' }}>No seleccionado</span>
         ) : isOpen ? (
-          <button
-            onClick={onAccept}
-            className="px-3 py-1.5 rounded-full text-xs font-bold text-white active:scale-95 transition-all"
-            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
-          >
+          <button onClick={onAccept} className="px-3 py-1.5 rounded-full text-xs font-bold text-white active:scale-95 transition-all" style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
             Aceptar
           </button>
         ) : null}
@@ -465,15 +406,7 @@ function QuoteCard({ quote, isOpen, onAccept }: QuoteCardProps) {
 type MetaChipProps = { icon: string; label: string; mono?: boolean }
 function MetaChip({ icon, label, mono = false }: MetaChipProps) {
   return (
-    <span
-      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border"
-      style={{
-        backgroundColor: 'var(--color-sombra)',
-        borderColor: 'var(--color-line)',
-        color: 'var(--color-muted)',
-        fontFamily: mono ? 'var(--font-mono)' : undefined,
-      }}
-    >
+    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)', color: 'var(--color-muted)', fontFamily: mono ? 'var(--font-mono)' : undefined }}>
       {icon} {label}
     </span>
   )

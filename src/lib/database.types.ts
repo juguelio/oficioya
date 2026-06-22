@@ -14,6 +14,159 @@ export type Database = {
   }
   public: {
     Tables: {
+      jobs: {
+        Row: {
+          id: string
+          title: string
+          rubro_id: string
+          ciudad_id: string
+          barrio: string | null
+          description: string
+          budget_min: number | null
+          budget_max: number | null
+          photos: string[]
+          status: string
+          author_name: string
+          author_phone: string
+          client_token: string
+          accepted_quote_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          rubro_id: string
+          ciudad_id: string
+          barrio?: string | null
+          description: string
+          budget_min?: number | null
+          budget_max?: number | null
+          photos?: string[]
+          status?: string
+          author_name: string
+          author_phone: string
+          client_token?: string
+          accepted_quote_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          rubro_id?: string
+          ciudad_id?: string
+          barrio?: string | null
+          description?: string
+          budget_min?: number | null
+          budget_max?: number | null
+          photos?: string[]
+          status?: string
+          author_name?: string
+          author_phone?: string
+          client_token?: string
+          accepted_quote_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quotes: {
+        Row: {
+          id: string
+          job_id: string
+          provider_id: string
+          amount: number
+          message: string
+          estimated_days: number | null
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          job_id: string
+          provider_id: string
+          amount: number
+          message?: string
+          estimated_days?: number | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          job_id?: string
+          provider_id?: string
+          amount?: number
+          message?: string
+          estimated_days?: number | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      certifications: {
+        Row: {
+          id: string
+          provider_id: string
+          type: string
+          file_name: string
+          file_path: string | null
+          status: string
+          points: number
+          uploaded_at: string
+        }
+        Insert: {
+          id?: string
+          provider_id: string
+          type: string
+          file_name: string
+          file_path?: string | null
+          status?: string
+          points?: number
+          uploaded_at?: string
+        }
+        Update: {
+          id?: string
+          provider_id?: string
+          type?: string
+          file_name?: string
+          file_path?: string | null
+          status?: string
+          points?: number
+          uploaded_at?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          id: string
+          provider_id: string
+          author_name: string
+          rating: number
+          comment: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          provider_id: string
+          author_name: string
+          rating: number
+          comment?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          provider_id?: string
+          author_name?: string
+          rating?: number
+          comment?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           id: string
@@ -249,10 +402,47 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      open_jobs: {
+        Row: {
+          id: string
+          title: string
+          rubro_id: string
+          ciudad_id: string
+          barrio: string | null
+          description: string
+          budget_min: number | null
+          budget_max: number | null
+          photos: string[]
+          status: string
+          author_name: string
+          created_at: string
+          quote_count: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      post_job: {
+        Args: {
+          p_title: string
+          p_rubro: string
+          p_ciudad: string
+          p_description: string
+          p_author_name: string
+          p_author_phone: string
+          p_budget_max?: number | null
+          p_barrio?: string | null
+        }
+        Returns: Json
+      }
+      get_job_by_token: {
+        Args: { p_token: string }
+        Returns: Json
+      }
+      accept_quote_by_token: {
+        Args: { p_token: string; p_quote_id: string }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

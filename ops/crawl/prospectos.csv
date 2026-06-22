@@ -1,0 +1,106 @@
+nombre,rubro,ciudad,telefono,telefono_e164,rating,reviews,direccion,fuente,notas
+Stroia Electricidad,electricista,san-martin,+54 2972 42-7232,+542972427232,5,1,"RN40 2220, San Martin de los Andes",poraca.com.ar,
+Stroia Electricidad (Berni),electricista,san-martin,+54 2972 41-1615,+542972411615,4.8,38,"Berni 144, San Martin de los Andes",poraca.com.ar,
+R-M Electricidad y Refrigeracion,electricista,san-martin,+54 379 427-9761,+543794279761,5,2,"Cerro Bella Vista 990, San Martin de los Andes",poraca.com.ar,"area 379 (Corrientes) sospechosa"
+Daniel Vargas Gasista,gasista,san-martin,+54 294 453-1338,+542944531338,4.9,30,"Pil Pil 325, San Martin de los Andes",poraca.com.ar,
+CardeGas,gasista,san-martin,+54 2972 50-6476,+542972506476,,,"San Martin de los Andes",poraca.com.ar,"prefijo 2972 local"
+Cerrajeria El Entrerriano,cerrajero,san-martin,+54 294 441-8286,+542944418286,5,4,"Laguna Rosales 14, San Martin de los Andes",poraca.com.ar,
+Cerrajeria Gustavo,cerrajero,san-martin,+54 299 507-4820,+542995074820,4.6,83,"Eduardo Elordi 325, San Martin de los Andes",poraca.com.ar,"area 299 sospechosa"
+Cerrajeria Movil,cerrajero,san-martin,+54 294 461-2665,+542944612665,4.6,97,"San Martin de los Andes",poraca.com.ar,
+Cerrajeria Los Creativos,cerrajero,san-martin,+54 294 434-2454,+542944342454,4.5,2,"Mariano Moreno 219, San Martin de los Andes",poraca.com.ar,
+Cerrajeria y Cristales Roca,cerrajero,san-martin,+54 2972 42-5102,+542972425102,4.1,166,"Gral. Roca 1234, San Martin de los Andes",poraca.com.ar,"prefijo 2972 local"
+Tronador Electricidad,electricista,villa-la-angostura,+54 294 480-5919,+542944805919,5,6,"Las Frambuesas 66, Villa La Angostura",poraca.com.ar,
+Electricidad Angostura,electricista,villa-la-angostura,+54 294 449-4640,+542944494640,4.6,150,"Los Araucanos 26, Villa La Angostura",poraca.com.ar,
+Electricista Robiquen,electricista,villa-la-angostura,+54 299 429-3144,+542994293144,5,40,"Villa La Angostura",poraca.com.ar,"area 299 (Nqn capital) sospechosa"
+Topo Gas,gasista,villa-la-angostura,+54 294 461-5100,+542944615100,5,7,"Cerro Belvedere 238, Villa La Angostura",poraca.com.ar,
+Conexion Gas y Agua (Lo De Nimis),gasista,villa-la-angostura,+54 294 451-3330,+542944513330,4.7,136,"Blvd. Pascotto 257, Villa La Angostura",poraca.com.ar,"tambien plomeria"
+Tierno Gas,gasista,villa-la-angostura,+54 294 434-6102,+542944346102,4.7,10,"Moquehue 276, Villa La Angostura",poraca.com.ar,
+Agua y Gas Angostura,gasista,villa-la-angostura,+54 294 448-4623,+542944484623,4.3,38,"Los Maquis 59, Villa La Angostura",poraca.com.ar,"tambien plomeria"
+Siriuselectricidad,electricista,bariloche,+54 294 467-7445,+542944677445,5,3,"Pil pil 229, Bariloche",poraca.com.ar,
+BURJ Servicios,electricista,bariloche,+54 280 427-4682,+542804274682,5,1,"Hunold y Paloma Araucana, Bariloche",poraca.com.ar,"multi-rubro (plomero/calderas/riego); area 280 sospechosa"
+Chomy Electricista,electricista,bariloche,+54 9 294 450-2233,+5492944502233,5,1,"Medallita 2311, Bariloche",poraca.com.ar,
+Electricidad Miguel,electricista,bariloche,+54 294 460-3765,+542944603765,5,1,"Alaniz J. 229, Bariloche",poraca.com.ar,
+Electricista Lisandro Bazzano,electricista,bariloche,+54 294 462-6666,+542944626666,5,1,"Bariloche",poraca.com.ar,
+Electricista Matriculado Bariloche,electricista,bariloche,+54 294 450-2113,+542944502113,5,3,"Bariloche",poraca.com.ar,
+Electricista Juanjo Iches,electricista,bariloche,+54 294 424-2883,+542944242883,5,6,"Bariloche",poraca.com.ar,
+SEL Argentina Electricidad Refrigeracion,electricista,bariloche,+54 11 3413-3559,+541134133559,5,4,"Castex 1960, Bariloche",poraca.com.ar,"area 11 (BsAs) sospechosa"
+Electricistas Matriculados en Bariloche,electricista,bariloche,+54 9 294 433-5540,+5492944335540,4.8,28,"San Martin 127 local 628, Bariloche",poraca.com.ar,"tambien gasista"
+GRUPO CG Electricistas Matriculados 24hs,electricista,bariloche,+54 9 11 4166-9375,+5491141669375,4.8,25,"Copahue 3380, Bariloche",poraca.com.ar,"EMERGENCIA 24hs; area 11 sospechosa"
+Marco Electricidad,electricista,bariloche,+54 294 443-1724,+542944431724,4.8,142,"Remedios de Escalada 18, Bariloche",poraca.com.ar,
+Electricidad Nireco,electricista,bariloche,+54 294 433-9973,+542944339973,4.6,403,"Benito Crespo 265, Bariloche",poraca.com.ar,"alto volumen de resenas"
+Electricidad Tomas Bariloche,electricista,bariloche,+54 294 450-2977,+542944502977,4,2,"Francisco Jordi Olivera 42, Bariloche",poraca.com.ar,
+Electricista Matriculado Bariloche 2,electricista,bariloche,+54 9 294 416-4309,+5492944164309,,,"Bariloche",poraca.com.ar,
+Electricista Matriculado en Bariloche 3,electricista,bariloche,+54 294 437-7076,+542944377076,,,"Bariloche",poraca.com.ar,
+Electricidad Marcos Bariloche,electricista,bariloche,+54 294 470-0020,+542944700020,,,"Vuelta de Obligado 350, Bariloche",poraca.com.ar,
+Gasiloche,gasista,bariloche,+54 294 452-3931,+542944523931,4.5,111,"Av. Angel Gallardo 733, Bariloche",poraca.com.ar,
+Agua & Gas,gasista,bariloche,+54 294 442-6039,+542944426039,4.5,914,"Eduardo Elordi 652, Bariloche",poraca.com.ar,"alto volumen de resenas"
+Oscar Gas,gasista,bariloche,+54 294 442-3541,+542944423541,3.6,114,"Av. Angel Gallardo 1038, Bariloche",poraca.com.ar,
+Gasista Matriculado (Albarracin),gasista,bariloche,+54 294 443-6702,+542944436702,3,2,"Santiago Albarracin 1055, Bariloche",poraca.com.ar,
+Plomero Gasista Bariloche,gasista,bariloche,+54 294 415-6317,+542944156317,3,2,"Don Bosco 579, Bariloche",poraca.com.ar,"cubre plomeria"
+Gasista Matriculado,gasista,bariloche,+54 294 426-3062,+542944263062,1,1,"Bariloche",poraca.com.ar,
+Rivero Hernan Gasista,gasista,bariloche,+54 294 465-1832,+542944651832,,,"Psje San Pedro 121, Bariloche",poraca.com.ar,
+Cerrajeria Giordano Eduardo,cerrajero,bariloche,+54 294 466-9717,+542944669717,5,2,"Sarmiento 615, Bariloche",poraca.com.ar,
+Servicios de Cerrajeria Josue,cerrajero,bariloche,+54 294 461-3238,+542944613238,5,7,"Cacique Purran 3743, Bariloche",poraca.com.ar,
+Cerrajeria Lopez 24 HS,cerrajero,bariloche,+54 294 471-2853,+542944712853,4.8,22,"Pje. Gutierrez 3443, Bariloche",poraca.com.ar,"EMERGENCIA 24hs"
+Cerrajeria Bravar,cerrajero,bariloche,+54 294 450-1369,+542944501369,4.8,78,"Otto Goedecke 1627, Bariloche",poraca.com.ar,
+Cerrajeria Giordano,cerrajero,bariloche,+54 294 442-4832,+542944424832,4.5,144,"Av. Angel Gallardo 1175, Bariloche",poraca.com.ar,
+Bariloche Cerrajero 24hs,cerrajero,bariloche,+54 294 429-5456,+542944295456,4.4,137,"Onelli 2067 local 2, Bariloche",poraca.com.ar,"EMERGENCIA 24hs"
+Cerrajeria Catedral,cerrajero,bariloche,+54 294 431-6879,+542944316879,4.4,34,"Eduardo Elordi 89, Bariloche",poraca.com.ar,
+Cerrajeria Andina,cerrajero,bariloche,+54 294 442-2422,+542944422422,4.3,120,"Dr. Neumeyer 74, Bariloche",poraca.com.ar,
+Nueva Troya Cerrajeria,cerrajero,bariloche,+54 294 460-3206,+542944603206,4.1,193,"Diag. Capraro 1062, Bariloche",poraca.com.ar,
+Luis Parra Cerrajero,cerrajero,bariloche,+54 294 458-6453,+542944586453,3.8,13,"Esquel 100, Bariloche",poraca.com.ar,
+Cerrajeria la Cle,cerrajero,bariloche,+54 294 442-2893,+542944422893,3.7,3,"Lanin 144, Bariloche",poraca.com.ar,
+Cerrajeria Express,cerrajero,bariloche,+54 294 432-6208,+542944326208,3.1,7,"Morales 2260, Bariloche",poraca.com.ar,
+Alarcon Nicanor,plomero,san-martin,+5492944965826,+5492944965826,,,,agua.coop,matriculado coop agua N°144
+Alonso Adrian Daniel,plomero,san-martin,+542972428438,+542972428438,,,,agua.coop,matriculado coop agua N°120 · fijo (no WhatsApp)
+Aloy Guillermo,plomero,san-martin,+5492944414991,+5492944414991,,,,agua.coop,matriculado coop agua N°96
+Antonucci Arnaldo,plomero,san-martin,+5492944698851,+5492944698851,,,,agua.coop,matriculado coop agua N°47
+Araujo Mauricio Daniel,plomero,san-martin,+5492944333434,+5492944333434,,,,agua.coop,matriculado coop agua N°154
+Barragan Pablo Adrian,plomero,san-martin,+5492944241603,+5492944241603,,,,agua.coop,matriculado coop agua N°158
+Bermedo Pablo Esteban,plomero,san-martin,+5492944316710,+5492944316710,,,,agua.coop,matriculado coop agua N°162
+Betancur Cristian Omar,plomero,san-martin,+5492944210586,+5492944210586,,,,agua.coop,matriculado coop agua N°87
+Biluron Walter J.,plomero,san-martin,+5492944610324,+5492944610324,,,,agua.coop,matriculado coop agua N°110
+Borquez Castro Angel P.,plomero,san-martin,+5492944383330,+5492944383330,,,,agua.coop,matriculado coop agua N°156
+Cardenas Gerardo Andres,plomero,san-martin,+5492972505067,+5492972505067,,,,agua.coop,matriculado coop agua N°128
+Castillo Carbonel Ruben,plomero,san-martin,+5492944602847,+5492944602847,,,,agua.coop,matriculado coop agua N°92
+Contreras Gustavo Oscar,plomero,san-martin,+5492995110219,+5492995110219,,,,agua.coop,matriculado coop agua N°11
+Crupkin Sergio A.,plomero,san-martin,+5492944715697,+5492944715697,,,,agua.coop,matriculado coop agua N°64
+Cucia Ricardo,plomero,san-martin,+5492944486454,+5492944486454,,,,agua.coop,matriculado coop agua N°79
+Decima Ramon Antonio,plomero,san-martin,+5492944553338,+5492944553338,,,,agua.coop,matriculado coop agua N°3
+Deniz Juan Cecilio,plomero,san-martin,+5492944413459,+5492944413459,,,,agua.coop,matriculado coop agua N°79
+Fernandes Carlos,plomero,san-martin,+5492944710835,+5492944710835,,,,agua.coop,matriculado coop agua N°84
+Fierro Facundo,plomero,san-martin,+5492944160495,+5492944160495,,,,agua.coop,matriculado coop agua N°126
+Garcia Adrian Fabio,plomero,san-martin,+5492944617721,+5492944617721,,,,agua.coop,matriculado coop agua N°132
+Garica Lagos Domingo J.,plomero,san-martin,+5492944663865,+5492944663865,,,,agua.coop,matriculado coop agua N°25
+Gomez Rodolfo F.,plomero,san-martin,+5492944368875,+5492944368875,,,,agua.coop,matriculado coop agua N°17
+Hermosilla Fuentes Raul,plomero,san-martin,+5492944566431,+5492944566431,,,,agua.coop,matriculado coop agua N°27
+Ilabarra Jaime Elias,plomero,san-martin,+542972421559,+542972421559,,,,agua.coop,matriculado coop agua N°37 · fijo (no WhatsApp)
+Krawies Sergio Daniel,plomero,san-martin,+5491123627701,+5491123627701,,,,agua.coop,matriculado coop agua N°160
+Lara Fabian,plomero,san-martin,+5492972433197,+5492972433197,,,,agua.coop,matriculado coop agua N°154
+Maldonado Oscar B.,plomero,san-martin,+5492944610612,+5492944610612,,,,agua.coop,matriculado coop agua N°1
+Mardonez Ruben Jorge,plomero,san-martin,+5492944416569,+5492944416569,,,,agua.coop,matriculado coop agua N°24
+Mariman Alver Gonzalo,plomero,san-martin,+5492944312159,+5492944312159,,,,agua.coop,matriculado coop agua N°159
+Matus Haedo Carlos P.,plomero,san-martin,+5492944696166,+5492944696166,,,,agua.coop,matriculado coop agua N°13
+Minetti Claudio Esteban,plomero,san-martin,+5491134785032,+5491134785032,,,,agua.coop,matriculado coop agua N°153
+Obando Urrutia Mario,plomero,san-martin,+5492972431348,+5492972431348,,,,agua.coop,matriculado coop agua N°108
+Orihuela Diego Gaston,plomero,san-martin,+5492972430063,+5492972430063,,,,agua.coop,matriculado coop agua N°155
+Ortino Luis,plomero,san-martin,+5492944610838,+5492944610838,,,,agua.coop,matriculado coop agua N°130
+Pena Emanuel Lucas,plomero,san-martin,+5492972507420,+5492972507420,,,,agua.coop,matriculado coop agua N°147
+Pena Mateo,plomero,san-martin,+5492972432041,+5492972432041,,,,agua.coop,matriculado coop agua N°163
+Pizama Roberto,plomero,san-martin,+5492944706242,+5492944706242,,,,agua.coop,matriculado coop agua N°153
+Ramirez Cristian Andres,plomero,san-martin,+5492944682422,+5492944682422,,,,agua.coop,matriculado coop agua N°134
+Roquier Claudio,plomero,san-martin,+5492944916917,+5492944916917,,,,agua.coop,matriculado coop agua N°123
+Salas Carlos Ramon,plomero,san-martin,+5492944303666,+5492944303666,,,,agua.coop,matriculado coop agua N°72
+Salcedo Roberto,plomero,san-martin,+5492944605353,+5492944605353,,,,agua.coop,matriculado coop agua N°45
+San Martin Juan Manuel,plomero,san-martin,+5492972505929,+5492972505929,,,,agua.coop,matriculado coop agua N°164
+Sayueque Hector,plomero,san-martin,+5492972415688,+5492972415688,,,,agua.coop,matriculado coop agua N°143
+Silva Martin Alejandro,plomero,san-martin,+5492944963212,+5492944963212,,,,agua.coop,matriculado coop agua N°161
+Skrandzius Damian,plomero,san-martin,+5492944247647,+5492944247647,,,,agua.coop,matriculado coop agua N°168
+Tripalaf Daniel,plomero,san-martin,+5492972431744,+5492972431744,,,,agua.coop,matriculado coop agua N°89
+Ulloa Jorge Hernan,plomero,san-martin,+5492944635376,+5492944635376,,,,agua.coop,matriculado coop agua N°11
+Vargas Barrera Estanislao,plomero,san-martin,+5492944246310,+5492944246310,,,,agua.coop,matriculado coop agua N°98
+Vargas Daniel Nicolas,plomero,san-martin,+5492944531338,+5492944531338,,,,agua.coop,matriculado coop agua N°109
+Vazquez Pablo,plomero,san-martin,+5492944289080,+5492944289080,,,,agua.coop,matriculado coop agua N°148
+Vazquez Ricardo Gabriel,plomero,san-martin,+5492972402120,+5492972402120,,,,agua.coop,matriculado coop agua N°137
+Velasco Ramin Eugenio,plomero,san-martin,+5492944628477,+5492944628477,,,,agua.coop,matriculado coop agua N°85
+Zuniga Roxana Yanet,plomero,san-martin,+5492995400494,+5492995400494,,,,agua.coop,matriculado coop agua N°167

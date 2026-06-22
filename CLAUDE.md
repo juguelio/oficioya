@@ -44,7 +44,7 @@ Nunca mencionar "Junín de los Andes" — la ciudad correcta es San Martín de l
 | Estado global | Zustand v5 + persist | solo para estado inter-sesión |
 | Forms | React Hook Form v7 + Zod + `@hookform/resolvers` | |
 | Backend (en producción) | Supabase (Auth, DB, Storage privado/KYC, Realtime para guardia) | 9 migraciones aplicadas. Cliente en `src/lib/supabase.ts` |
-| Datos legacy mock | `src/data/` | directorio de prestadores aún lee mock; trabajos/reseñas mock — migración pendiente |
+| Datos | Supabase (prestadores, reseñas, certificaciones, trabajos, presupuestos) | `useProviders`, dashboard (`useDashboardData`) y trabajos (`useOpenJobs`/`useJobTracking`/`useProviderJobView`) leen de Supabase. El store Zustand del dashboard queda como fallback de preview sin sesión |
 | Analytics | PostHog (`src/lib/analytics.ts`) | conteo de clics de WhatsApp (ADR-001). Key en `.env.local` |
 | Pagos | MercadoPago | no implementado aún |
 | Deploy | Vercel — `oficioya.app` | |
@@ -128,10 +128,14 @@ Si dos features necesitan algo, ese algo va a `@/shared/`.
 /planes                    PricingPage
 /emergencias               EmergencyPage
 /onboarding                OnboardingPage
-/registro/prestador        ProviderRegisterPage
+/registro/prestador        ProviderSignup     (src/pages/, Supabase)
 /verificacion              VerificationPage
-/login                     RegisterPage (placeholder)
+/login                     ProviderLogin      (src/pages/, Supabase)
 /registrarme               → redirect a /registro/prestador
+/dashboard                 ProviderDashboard  (src/pages/, panel prestador)
+/trabajos                  JobsPage           (board de trabajos, vista open_jobs)
+/trabajos/nuevo            PostJobPage        (publicar — cliente anónimo + token)
+/trabajos/:id              JobDetailPage      (?t=token → cliente; sin token → prestador oferta)
 ```
 
 Todas las páginas son lazy-loaded. El patrón en Router.tsx:
@@ -162,6 +166,7 @@ type Provider = {
   bio?: string
   photos: string[]
   createdAt: string          // 'YYYY-MM-DD'
+  isEmergencyAvailable: boolean   // modo guardia 🔴 — primer criterio de orden
 }
 ```
 
@@ -216,11 +221,11 @@ Total: 16 rubros. Fuente de verdad: `src/design-system/tokens.ts`.
 — Dentro de cada grupo: rating descendente
 ```
 
-**IMPORTANTE:** `useProviders` actualmente no implementa el criterio de "modo guardia" porque el campo `isOnGuardia` no existe aún en el tipo `Provider`. Cuando se agregue, insertar como primer criterio de orden.
+**IMPLEMENTADO:** `useProviders` ya ordena por modo guardia como primer criterio. El campo en el tipo `Provider` se llama `isEmergencyAvailable` (en DB: `is_emergency_available`) — ese es el nombre real, "isOnGuardia" es solo terminología de producto.
 
-El planOrder actual en `useProviders.ts`:
+El planOrder actual en `useProviders.ts` (sin plan cae al fallback `?? 3`):
 ```ts
-const planOrder = { destacado: 0, profesional: 1, basico: 2, null: 3 }
+const planOrder: Record<string, number> = { destacado: 0, profesional: 1, basico: 2 }
 ```
 
 ---
@@ -465,16 +470,14 @@ useProviders(filters?: {
   rubro?: RubroId
   soloVerificados?: boolean
   soloConPlan?: boolean
-}): { providers: Provider[], total: number, isEmpty: boolean }
+}): { providers: Provider[], total: number, isEmpty: boolean, loading: boolean, error: string | null }
 ```
 
-Filtra `mockProviders` donde `status === 'active'`, aplica filtros opcionales, luego ordena:
+Ya consulta **Supabase** (`supabase.from('providers').eq('status','active')`), no mock. Aplica filtros opcionales, mapea filas DB → `Provider` via `toProvider()`, luego ordena:
 ```
-destacado → profesional → basico → null → por rating desc dentro de cada grupo
+en guardia (isEmergencyAvailable) → destacado → profesional → basico → sin plan → rating desc dentro de cada grupo
 ```
-**Pendiente:** agregar `isOnGuardia` como primer criterio cuando se implemente el campo.
-
-Cuando llegue Supabase, solo se reemplaza el body del hook. Los componentes no cambian.
+Los componentes consumen `loading`/`error` para skeletons y estados de error.
 
 ---
 
@@ -617,4 +620,4 @@ npx tsc --noEmit
 
 ---
 
-*Última actualización: 2026-06-15*
+*Última actualización: 2026-06-19*

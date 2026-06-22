@@ -1,0 +1,86 @@
+{
+  "name": "Oficio · Notificar trabajo nuevo",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "oficio-new-job",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-job",
+      "name": "Webhook · trabajo nuevo",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const b = $json.body || $json;\nreturn [{ json: { job_id: b.job_id, title: b.title, rubro: b.rubro, ciudad: b.ciudad } }];"
+      },
+      "id": "extract-job",
+      "name": "Extract job",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/providers?rubro_id=eq.{{ $json.rubro }}&ciudad_id=eq.{{ $json.ciudad }}&status=eq.active&select=name,whatsapp_number",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-providers",
+      "name": "Supabase · prestadores del rubro/ciudad",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const job = $('Extract job').first().json;\nconst arr = $input.first().json;\nconst list = Array.isArray(arr) ? arr : [arr];\nreturn list\n  .filter(p => p && p.whatsapp_number)\n  .map(p => ({ json: { phone: p.whatsapp_number, name: p.name || '', job_id: job.job_id, title: job.title, ciudad: job.ciudad } }));"
+      },
+      "id": "split-providers",
+      "name": "Split prestadores",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.WHATSAPP_API_URL}}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "D360-API-KEY", "value": "={{$env.WHATSAPP_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $json.phone.replace('+','') }}\",\n  \"type\": \"template\",\n  \"template\": {\n    \"name\": \"oficio_trabajo_nuevo\",\n    \"language\": { \"code\": \"es_AR\" },\n    \"components\": [\n      { \"type\": \"body\", \"parameters\": [\n        { \"type\": \"text\", \"text\": \"{{ ($json.name||'').split(' ')[0] }}\" },\n        { \"type\": \"text\", \"text\": \"{{ $json.title }}\" },\n        { \"type\": \"text\", \"text\": \"{{ $json.ciudad }}\" }\n      ] },\n      { \"type\": \"button\", \"sub_type\": \"url\", \"index\": \"0\", \"parameters\": [\n        { \"type\": \"text\", \"text\": \"{{ $json.job_id }}\" }\n      ] }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "send-job",
+      "name": "WhatsApp · aviso de trabajo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    }
+  ],
+  "connections": {
+    "Webhook · trabajo nuevo": { "main": [[{ "node": "Extract job", "type": "main", "index": 0 }]] },
+    "Extract job": { "main": [[{ "node": "Supabase · prestadores del rubro/ciudad", "type": "main", "index": 0 }]] },
+    "Supabase · prestadores del rubro/ciudad": { "main": [[{ "node": "Split prestadores", "type": "main", "index": 0 }]] },
+    "Split prestadores": { "main": [[{ "node": "WhatsApp · aviso de trabajo", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

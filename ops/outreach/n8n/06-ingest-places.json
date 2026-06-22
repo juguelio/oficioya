@@ -1,0 +1,54 @@
+{
+  "name": "Oficio · Ingesta Google Places (SMA)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [ { "field": "cronExpression", "expression": "0 6 * * 1" } ] }
+      },
+      "id": "trigger-places",
+      "name": "Cron semanal (lun 6hs)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ingesta Places con PAGINACIÓN (hasta 3 páginas por búsqueda) + filtro geográfico.\n// Hace los fetch desde el propio Code node (this.helpers.httpRequest), paginando con nextPageToken.\nconst API = $env.GOOGLE_PLACES_API_KEY;\nconst FIELD_MASK = 'places.id,places.displayName,places.internationalPhoneNumber,places.rating,places.userRatingCount,places.formattedAddress,nextPageToken';\nconst QUERIES = [\n  ['plomero','plomero'], ['plomero','destapaciones'], ['plomero','plomero a domicilio'],\n  ['electricista','electricista'], ['electricista','electricista matriculado'], ['electricista','instalaciones electricas'],\n  ['gasista','gasista matriculado'], ['gasista','service de calderas'], ['gasista','plomero gasista'],\n  ['cerrajero','cerrajero'], ['cerrajero','cerrajero 24 horas'],\n  ['carpintero','carpintero'], ['carpintero','carpinteria'],\n  ['pintor','pintor'], ['pintor','pintura de obra'],\n  ['albanil','albanil'], ['albanil','construccion en seco durlock'],\n  ['calefaccionista','calefaccion estufas salamandras'], ['calefaccionista','service de calefaccion'],\n  ['jardinero','jardinero'], ['jardinero','poda de arboles'],\n  ['cabanas','mantenimiento de cabanas'], ['cabanas','administracion de cabanas'],\n  ['techista','techista zinguero'],\n  ['herrero','herreria'],\n  ['tecnico-pc','reparacion de computadoras'],\n  ['flete','flete mudanzas'],\n  ['limpieza','servicio de limpieza'],\n];\nconst rows = [];\nconst seen = new Set();\nasync function search(q, pageToken) {\n  const body = { textQuery: q + ' en San Martin de los Andes, Neuquen', regionCode: 'AR', languageCode: 'es', pageSize: 20 };\n  if (pageToken) body.pageToken = pageToken;\n  return await this.helpers.httpRequest({\n    method: 'POST',\n    url: 'https://places.googleapis.com/v1/places:searchText',\n    headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': API, 'X-Goog-FieldMask': FIELD_MASK },\n    body, json: true,\n  });\n}\nfor (const [rubro, q] of QUERIES) {\n  let token = null;\n  for (let page = 0; page < 3; page++) {\n    let resp;\n    try { resp = await search.call(this, q, token); } catch (e) { break; }\n    const places = (resp && resp.places) ? resp.places : [];\n    for (const p of places) {\n      const digits = (p.internationalPhoneNumber || '').replace(/\\D/g, '');\n      if (!digits) continue;\n      const phone = '+' + digits;\n      if (!phone.startsWith('+54')) continue;\n      const addr = p.formattedAddress || '';\n      if (!/neuqu/i.test(addr) && !/8370/.test(addr)) continue;\n      if (seen.has(phone)) continue;\n      seen.add(phone);\n      rows.push({\n        name: (p.displayName && p.displayName.text) ? p.displayName.text : '',\n        phone, rubro, ciudad: 'san-martin', source: 'google_places',\n        rating_externo: (typeof p.rating === 'number') ? p.rating : null,\n        reviews_externo: (typeof p.userRatingCount === 'number') ? p.userRatingCount : null,\n        address: addr || null, notas: null,\n      });\n    }\n    token = (resp && resp.nextPageToken) ? resp.nextPageToken : null;\n    if (!token) break;\n  }\n}\nreturn [{ json: { rows, count: rows.length } }];"
+      },
+      "id": "ingest-places",
+      "name": "Ingesta Places (paginada)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/prospects?on_conflict=phone",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "resolution=ignore-duplicates,return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.rows }}",
+        "options": {}
+      },
+      "id": "upsert-prospects",
+      "name": "Supabase · upsert prospects",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 0]
+    }
+  ],
+  "connections": {
+    "Cron semanal (lun 6hs)": { "main": [[{ "node": "Ingesta Places (paginada)", "type": "main", "index": 0 }]] },
+    "Ingesta Places (paginada)": { "main": [[{ "node": "Supabase · upsert prospects", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

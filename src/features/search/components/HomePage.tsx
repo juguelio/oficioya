@@ -223,7 +223,7 @@ const orderedCiudades = useMemo(
         </section>
 
         {/* ── TRUST STRIP ──────────────────────────────────────────────────────── */}
-        <section style={{ backgroundColor: '#174F77' }}>
+        <section style={{ backgroundColor: 'var(--color-bosque-dk)' }}>
           <div className="flex divide-x" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
           {[
             { stat: '100%', label: 'Prestadores verificados' },

@@ -25,7 +25,7 @@ const planOrder: Record<string, number> = {
   basico:      2,
 }
 
-function toProvider(row: DbProvider): Provider {
+export function toProvider(row: DbProvider): Provider {
   return {
     id:           row.id,
     name:         row.name,

@@ -613,7 +613,7 @@ export const mockProviders: Provider[] = [
     bio: 'Albañil en obras nuevas y remodelaciones. Experiencia en construcción con madera y piedra local.',
     photos: ['/images/provider-albanil.png'],
     isEmergencyAvailable: false,
-  createdAt: '2025-01-20',
+    createdAt: '2026-03-10',
   },
   {
     id: 'p33',

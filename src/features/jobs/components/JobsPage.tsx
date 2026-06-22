@@ -2,8 +2,7 @@ import { useState, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useCityStore } from '@/features/search/store'
-import { useJobStore } from '@/features/jobs/store'
-import { useJobs } from '@/features/jobs/hooks'
+import { useOpenJobs } from '@/features/jobs/hooks'
 import { Logo } from '@/shared/components'
 import { cn } from '@/shared/utils/cn'
 import { formatARS } from '@/shared/utils/formatARS'
@@ -41,20 +40,18 @@ export function JobsPage() {
 
   const [rubroFilter, setRubroFilter] = useState<RubroId | null>(null)
 
-  // Para calcular rubros activos usamos todos los jobs de la ciudad (sin filtro de rubro)
-  const allJobsInCity = useJobStore(s =>
-    ciudadId ? s.jobs.filter(j => j.ciudad === ciudadId) : s.jobs
-  )
+  // Todos los trabajos de la ciudad (sin filtro de rubro), desde la vista sanitizada
+  const { jobs: cityJobs, quoteCountByJob } = useOpenJobs({ ciudad: ciudadId })
 
   const activeRubros = useMemo(() => {
-    const ids = new Set(allJobsInCity.map(j => j.rubro))
+    const ids = new Set(cityJobs.map(j => j.rubro))
     return rubros.filter(r => ids.has(r.id as RubroId))
-  }, [allJobsInCity])
+  }, [cityJobs])
 
-  const { jobs, quoteCountByJob } = useJobs({
-    ciudad: ciudadId,
-    rubro:  rubroFilter,
-  })
+  const jobs = useMemo(
+    () => (rubroFilter ? cityJobs.filter(j => j.rubro === rubroFilter) : cityJobs),
+    [cityJobs, rubroFilter],
+  )
 
   const ciudadData = ciudades.find(c => c.id === ciudadId)
 

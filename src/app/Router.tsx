@@ -9,15 +9,19 @@ const EmergencyPage      = lazy(() => import('@/features/search/components/Emerg
 const OnboardingPage     = lazy(() => import('@/features/auth/components/OnboardingPage').then(m => ({ default: m.OnboardingPage })))
 const VerificationPage   = lazy(() => import('@/features/auth/components/VerificationPage').then(m => ({ default: m.VerificationPage })))
 const ProviderSignup     = lazy(() => import('@/pages/ProviderSignup').then(m => ({ default: m.ProviderSignup })))
+const ConvOnboarding     = lazy(() => import('@/pages/ConversationalOnboarding').then(m => ({ default: m.ConversationalOnboarding })))
 const ProviderLogin      = lazy(() => import('@/pages/ProviderLogin').then(m => ({ default: m.ProviderLogin })))
 const ProviderDashboard  = lazy(() => import('@/pages/ProviderDashboard').then(m => ({ default: m.ProviderDashboard })))
-// Trabajos (jobs/presupuestos) ocultos hasta migrar de mock a Supabase — servían datos
-// falsos a usuarios reales. Componentes en src/features/jobs/ intactos para reactivar.
+const JobsPage           = lazy(() => import('@/features/jobs/components/JobsPage').then(m => ({ default: m.JobsPage })))
+const PostJobPage        = lazy(() => import('@/features/jobs/components/PostJobPage').then(m => ({ default: m.PostJobPage })))
+const JobDetailPage      = lazy(() => import('@/features/jobs/components/JobDetailPage').then(m => ({ default: m.JobDetailPage })))
 
 export const router = createBrowserRouter([
   // Auth
   { path: '/onboarding',         element: <OnboardingPage /> },
-  { path: '/registro/prestador', element: <ProviderSignup /> },
+  { path: '/registro/prestador', element: <ConvOnboarding /> },
+  { path: '/sumarme',            element: <Navigate to="/registro/prestador" replace /> },
+  { path: '/registro/clasico',   element: <ProviderSignup /> },
   { path: '/verificacion',       element: <VerificationPage /> },
   { path: '/login',              element: <ProviderLogin /> },
   { path: '/registrarme',        element: <Navigate to="/registro/prestador" replace /> },
@@ -29,10 +33,10 @@ export const router = createBrowserRouter([
   { path: '/planes',             element: <PricingPage /> },
   { path: '/emergencias',        element: <EmergencyPage /> },
 
-  // Trabajos ocultos en v1 — redirigen a home para no exponer mock data
-  { path: '/trabajos',           element: <Navigate to="/" replace /> },
-  { path: '/trabajos/nuevo',     element: <Navigate to="/" replace /> },
-  { path: '/trabajos/:id',       element: <Navigate to="/" replace /> },
+  // Trabajos (jobs + presupuestos) — backend Supabase
+  { path: '/trabajos',           element: <JobsPage /> },
+  { path: '/trabajos/nuevo',     element: <PostJobPage /> },
+  { path: '/trabajos/:id',       element: <JobDetailPage /> },
 
   // Dashboard prestador (fase 1: auth mock vía store)
   { path: '/dashboard',          element: <ProviderDashboard /> },

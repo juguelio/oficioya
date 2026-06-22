@@ -5,17 +5,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useCityStore } from '@/features/search/store'
-import { useJobStore } from '@/features/jobs/store'
+import { postJob } from '@/features/jobs/hooks'
+import { sendNewJobAlert } from '@/lib/notifications'
 import { cn } from '@/shared/utils/cn'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
 
 const schema = z.object({
-  rubro:       z.string().min(1, 'Elegí un rubro'),
-  ciudad:      z.string().min(1, 'Elegí una ciudad'),
-  title:       z.string().min(10, 'El título debe tener al menos 10 caracteres'),
-  description: z.string().min(20, 'Describí el trabajo con más detalle'),
-  budgetMax:   z.coerce.number().optional(),
-  authorName:  z.string().min(2, 'Ingresá tu nombre'),
+  rubro:        z.string().min(1, 'Elegí un rubro'),
+  ciudad:       z.string().min(1, 'Elegí una ciudad'),
+  title:        z.string().min(10, 'El título debe tener al menos 10 caracteres'),
+  description:  z.string().min(20, 'Describí el trabajo con más detalle'),
+  budgetMax:    z.coerce.number().optional(),
+  authorName:   z.string().min(2, 'Ingresá tu nombre'),
+  authorPhone:  z.string().min(10, 'Incluí tu WhatsApp con código +54').startsWith('+54', 'Incluí el código +54'),
 })
 type FormData = z.infer<typeof schema>
 
@@ -24,53 +26,60 @@ type FormData = z.infer<typeof schema>
 export function PostJobPage() {
   const navigate  = useNavigate()
   const storedCiudadId = useCityStore(s => s.ciudadId)
-  const addJob    = useJobStore(s => s.addJob)
 
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } =
     useForm<FormData>({
       resolver: zodResolver(schema),
       defaultValues: {
         ciudad: storedCiudadId ?? '',
+        authorPhone: '+549',
       },
     })
 
   const selectedRubro  = watch('rubro')
   const selectedCiudad = watch('ciudad')
 
-  const [submitted, setSubmitted] = useState(false)
-  const [newJobId, setNewJobId]   = useState<string | null>(null)
+  const [result, setResult]   = useState<{ id: string; token: string } | null>(null)
+  const [error, setError]     = useState<string | null>(null)
 
-  function onSubmit(data: FormData) {
-    const id = addJob({
-      rubro:      data.rubro as RubroId,
-      ciudad:     data.ciudad as CiudadId,
-      title:      data.title,
+  async function onSubmit(data: FormData) {
+    setError(null)
+    const res = await postJob({
+      rubro:       data.rubro as RubroId,
+      ciudad:      data.ciudad as CiudadId,
+      title:       data.title,
       description: data.description,
-      budgetMax:  data.budgetMax || undefined,
-      authorName: data.authorName,
-      photos:     [],
+      budgetMax:   data.budgetMax || undefined,
+      authorName:  data.authorName,
+      authorPhone: data.authorPhone,
     })
-    setNewJobId(id)
-    setSubmitted(true)
+    if (!res) { setError('No se pudo publicar el trabajo. Probá de nuevo.'); return }
+    // fire-and-forget: avisar a prestadores del rubro/ciudad vía n8n
+    sendNewJobAlert({ jobId: res.id, title: data.title, rubro: data.rubro, ciudad: data.ciudad })
+    setResult(res)
   }
 
-  if (submitted && newJobId) {
+  if (result) {
+    const trackUrl = `/trabajos/${result.id}?t=${result.token}`
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
         <span className="text-6xl mb-5">🎉</span>
         <h2 className="font-black text-2xl mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
           ¡Trabajo publicado!
         </h2>
-        <p className="text-sm mb-8" style={{ color: 'var(--color-muted)' }}>
-          Los prestadores del corredor ya pueden ver tu trabajo y enviarte presupuestos.
+        <p className="text-sm mb-3" style={{ color: 'var(--color-muted)' }}>
+          Los prestadores ya pueden verlo y enviarte presupuestos.
+        </p>
+        <p className="text-xs mb-8 px-4 py-3 rounded-xl" style={{ color: 'var(--color-nieve)', backgroundColor: 'var(--color-sombra)', border: '1px solid var(--color-line)' }}>
+          📌 Guardá este link privado para ver y comparar los presupuestos. Es tu acceso, no lo compartas.
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <button
-            onClick={() => navigate(`/trabajos/${newJobId}`)}
+            onClick={() => navigate(trackUrl)}
             className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
             style={{ backgroundColor: 'var(--color-bosque-lt)' }}
           >
-            Ver mi trabajo
+            Ver mis presupuestos
           </button>
           <button
             onClick={() => navigate('/trabajos')}
@@ -240,8 +249,27 @@ export function PostJobPage() {
               }}
             />
             {errors.authorName && <p className="text-xs mt-1" style={{ color: '#ffb4ab' }}>{errors.authorName.message}</p>}
+          </div>
+
+          {/* Tu WhatsApp */}
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+              Tu WhatsApp
+            </label>
+            <input
+              {...register('authorPhone')}
+              type="tel"
+              placeholder="+5492972..."
+              className="w-full h-12 px-4 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
+              style={{
+                backgroundColor: 'var(--color-sombra)',
+                border: `1px solid ${errors.authorPhone ? '#ffb4ab' : 'var(--color-line)'}`,
+                color: 'var(--color-nieve)',
+              }}
+            />
+            {errors.authorPhone && <p className="text-xs mt-1" style={{ color: '#ffb4ab' }}>{errors.authorPhone.message}</p>}
             <p className="text-xs mt-1.5" style={{ color: 'var(--color-muted)' }}>
-              Solo se muestra a prestadores verificados que envíen presupuesto.
+              Privado: nunca se muestra a los prestadores. Sólo lo usamos para tu link de seguimiento.
             </p>
           </div>
 
@@ -253,6 +281,7 @@ export function PostJobPage() {
         className="fixed bottom-0 left-0 w-full px-5 py-4 border-t"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
+        {error && <p className="text-xs mb-2 text-center" style={{ color: '#ffb4ab' }}>{error}</p>}
         <button
           onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting}

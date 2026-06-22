@@ -1,0 +1,126 @@
+{
+  "name": "Oficio · Outreach Outbound",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "cronExpression", "expression": "0 11 * * 1-5" }
+          ]
+        }
+      },
+      "id": "trigger-outbound",
+      "name": "Cron (L-V 11hs)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/prospects?status=eq.nuevo&select=*&limit=25",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-prospects",
+      "name": "Supabase · prospects nuevo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normaliza la respuesta (array) a un item por prospecto.\nconst out = [];\nfor (const i of $input.all()) {\n  const j = i.json;\n  if (Array.isArray(j)) { for (const p of j) out.push({ json: p }); }\n  else out.push({ json: j });\n}\nreturn out;"
+      },
+      "id": "split-prospects",
+      "name": "Split prospects",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.WHATSAPP_API_URL}}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "D360-API-KEY", "value": "={{$env.WHATSAPP_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $json.phone.replace('+','') }}\",\n  \"type\": \"template\",\n  \"template\": {\n    \"name\": \"oficio_primer_contacto\",\n    \"language\": { \"code\": \"es_AR\" },\n    \"components\": [\n      { \"type\": \"body\", \"parameters\": [\n        { \"type\": \"text\", \"text\": \"{{ ($json.name||'').split(' ')[0] }}\" },\n        { \"type\": \"text\", \"text\": \"{{ $json.ciudad }}\" },\n        { \"type\": \"text\", \"text\": \"{{ $json.rubro }}\" }\n      ] }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "send-template",
+      "name": "WhatsApp · plantilla 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/outreach_log",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"provider_phone\": \"{{ $('Split prospects').item.json.phone }}\",\n  \"message_sent\": \"plantilla:oficio_primer_contacto\"\n}",
+        "options": {}
+      },
+      "id": "log-outreach",
+      "name": "Supabase · insert outreach_log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/prospects?phone=eq.{{ encodeURIComponent($('Split prospects').item.json.phone) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"status\": \"contactado\" }",
+        "options": {}
+      },
+      "id": "mark-contacted",
+      "name": "Supabase · prospects=contactado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 0]
+    }
+  ],
+  "connections": {
+    "Cron (L-V 11hs)": { "main": [[{ "node": "Supabase · prospects nuevo", "type": "main", "index": 0 }]] },
+    "Supabase · prospects nuevo": { "main": [[{ "node": "Split prospects", "type": "main", "index": 0 }]] },
+    "Split prospects": { "main": [[{ "node": "WhatsApp · plantilla 1", "type": "main", "index": 0 }]] },
+    "WhatsApp · plantilla 1": { "main": [[{ "node": "Supabase · insert outreach_log", "type": "main", "index": 0 }]] },
+    "Supabase · insert outreach_log": { "main": [[{ "node": "Supabase · prospects=contactado", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

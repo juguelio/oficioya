@@ -1,12 +1,16 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { mockProviders } from '@/data/mock-providers'
-import { useDashboardStore, getCertScore, getProviderReviews, getAverageRating } from '@/features/dashboard/store'
+import { useDashboardStore, getAverageRating } from '@/features/dashboard/store'
+import { useDashboardData } from '@/features/dashboard/hooks'
 import { CERT_CONFIGS, TRUST_BADGES, getTrustBadge, MAX_CERT_SCORE } from '@/features/dashboard/types'
 import { formatARS } from '@/shared/utils/formatARS'
 import type { CertType, Review, Certification } from '@/features/dashboard/types'
 import type { Provider } from '@/features/providers/types'
-import { useState } from 'react'
+import type { DbProvider } from '@/lib/database.types'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
+import { toProvider } from '@/features/providers/hooks/useProviders'
 
 const FALLBACK_PHOTO = '/images/user-avatar.png'
 
@@ -22,17 +26,106 @@ function timeAgo(iso: string): string {
 // ─── ProviderDashboard ────────────────────────────────────────────────────────
 
 export function ProviderDashboard() {
+  const navigate = useNavigate()
+  const { user, loading, signOut } = useAuth()
   const activeProviderId = useDashboardStore(s => s.activeProviderId)
   const setActiveProvider = useDashboardStore(s => s.setActiveProvider)
   const clearActiveProvider = useDashboardStore(s => s.clearActiveProvider)
 
-  const provider = mockProviders.find(p => p.id === activeProviderId) ?? null
+  // Sesión real: cargar el prestador logueado desde Supabase por auth_user_id.
+  // El selector mock queda solo como fallback de desarrollo SIN sesión.
+  const [authProvider, setAuthProvider] = useState<Provider | null>(null)
+  const [authState, setAuthState] = useState<'loading' | 'none' | 'ready'>('loading')
 
+  useEffect(() => {
+    if (loading) return
+    if (!user) { setAuthState('none'); return }
+    let cancelled = false
+    setAuthState('loading')
+    supabase
+      .from('providers')
+      .select('*')
+      .eq('auth_user_id', user.id)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (cancelled) return
+        if (error || !data) { setAuthState('none'); return }
+        setAuthProvider(toProvider(data as DbProvider))
+        setAuthState('ready')
+      })
+    return () => { cancelled = true }
+  }, [user, loading])
+
+  async function handleSignOut() {
+    await signOut()
+    navigate('/')
+  }
+
+  // ── Usuario autenticado ──────────────────────────────────────────────────
+  if (user) {
+    if (authState === 'loading') return <DashboardLoading />
+    if (authState === 'ready' && authProvider) {
+      return <DashboardMain provider={authProvider} onExit={handleSignOut} isLive />
+    }
+    // Logueado pero sin fila de prestador todavía (trigger pendiente / verificación)
+    return <DashboardPending onExit={handleSignOut} />
+  }
+
+  // ── Sin sesión: fallback mock (solo desarrollo) ──────────────────────────
+  const provider = mockProviders.find(p => p.id === activeProviderId) ?? null
   if (!provider) {
     return <ProviderSelector onSelect={setActiveProvider} />
   }
+  return <DashboardMain provider={provider} onExit={clearActiveProvider} isLive={false} />
+}
 
-  return <DashboardMain provider={provider} onExit={clearActiveProvider} />
+// ─── Estados de sesión real ─────────────────────────────────────────────────────
+
+function DashboardLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <div className="w-full max-w-xl px-5 space-y-3 animate-pulse">
+        <div className="h-24 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="h-40 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="h-40 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+      </div>
+    </div>
+  )
+}
+
+type DashboardPendingProps = { onExit: () => void }
+
+function DashboardPending({ onExit }: DashboardPendingProps) {
+  const navigate = useNavigate()
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center text-center px-6" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <div className="max-w-sm space-y-4">
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
+          Tu perfil está en preparación
+        </h1>
+        <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+          Estamos terminando de crear tu perfil de prestador. Si recién te registraste,
+          puede tardar unos segundos. Completá la verificación para activarlo.
+        </p>
+        <div className="flex flex-col gap-2 pt-2">
+          <button
+            onClick={() => navigate('/verificacion')}
+            className="w-full h-12 rounded-[--radius-full] font-bold text-sm transition-all active:scale-[0.98]"
+            style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
+          >
+            Ir a verificación
+          </button>
+          <button
+            onClick={onExit}
+            className="w-full h-12 text-sm font-semibold transition-colors"
+            style={{ color: 'var(--color-muted)' }}
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 // ─── ProviderSelector ─────────────────────────────────────────────────────────
@@ -99,23 +192,24 @@ function ProviderSelector({ onSelect }: ProviderSelectorProps) {
 
 // ─── DashboardMain ────────────────────────────────────────────────────────────
 
-type DashboardMainProps = { provider: Provider; onExit: () => void }
+type DashboardMainProps = { provider: Provider; onExit: () => void; isLive: boolean }
 
-function DashboardMain({ provider, onExit }: DashboardMainProps) {
+function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
   const [tab, setTab] = useState<'resumen' | 'certs' | 'resenas'>('resumen')
   const navigate = useNavigate()
 
-  const certifications = useDashboardStore(s => s.certifications)
-  const reviews        = useDashboardStore(s => s.reviews)
-  const guardiaState   = useDashboardStore(s => s.guardiaState)
-  const toggleGuardia  = useDashboardStore(s => s.toggleGuardia)
+  const data = useDashboardData({
+    providerId:     provider.id,
+    defaultGuardia: provider.isEmergencyAvailable,
+    isLive,
+  })
 
-  const myCerts   = certifications.filter(c => c.providerId === provider.id)
-  const myReviews = getProviderReviews(reviews, provider.id)
-  const score     = getCertScore(certifications, provider.id)
-  const badge     = getTrustBadge(score)
-  const isOnGuardia = provider.id in guardiaState ? guardiaState[provider.id] : provider.isEmergencyAvailable
-  const avgRating = getAverageRating(myReviews)
+  const myCerts     = data.certifications
+  const myReviews   = data.reviews
+  const score       = data.score
+  const badge       = getTrustBadge(score)
+  const isOnGuardia = data.isOnGuardia
+  const avgRating   = getAverageRating(myReviews)
 
   const photo = provider.photos?.[0] ?? FALLBACK_PHOTO
 
@@ -199,7 +293,7 @@ function DashboardMain({ provider, onExit }: DashboardMainProps) {
             <ResumenTab
               provider={provider}
               isOnGuardia={isOnGuardia}
-              onToggleGuardia={() => toggleGuardia(provider.id, provider.isEmergencyAvailable)}
+              onToggleGuardia={data.toggleGuardia}
               avgRating={avgRating}
               reviewCount={myReviews.length}
               score={score}
@@ -208,8 +302,9 @@ function DashboardMain({ provider, onExit }: DashboardMainProps) {
           )}
           {tab === 'certs' && (
             <CertificacionesTab
-              providerId={provider.id}
               certifications={myCerts}
+              onAdd={data.addCertification}
+              onRemove={data.removeCertification}
             />
           )}
           {tab === 'resenas' && (
@@ -367,17 +462,19 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
 
 // ─── CertificacionesTab ───────────────────────────────────────────────────────
 
-type CertificacionesTabProps = { providerId: string; certifications: Certification[] }
+type CertificacionesTabProps = {
+  certifications: Certification[]
+  onAdd: (type: CertType, file: File) => void
+  onRemove: (type: CertType) => void
+}
 
-function CertificacionesTab({ providerId, certifications }: CertificacionesTabProps) {
-  const addCertification    = useDashboardStore(s => s.addCertification)
-  const removeCertification = useDashboardStore(s => s.removeCertification)
-  const fileInputRefs       = useRef<Record<string, HTMLInputElement | null>>({})
+function CertificacionesTab({ certifications, onAdd, onRemove }: CertificacionesTabProps) {
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   function handleFileChange(type: CertType, e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    addCertification(providerId, type, file.name)
+    onAdd(type, file)
     // reset input para permitir re-subir el mismo archivo
     e.target.value = ''
   }
@@ -456,7 +553,7 @@ function CertificacionesTab({ providerId, certifications }: CertificacionesTabPr
                   </span>
                   {isVerified ? (
                     <button
-                      onClick={() => removeCertification(providerId, config.type)}
+                      onClick={() => onRemove(config.type)}
                       className="w-7 h-7 flex items-center justify-center rounded-full active:scale-90 transition-all"
                       style={{ backgroundColor: 'rgba(255,180,171,0.15)', color: '#ffb4ab' }}
                       title="Eliminar"

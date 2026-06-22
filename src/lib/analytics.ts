@@ -9,7 +9,11 @@ const host = (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ?? 'https
 let enabled = false
 
 export function initAnalytics(): void {
-  if (enabled || !key) return
+  if (enabled) return
+  if (!key) {
+    console.warn('[analytics] VITE_POSTHOG_KEY no está configurado — el tracking (ADR-001) es no-op.')
+    return
+  }
   posthog.init(key, {
     api_host: host,
     capture_pageview: true,

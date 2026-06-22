@@ -1,0 +1,132 @@
+{
+  "name": "Oficio · Outreach Follow-up",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "cronExpression", "expression": "0 12 * * 1-5" }
+          ]
+        }
+      },
+      "id": "trigger-followup",
+      "name": "Cron diario (12hs)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/outreach_log?follow_up_scheduled_at=lte.{{ $now.toISO() }}&converted=is.false&select=id,provider_phone&limit=30",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-due",
+      "name": "Supabase · follow-ups vencidos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = [];\nfor (const i of $input.all()) {\n  const j = i.json;\n  if (Array.isArray(j)) { for (const r of j) out.push({ json: r }); }\n  else out.push({ json: j });\n}\nreturn out;"
+      },
+      "id": "split-due",
+      "name": "Split due",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/prospects?phone=eq.{{ encodeURIComponent($json.provider_phone) }}&select=name,rubro,ciudad&limit=1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-ctx",
+      "name": "Supabase · context",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const due = $('Split due').item.json;\nconst arr = $input.first().json;\nconst p = Array.isArray(arr) ? (arr[0] || {}) : (arr || {});\nreturn [{ json: { id: due.id, phone: due.provider_phone, name: p.name || '', rubro: p.rubro || '', ciudad: p.ciudad || '' } }];"
+      },
+      "id": "merge-followup",
+      "name": "Merge follow-up",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.WHATSAPP_API_URL}}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "D360-API-KEY", "value": "={{$env.WHATSAPP_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $json.phone.replace('+','') }}\",\n  \"type\": \"template\",\n  \"template\": {\n    \"name\": \"oficio_followup\",\n    \"language\": { \"code\": \"es_AR\" },\n    \"components\": [\n      { \"type\": \"body\", \"parameters\": [\n        { \"type\": \"text\", \"text\": \"{{ ($json.name||'').split(' ')[0] }}\" },\n        { \"type\": \"text\", \"text\": \"{{ $json.rubro }}\" },\n        { \"type\": \"text\", \"text\": \"{{ $json.ciudad }}\" }\n      ] }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "send-followup",
+      "name": "WhatsApp · follow-up",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/outreach_log?id=eq.{{ $('Merge follow-up').item.json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"follow_up_scheduled_at\": null }",
+        "options": {}
+      },
+      "id": "clear-followup",
+      "name": "Supabase · limpiar follow_up",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "Cron diario (12hs)": { "main": [[{ "node": "Supabase · follow-ups vencidos", "type": "main", "index": 0 }]] },
+    "Supabase · follow-ups vencidos": { "main": [[{ "node": "Split due", "type": "main", "index": 0 }]] },
+    "Split due": { "main": [[{ "node": "Supabase · context", "type": "main", "index": 0 }]] },
+    "Supabase · context": { "main": [[{ "node": "Merge follow-up", "type": "main", "index": 0 }]] },
+    "Merge follow-up": { "main": [[{ "node": "WhatsApp · follow-up", "type": "main", "index": 0 }]] },
+    "WhatsApp · follow-up": { "main": [[{ "node": "Supabase · limpiar follow_up", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}
