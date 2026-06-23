@@ -119,6 +119,7 @@ export function ConversationalOnboarding() {
   const [textValue,    setTextValue]    = useState('')
   const [photoFile,    setPhotoFile]    = useState<File | null>(null)
   const [submitError,  setSubmitError]  = useState<string | null>(null)
+  const [referralOpen, setReferralOpen] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const scrollRef    = useRef<HTMLDivElement>(null)
@@ -229,11 +230,15 @@ export function ConversationalOnboarding() {
     sendNewProviderAlert({ name: draft.name, email: draft.email, rubro: draft.rubro_id, ciudad: draft.ciudad_id, plan: draft.subscription_tier_id || 'basico' })
 
     setPhase('done')
-    navigate('/verificacion')
+    setReferralOpen(true) // último paso: pedir referidos (warm leads) antes de verificación
   }
 
   const ciudadLabel = ciudades.find(c => c.id === draft.ciudad_id)?.label ?? ''
   const rubroLabel  = rubros.find(r => r.id === draft.rubro_id)?.label ?? ''
+
+  if (referralOpen) {
+    return <ReferralStep referrer={draft.name} ciudad={draft.ciudad_id} onDone={() => navigate('/verificacion')} />
+  }
 
   return (
     <div className="flex flex-col h-[100dvh] text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
@@ -405,6 +410,83 @@ export function ConversationalOnboarding() {
       </div>
     )
   }
+}
+
+// ─── ReferralStep — loop de referidos (warm leads) ───────────────────────────
+
+type ReferralRow = { name: string; phone: string }
+
+function ReferralStep({ referrer, ciudad, onDone }: { referrer: string; ciudad: string; onDone: () => void }) {
+  const [rows, setRows]       = useState<ReferralRow[]>([{ name: '', phone: '+549' }, { name: '', phone: '+549' }])
+  const [sending, setSending] = useState(false)
+
+  function update(i: number, field: keyof ReferralRow, value: string) {
+    setRows(rs => rs.map((r, j) => (j === i ? { ...r, [field]: value } : r)))
+  }
+
+  async function send() {
+    const referrals = rows
+      .filter(r => r.phone.replace(/\D/g, '').length >= 11)
+      .map(r => ({ name: r.name.trim(), phone: r.phone.trim() }))
+    if (referrals.length === 0) { onDone(); return }
+    setSending(true)
+    await supabase.rpc('submit_referral', { p_referrer: referrer, p_ciudad: ciudad, p_referrals: referrals })
+    setSending(false)
+    onDone()
+  }
+
+  return (
+    <div className="flex flex-col min-h-[100dvh] px-6 pt-16 pb-10 text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <div className="max-w-xl mx-auto w-full">
+        <span className="text-5xl">🙌</span>
+        <h1 className="text-2xl font-bold mt-4 mb-2" style={{ letterSpacing: '-0.02em' }}>¡Listo, ya estás dentro!</h1>
+        <p className="text-sm text-[--color-muted] mb-6">
+          Una última y nos ayudás un montón: ¿conocés 1 o 2 colegas de confianza que también podrían sumarse?
+          Les llega la invitación de tu parte.
+        </p>
+
+        <div className="space-y-3">
+          {rows.map((r, i) => (
+            <div key={i} className="flex gap-2">
+              <input
+                value={r.name}
+                onChange={e => update(i, 'name', e.target.value)}
+                placeholder="Nombre del colega"
+                className="flex-1 h-12 px-4 rounded-[--radius-full] text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+              />
+              <input
+                value={r.phone}
+                onChange={e => update(i, 'phone', e.target.value)}
+                type="tel"
+                inputMode="tel"
+                placeholder="+5492972..."
+                className="w-40 h-12 px-3 rounded-[--radius-full] text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-2 mt-8">
+          <button
+            type="button"
+            onClick={send}
+            disabled={sending}
+            className="w-full py-3.5 rounded-[--radius-full] font-bold text-base transition-all active:scale-[0.98] disabled:opacity-60"
+            style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
+          >
+            {sending ? 'Enviando…' : 'Recomendar y terminar'}
+          </button>
+          <button
+            type="button"
+            onClick={onDone}
+            className="w-full py-2 text-sm font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors"
+          >
+            Saltar
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function placeholderFor(phase: Phase): string {

@@ -443,6 +443,10 @@ export type Database = {
         Args: { p_token: string; p_quote_id: string }
         Returns: Json
       }
+      submit_referral: {
+        Args: { p_referrer: string; p_ciudad: string; p_referrals: Json }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
