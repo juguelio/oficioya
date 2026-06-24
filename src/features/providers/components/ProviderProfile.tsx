@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,6 +8,10 @@ import { ciudades, rubros } from '@/design-system/tokens'
 import { useDashboardStore, getProviderReviews, getAverageRating } from '@/features/dashboard/store'
 import { track } from '@/lib/analytics'
 import { cn } from '@/shared/utils/cn'
+import { supabase } from '@/lib/supabase'
+import { toProvider } from '@/features/providers/hooks/useProviders'
+import type { Provider } from '@/features/providers/types'
+import type { DbProviderPublic } from '@/lib/database.types'
 
 // ─── Placeholder images per rubro ────────────────────────────────────────────
 const FALLBACK_IMG = '/images/provider-carpintera.png'
@@ -45,7 +49,28 @@ export function ProviderProfile() {
 
   const selectedRating = watch('rating')
 
-  const provider = mockProviders.find(p => p.id === id)
+  // undefined = cargando · null = no encontrado
+  const [provider, setProvider] = useState<Provider | null | undefined>(undefined)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      if (!id) { setProvider(null); return }
+      const { data } = await supabase.from('providers_public').select('*').eq('id', id).maybeSingle()
+      if (cancelled) return
+      if (data) { setProvider(toProvider(data as DbProviderPublic)); return }
+      setProvider(mockProviders.find(p => p.id === id) ?? null)  // fallback ids mock viejos
+    })()
+    return () => { cancelled = true }
+  }, [id])
+
+  if (provider === undefined) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-[--color-muted]" style={{ backgroundColor: 'var(--color-noche)' }}>
+        Cargando…
+      </div>
+    )
+  }
 
   if (!provider) {
     return (
@@ -119,26 +144,31 @@ export function ProviderProfile() {
           />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 50%)' }} />
 
-          {/* Rating badge */}
-          <div
-            className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 border border-[--color-line]"
-            style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
-          >
-            <span className="text-[--color-bosque-lt] text-sm leading-none">★</span>
-            <span className="text-[--color-nieve] text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>
-              {provider.rating.toFixed(1)}
-            </span>
-          </div>
+          {/* Rating badge — Oficio si reclamado; si no, señal externa (Google) etiquetada. Nunca
+              mostramos el rating de Oficio (0) de un perfil sin reclamar como si fuera real. */}
+          {provider.claimed && provider.rating > 0 ? (
+            <div className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 border border-[--color-line]" style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}>
+              <span className="text-[--color-bosque-lt] text-sm leading-none">★</span>
+              <span className="text-[--color-nieve] text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>{provider.rating.toFixed(1)}</span>
+            </div>
+          ) : provider.externalRating ? (
+            <div className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1.5 border border-[--color-line]" style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}>
+              <span className="text-[#E8A020] text-sm leading-none">★</span>
+              <span className="text-[--color-nieve] text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>{provider.externalRating.toFixed(1)}</span>
+              <span className="text-[--color-muted] text-[10px] font-semibold">Google</span>
+            </div>
+          ) : null}
 
-          {/* Verified badge */}
-          {provider.isVerified && (
-            <div
-              className="absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-bold border border-[--color-line]"
-              style={{ backgroundColor: 'rgba(14,21,16,0.75)', color: 'var(--color-bosque-lt)' }}
-            >
+          {/* Badge: verificado (verde) si lo está; "Sin confirmar" (muted) si es un perfil sin reclamar */}
+          {provider.isVerified ? (
+            <div className="absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-bold border border-[--color-line]" style={{ backgroundColor: 'rgba(14,21,16,0.75)', color: 'var(--color-bosque-lt)' }}>
               ✓ Verificado
             </div>
-          )}
+          ) : !provider.claimed ? (
+            <div className="absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-bold border border-[--color-line]" style={{ backgroundColor: 'rgba(14,21,16,0.75)', color: 'var(--color-muted)' }}>
+              Sin confirmar
+            </div>
+          ) : null}
         </div>
 
         {/* ── Info block ─────────────────────────────────────────────────────────── */}
@@ -173,8 +203,22 @@ export function ProviderProfile() {
               <p className="text-xs text-[--color-muted] uppercase tracking-widest">Trabajos</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-[--color-nieve]">{provider.rating.toFixed(1)}</p>
-              <p className="text-xs text-[--color-muted] uppercase tracking-widest">Calificación</p>
+              {provider.claimed && provider.rating > 0 ? (
+                <>
+                  <p className="text-xl font-bold text-[--color-nieve]">{provider.rating.toFixed(1)}</p>
+                  <p className="text-xs text-[--color-muted] uppercase tracking-widest">Calificación</p>
+                </>
+              ) : provider.externalRating ? (
+                <>
+                  <p className="text-xl font-bold text-[--color-nieve]">★ {provider.externalRating.toFixed(1)}</p>
+                  <p className="text-xs text-[--color-muted] uppercase tracking-widest">en Google{provider.externalReviews ? ` · ${provider.externalReviews}` : ''}</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-xl font-bold text-[--color-muted]">—</p>
+                  <p className="text-xs text-[--color-muted] uppercase tracking-widest">Calificación</p>
+                </>
+              )}
             </div>
             <div>
               <p className="text-xl font-bold" style={{ color: provider.isVerified ? 'var(--color-bosque-lt)' : 'var(--color-muted)' }}>
@@ -194,27 +238,39 @@ export function ProviderProfile() {
             </div>
           )}
 
-          {/* WhatsApp CTA — primary action */}
-          <a
-            href={waLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => track('whatsapp_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'profile' })}
-            className={cn(
-              'flex w-full items-center justify-center gap-2 rounded-[--radius-full]',
-              'py-4 font-bold text-white text-base',
-              'active:scale-[0.98] transition-transform shadow-lg',
-            )}
-            style={{ background: '#25D366' }}
-          >
-            <IconWhatsApp />
-            Contactar por WhatsApp
-          </a>
-
-          {/* Secondary: phone number visible */}
-          <p className="text-center text-xs text-[--color-muted] mt-3 mb-8" style={{ fontFamily: 'var(--font-mono)' }}>
-            {provider.phone.replace(/(\+54)(9)(\d{4})(\d{3})(\d{4})/, '$1 $2 $3 $4-$5')}
-          </p>
+          {/* Contacto — sólo si el perfil está reclamado (activo). Si no, queda oculto
+              hasta que el prestador confirme su membresía. */}
+          {provider.claimed ? (
+            <>
+              <a
+                href={waLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track('whatsapp_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'profile' })}
+                className={cn(
+                  'flex w-full items-center justify-center gap-2 rounded-[--radius-full]',
+                  'py-4 font-bold text-white text-base',
+                  'active:scale-[0.98] transition-transform shadow-lg',
+                )}
+                style={{ background: '#25D366' }}
+              >
+                <IconWhatsApp />
+                Contactar por WhatsApp
+              </a>
+              <p className="text-center text-xs text-[--color-muted] mt-3 mb-8" style={{ fontFamily: 'var(--font-mono)' }}>
+                {provider.phone.replace(/(\+54)(9)(\d{4})(\d{3})(\d{4})/, '$1 $2 $3 $4-$5')}
+              </p>
+            </>
+          ) : (
+            <div className="rounded-[--radius-xl] px-5 py-5 mb-8 text-center border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+              <p className="text-sm font-bold text-[--color-nieve] mb-1">
+                Este profesional todavía no activó su perfil en Oficio.
+              </p>
+              <p className="text-xs text-[--color-muted] leading-relaxed">
+                Lo encontramos en directorios locales. Cuando confirme su perfil vas a poder contactarlo directo por acá.
+              </p>
+            </div>
+          )}
 
         </div>
 

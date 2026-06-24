@@ -15,6 +15,7 @@ const ProviderDashboard  = lazy(() => import('@/pages/ProviderDashboard').then(m
 const JobsPage           = lazy(() => import('@/features/jobs/components/JobsPage').then(m => ({ default: m.JobsPage })))
 const PostJobPage        = lazy(() => import('@/features/jobs/components/PostJobPage').then(m => ({ default: m.PostJobPage })))
 const JobDetailPage      = lazy(() => import('@/features/jobs/components/JobDetailPage').then(m => ({ default: m.JobDetailPage })))
+const ClaimProfilePage   = lazy(() => import('@/features/auth/components/ClaimProfilePage').then(m => ({ default: m.ClaimProfilePage })))
 
 export const router = createBrowserRouter([
   // Auth
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
   { path: '/sumarme',            element: <Navigate to="/registro/prestador" replace /> },
   { path: '/registro/clasico',   element: <ProviderSignup /> },
   { path: '/verificacion',       element: <VerificationPage /> },
+  { path: '/activar/:id',        element: <ClaimProfilePage /> },
   { path: '/login',              element: <ProviderLogin /> },
   { path: '/registrarme',        element: <Navigate to="/registro/prestador" replace /> },
 

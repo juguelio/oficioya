@@ -420,6 +420,32 @@ export type Database = {
         }
         Relationships: []
       }
+      providers_public: {
+        Row: {
+          id: string
+          name: string
+          rubro_id: string
+          ciudad_id: string
+          barrio: string | null
+          bio: string | null
+          rating: number
+          total_jobs: number
+          is_verified: boolean
+          subscription_tier_id: string | null
+          is_emergency_available: boolean
+          status: string
+          claimed: boolean
+          external_rating: number | null
+          external_reviews: number | null
+          source_count: number
+          photos: string[]
+          lat: number | null
+          lng: number | null
+          created_at: string
+          whatsapp_number: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       post_job: {
@@ -445,6 +471,18 @@ export type Database = {
       }
       submit_referral: {
         Args: { p_referrer: string; p_ciudad: string; p_referrals: Json }
+        Returns: number
+      }
+      get_claimable_by_token: {
+        Args: { p_token: string }
+        Returns: Json
+      }
+      claim_provider: {
+        Args: { p_token: string; p_whatsapp: string }
+        Returns: Json
+      }
+      build_claimable_profiles: {
+        Args: Record<string, never>
         Returns: number
       }
     }
@@ -590,6 +628,7 @@ export type DbSubscriptionTier    = Tables<'subscription_tiers'>
 export type DbProvider            = Tables<'providers'>
 export type DbProviderInsert      = TablesInsert<'providers'>
 export type DbProviderUpdate      = TablesUpdate<'providers'>
+export type DbProviderPublic      = Database['public']['Views']['providers_public']['Row']
 export type DbEmergencyRequest    = Tables<'emergency_requests'>
 export type DbEmergencyRequestInsert = TablesInsert<'emergency_requests'>
 

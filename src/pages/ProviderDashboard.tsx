@@ -7,7 +7,7 @@ import { CERT_CONFIGS, TRUST_BADGES, getTrustBadge, MAX_CERT_SCORE } from '@/fea
 import { formatARS } from '@/shared/utils/formatARS'
 import type { CertType, Review, Certification } from '@/features/dashboard/types'
 import type { Provider } from '@/features/providers/types'
-import type { DbProvider } from '@/lib/database.types'
+import type { DbProviderPublic } from '@/lib/database.types'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toProvider } from '@/features/providers/hooks/useProviders'
@@ -50,7 +50,9 @@ export function ProviderDashboard() {
       .then(({ data, error }) => {
         if (cancelled) return
         if (error || !data) { setAuthState('none'); return }
-        setAuthProvider(toProvider(data as DbProvider))
+        // el dashboard lee la fila propia (tabla); tiene los campos de la 018 salvo `claimed`
+        // (columna computada de la vista) → la derivamos del status.
+        setAuthProvider(toProvider({ ...data, claimed: data.status === 'active' } as unknown as DbProviderPublic))
         setAuthState('ready')
       })
     return () => { cancelled = true }

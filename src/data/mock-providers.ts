@@ -1,6 +1,7 @@
 import type { Provider } from '@/features/providers/types'
 
-export const mockProviders: Provider[] = [
+// Los mocks son todos perfiles "reclamados" (activos). claimed se agrega en el map de abajo.
+const rawMocks: Omit<Provider, 'claimed' | 'externalRating' | 'externalReviews' | 'sourceCount'>[] = [
 
   // ── Bariloche ──────────────────────────────────────────────────────────────
   {
@@ -768,3 +769,5 @@ export const mockProviders: Provider[] = [
   createdAt: '2022-12-22',
   },
 ]
+
+export const mockProviders: Provider[] = rawMocks.map(p => ({ ...p, claimed: true }))

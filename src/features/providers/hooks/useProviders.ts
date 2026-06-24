@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Provider } from '@/features/providers/types'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
-import type { DbProvider } from '@/lib/database.types'
+import type { DbProviderPublic } from '@/lib/database.types'
 
 type Filters = {
   ciudad?: CiudadId
@@ -25,14 +25,14 @@ const planOrder: Record<string, number> = {
   basico:      2,
 }
 
-export function toProvider(row: DbProvider): Provider {
+export function toProvider(row: DbProviderPublic): Provider {
   return {
     id:           row.id,
     name:         row.name,
     rubro:        row.rubro_id as RubroId,
     ciudad:       row.ciudad_id as CiudadId,
     barrio:       row.barrio ?? undefined,
-    phone:        row.phone,
+    phone:        row.whatsapp_number ?? '',   // contacto; '' si unclaimed (oculto hasta el claim)
     rating:       Number(row.rating),
     totalJobs:    row.total_jobs,
     isVerified:   row.is_verified,
@@ -44,6 +44,10 @@ export function toProvider(row: DbProvider): Provider {
     photos:                row.photos,
     createdAt:             row.created_at.slice(0, 10),
     isEmergencyAvailable:  row.is_emergency_available,
+    claimed:               row.claimed,
+    externalRating:        row.external_rating ?? undefined,
+    externalReviews:       row.external_reviews ?? undefined,
+    sourceCount:           row.source_count ?? undefined,
   }
 }
 
@@ -58,10 +62,11 @@ export function useProviders(filters: Filters = {}): UseProvidersReturn {
     setError(null)
 
     async function run() {
+      // providers_public = active + unclaimed (la vista filtra status y enmascara el whatsapp
+      // de los unclaimed). No filtramos por status acá: los unclaimed se muestran (sin contacto).
       let query = supabase
-        .from('providers')
+        .from('providers_public')
         .select('*')
-        .eq('status', 'active')
 
       if (filters.ciudad)          query = query.eq('ciudad_id', filters.ciudad)
       if (filters.rubro)           query = query.eq('rubro_id', filters.rubro)
@@ -78,16 +83,26 @@ export function useProviders(filters: Filters = {}): UseProvidersReturn {
         return
       }
 
-      const sorted = (data as DbProvider[])
+      const sorted = (data as DbProviderPublic[])
         .map(toProvider)
         .sort((a, b) => {
+          // 1. 🔴 en guardia (modo guardia) siempre primero
           if (a.isEmergencyAvailable !== b.isEmergencyAvailable) {
             return a.isEmergencyAvailable ? -1 : 1
           }
-          const pa = planOrder[a.subscription ?? ''] ?? 3
-          const pb = planOrder[b.subscription ?? ''] ?? 3
-          if (pa !== pb) return pa - pb
-          return b.rating - a.rating
+          // 2. ✓ reclamados (miembros reales) por encima de los sin reclamar
+          if (a.claimed !== b.claimed) return a.claimed ? -1 : 1
+          if (a.claimed) {
+            // reclamados: por plan (destacado→profesional→basico→sin plan), luego rating de Oficio
+            const pa = planOrder[a.subscription ?? ''] ?? 3
+            const pb = planOrder[b.subscription ?? ''] ?? 3
+            if (pa !== pb) return pa - pb
+            return b.rating - a.rating
+          }
+          // 3. sin reclamar: más fuentes arriba (más confiable), luego rating externo
+          const sa = a.sourceCount ?? 0, sb = b.sourceCount ?? 0
+          if (sa !== sb) return sb - sa
+          return (b.externalRating ?? 0) - (a.externalRating ?? 0)
         })
 
       setProviders(sorted)
