@@ -7,7 +7,10 @@
       "name": "Manual (probar primero)",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
-      "position": [0, 0]
+      "position": [
+        0,
+        0
+      ]
     },
     {
       "parameters": {
@@ -17,24 +20,43 @@
       "name": "Búsquedas IG",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [220, 0]
+      "position": [
+        220,
+        0
+      ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items?token={{$env.APIFY_TOKEN}}",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items",
         "sendHeaders": true,
-        "headerParameters": { "parameters": [ { "name": "Content-Type", "value": "application/json" } ] },
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.APIFY_TOKEN}}"
+            }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"search\": {{ JSON.stringify($json.search) }},\n  \"searchType\": \"user\",\n  \"searchLimit\": 15,\n  \"resultsType\": \"details\",\n  \"addParentData\": false\n}",
-        "options": { "timeout": 120000 }
+        "options": {
+          "timeout": 120000
+        }
       },
       "id": "apify-ig",
       "name": "Apify · Instagram scraper",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [440, 0],
+      "position": [
+        440,
+        0
+      ],
       "continueOnFail": true
     },
     {
@@ -45,7 +67,10 @@
       "name": "Normalizar IG → prospects",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [660, 0]
+      "position": [
+        660,
+        0
+      ]
     },
     {
       "parameters": {
@@ -54,9 +79,18 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -68,14 +102,59 @@
       "name": "Supabase · upsert prospects",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [880, 0]
+      "position": [
+        880,
+        0
+      ]
     }
   ],
   "connections": {
-    "Manual (probar primero)": { "main": [[{ "node": "Búsquedas IG", "type": "main", "index": 0 }]] },
-    "Búsquedas IG": { "main": [[{ "node": "Apify · Instagram scraper", "type": "main", "index": 0 }]] },
-    "Apify · Instagram scraper": { "main": [[{ "node": "Normalizar IG → prospects", "type": "main", "index": 0 }]] },
-    "Normalizar IG → prospects": { "main": [[{ "node": "Supabase · upsert prospects", "type": "main", "index": 0 }]] }
+    "Manual (probar primero)": {
+      "main": [
+        [
+          {
+            "node": "Búsquedas IG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Búsquedas IG": {
+      "main": [
+        [
+          {
+            "node": "Apify · Instagram scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify · Instagram scraper": {
+      "main": [
+        [
+          {
+            "node": "Normalizar IG → prospects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar IG → prospects": {
+      "main": [
+        [
+          {
+            "node": "Supabase · upsert prospects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1" }
+  "settings": {
+    "executionOrder": "v1"
+  }
 }
