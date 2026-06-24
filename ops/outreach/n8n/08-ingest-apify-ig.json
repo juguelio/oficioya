@@ -1,0 +1,81 @@
+{
+  "name": "Oficio · Ingesta Apify Instagram (SMA) [TUNE]",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-manual",
+      "name": "Manual (probar primero)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Búsquedas de IG por rubro + SMA. Una por item.\nconst Q = [\n  ['plomero','plomero san martin de los andes'],\n  ['gasista','gasista san martin de los andes'],\n  ['electricista','electricista san martin de los andes'],\n  ['cerrajero','cerrajero san martin de los andes'],\n  ['carpintero','carpintero san martin de los andes'],\n  ['pintor','pintor san martin de los andes'],\n  ['albanil','albanil san martin de los andes'],\n  ['cabanas','mantenimiento cabanas san martin de los andes'],\n  ['jardinero','jardineria san martin de los andes'],\n  ['limpieza','limpieza san martin de los andes'],\n];\nreturn Q.map(([rubro, search]) => ({ json: { rubro, search } }));"
+      },
+      "id": "queries-ig",
+      "name": "Búsquedas IG",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items?token={{$env.APIFY_TOKEN}}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "Content-Type", "value": "application/json" } ] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"search\": {{ JSON.stringify($json.search) }},\n  \"searchType\": \"user\",\n  \"searchLimit\": 15,\n  \"resultsType\": \"details\",\n  \"addParentData\": false\n}",
+        "options": { "timeout": 120000 }
+      },
+      "id": "apify-ig",
+      "name": "Apify · Instagram scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// NORMALIZAR — BEST EFFORT, ajustar tras la primera corrida (ver el output real de Apify).\n// Saca teléfono de campos estructurados o, si no, de la bio por regex. Gate SMA por bio/área.\nconst rubros = ['plomero','gasista','electricista','cerrajero','carpintero','pintor','albanil','cabanas','jardinero','limpieza'];\nconst items = $input.all();\nconst rows = [];\nconst seen = new Set();\nfunction toE164(raw) {\n  let d = (raw || '').replace(/\\D/g, '');\n  if (!d) return null;\n  if (d.startsWith('54')) { d = d.slice(2); }\n  d = d.replace(/^0/, '').replace(/^9/, '');\n  if (d.length < 10) return null;\n  return '+549' + d.slice(-10);\n}\nitems.forEach((it, i) => {\n  const rubro = rubros[i] || '';\n  const arr = Array.isArray(it.json) ? it.json : [it.json];\n  for (const p of arr) {\n    if (!p) continue;\n    const bio = (p.biography || p.bio || '') + '';\n    const name = p.fullName || p.full_name || p.username || '';\n    // teléfono: campo estructurado de cuenta business, o regex de la bio\n    let phone = toE164(p.public_phone_number || p.businessPhoneNumber || p.phone || '');\n    if (!phone) {\n      const m = bio.match(/(?:\\+?54\\s?9?)?[\\s\\-]?(?:0?2(?:972|944|99)|11)[\\s\\-]?\\d{3}[\\s\\-]?\\d{4}/);\n      if (m) phone = toE164(m[0]);\n    }\n    if (!phone) continue;\n    // gate SMA: bio/nombre menciona SMA o el teléfono es de área local (2972/2944)\n    const localHint = /san mart|sma|8370|chapelco|2972|2944/i.test(bio + ' ' + name) || /^\\+549(2972|2944)/.test(phone);\n    if (!localHint) continue;\n    if (seen.has(phone)) continue;\n    seen.add(phone);\n    rows.push({\n      name, phone, rubro, ciudad: 'san-martin', source: 'instagram',\n      rating_externo: null, reviews_externo: null,\n      address: null, notas: p.username ? ('ig: @' + p.username + ' (verificar)') : 'ig (verificar)',\n    });\n  }\n});\nreturn [{ json: { rows, count: rows.length } }];"
+      },
+      "id": "normalize-ig",
+      "name": "Normalizar IG → prospects",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/rpc/ingest_prospects",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"p_rows\": {{ $json.rows }} }",
+        "options": {}
+      },
+      "id": "upsert-prospects",
+      "name": "Supabase · upsert prospects",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    }
+  ],
+  "connections": {
+    "Manual (probar primero)": { "main": [[{ "node": "Búsquedas IG", "type": "main", "index": 0 }]] },
+    "Búsquedas IG": { "main": [[{ "node": "Apify · Instagram scraper", "type": "main", "index": 0 }]] },
+    "Apify · Instagram scraper": { "main": [[{ "node": "Normalizar IG → prospects", "type": "main", "index": 0 }]] },
+    "Normalizar IG → prospects": { "main": [[{ "node": "Supabase · upsert prospects", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

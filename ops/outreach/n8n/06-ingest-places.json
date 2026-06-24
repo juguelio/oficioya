@@ -24,19 +24,18 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{$env.SUPABASE_URL}}/rest/v1/prospects?on_conflict=phone",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/rpc/ingest_prospects",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
             { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Content-Type", "value": "application/json" },
-            { "name": "Prefer", "value": "resolution=ignore-duplicates,return=minimal" }
+            { "name": "Content-Type", "value": "application/json" }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ $json.rows }}",
+        "jsonBody": "={ \"p_rows\": {{ $json.rows }} }",
         "options": {}
       },
       "id": "upsert-prospects",
