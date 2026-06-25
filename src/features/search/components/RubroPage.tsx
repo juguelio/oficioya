@@ -201,6 +201,9 @@ type ProviderListCardProps = {
 
 function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
   const img         = provider.photos?.[0] ?? fallbackImg
+  // Perfiles sin reclamar tienen el WhatsApp enmascarado (phone=''): NO mostramos un CTA muerto
+  // a wa.me/ vacío — mandamos al perfil (que maneja el estado "sin confirmar" y el claim).
+  const claimed     = provider.claimed && provider.phone.replace(/\D/g, '').length > 0
   const waLink      = `https://wa.me/${provider.phone.replace(/\D/g, '')}`
   const ciudadLabel = ciudades.find(c => c.id === provider.ciudad)?.label ?? provider.ciudad
   const navigate    = useNavigate()
@@ -284,23 +287,35 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
 
         {/* Bottom: CTAs */}
         <div className="mt-4">
-          <a
-            href={waLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => track('whatsapp_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'rubro_list' })}
-            className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
-            style={{ background: '#25D366' }}
-          >
-            <IconWhatsApp />
-            Contactar por WhatsApp
-          </a>
-          <button
-            onClick={() => navigate(`/prestador/${provider.id}`)}
-            className="w-full mt-1.5 py-2 text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors text-center active:scale-[0.98]"
-          >
-            Ver perfil completo →
-          </button>
+          {claimed ? (
+            <>
+              <a
+                href={waLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track('whatsapp_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'rubro_list' })}
+                className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
+                style={{ background: '#25D366' }}
+              >
+                <IconWhatsApp />
+                Contactar por WhatsApp
+              </a>
+              <button
+                onClick={() => navigate(`/prestador/${provider.id}`)}
+                className="w-full mt-1.5 py-2 text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors text-center active:scale-[0.98]"
+              >
+                Ver perfil completo →
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => navigate(`/prestador/${provider.id}`)}
+              className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
+              style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+            >
+              Ver perfil →
+            </button>
+          )}
         </div>
 
       </div>
