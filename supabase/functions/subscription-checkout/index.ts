@@ -1,6 +1,6 @@
 // Edge Function — crea una suscripción mensual (MercadoPago preapproval, débito automático)
-// para un prestador en un tier dado. Devuelve el init_point para autorizar el débito.
-// El MP_ACCESS_TOKEN vive SÓLO acá (server-side).
+// para el prestador LOGUEADO. La identidad sale del JWT de Supabase (no del body): así un
+// caller no puede suscribir a un prestador ajeno (IDOR). El MP_ACCESS_TOKEN vive SÓLO acá.
 //
 // Deploy: supabase functions deploy subscription-checkout
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -18,34 +18,39 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405)
 
   try {
-    const { providerId, tierId, payerEmail } = await req.json()
-    if (!providerId || !tierId) return json({ error: 'missing_params' }, 400)
+    const { tierId } = await req.json()
+    if (!tierId) return json({ error: 'missing_params' }, 400)
 
     const mpToken = Deno.env.get('MP_ACCESS_TOKEN')
     if (!mpToken) return json({ error: 'mp_not_configured' }, 503)
 
     const appUrl = Deno.env.get('APP_URL') ?? new URL(req.url).origin
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    )
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 
-    const { data: provider } = await supabase
+    // Identidad real desde el JWT del prestador (no se confía en el body).
+    const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
+      global: { headers: { Authorization: req.headers.get('Authorization') ?? '' } },
+    })
+    const { data: { user } } = await userClient.auth.getUser()
+    if (!user) return json({ error: 'unauthorized' }, 401)
+
+    const admin = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+    const { data: provider } = await admin
       .from('providers')
       .select('id, status')
-      .eq('id', providerId)
+      .eq('auth_user_id', user.id)
       .eq('status', 'active')
       .maybeSingle()
     if (!provider) return json({ error: 'provider_unavailable' }, 404)
 
-    const { data: tier } = await supabase
+    const { data: tier } = await admin
       .from('subscription_tiers')
       .select('id, label, price_ars')
       .eq('id', tierId)
       .maybeSingle()
     if (!tier) return json({ error: 'tier_unknown' }, 404)
 
-    const { data: sub, error: insErr } = await supabase
+    const { data: sub, error: insErr } = await admin
       .from('provider_subscriptions')
       .insert({ provider_id: provider.id, tier_id: tier.id, status: 'pending' })
       .select('id')
@@ -55,7 +60,7 @@ Deno.serve(async (req) => {
     const pre = {
       reason: `Oficio — Plan ${tier.label}`,
       external_reference: sub.id,
-      payer_email: payerEmail ?? undefined,
+      payer_email: user.email ?? undefined,
       auto_recurring: {
         frequency: 1,
         frequency_type: 'months',
@@ -74,7 +79,7 @@ Deno.serve(async (req) => {
     const mp = await mpRes.json()
     if (!mpRes.ok || !mp.init_point) return json({ error: 'mp_error', detail: mp }, 502)
 
-    await supabase
+    await admin
       .from('provider_subscriptions')
       .update({ mp_preapproval_id: String(mp.id ?? '') })
       .eq('id', sub.id)
