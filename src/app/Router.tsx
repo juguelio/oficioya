@@ -1,5 +1,7 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 import { lazy } from 'react'
+// No-lazy a propósito: la pantalla de error/404 debe renderizar aunque falle la carga de un chunk.
+import { NotFoundPage, RootBoundary } from '@/shared/components'
 
 const HomePage           = lazy(() => import('@/features/search/components/HomePage').then(m => ({ default: m.HomePage })))
 const RubroPage          = lazy(() => import('@/features/search/components/RubroPage').then(m => ({ default: m.RubroPage })))
@@ -20,6 +22,11 @@ const JobDetailPage      = lazy(() => import('@/features/jobs/components/JobDeta
 const ClaimProfilePage   = lazy(() => import('@/features/auth/components/ClaimProfilePage').then(m => ({ default: m.ClaimProfilePage })))
 
 export const router = createBrowserRouter([
+  {
+    // Layout sin path: un solo errorElement cubre todas las rutas hijas (crashes de render/loader).
+    element: <Outlet />,
+    errorElement: <RootBoundary />,
+    children: [
   // Auth
   { path: '/onboarding',         element: <OnboardingPage /> },
   { path: '/registro/prestador', element: <ConvOnboarding /> },
@@ -46,4 +53,9 @@ export const router = createBrowserRouter([
 
   // Dashboard prestador (fase 1: auth mock vía store)
   { path: '/dashboard',          element: <ProviderDashboard /> },
+
+  // Catch-all: cualquier URL desconocida → 404 branded (no la pantalla de dev de React Router).
+  { path: '*',                   element: <NotFoundPage /> },
+    ],
+  },
 ])
