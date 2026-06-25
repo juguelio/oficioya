@@ -6,6 +6,8 @@ const RubroPage          = lazy(() => import('@/features/search/components/Rubro
 const ProviderProfile    = lazy(() => import('@/features/providers/components/ProviderProfile').then(m => ({ default: m.ProviderProfile })))
 const PricingPage        = lazy(() => import('@/features/subscriptions/components/PricingPage').then(m => ({ default: m.PricingPage })))
 const EmergencyPage      = lazy(() => import('@/features/search/components/EmergencyPage').then(m => ({ default: m.EmergencyPage })))
+const EmergencyCheckout  = lazy(() => import('@/features/search/components/EmergencyCheckoutPage').then(m => ({ default: m.EmergencyCheckoutPage })))
+const EmergencyContact   = lazy(() => import('@/features/search/components/EmergencyContactPage').then(m => ({ default: m.EmergencyContactPage })))
 const OnboardingPage     = lazy(() => import('@/features/auth/components/OnboardingPage').then(m => ({ default: m.OnboardingPage })))
 const VerificationPage   = lazy(() => import('@/features/auth/components/VerificationPage').then(m => ({ default: m.VerificationPage })))
 const ProviderSignup     = lazy(() => import('@/pages/ProviderSignup').then(m => ({ default: m.ProviderSignup })))
@@ -33,7 +35,9 @@ export const router = createBrowserRouter([
   { path: '/:ciudad/:rubro',     element: <RubroPage /> },
   { path: '/prestador/:id',      element: <ProviderProfile /> },
   { path: '/planes',             element: <PricingPage /> },
-  { path: '/emergencias',        element: <EmergencyPage /> },
+  { path: '/emergencias',                element: <EmergencyPage /> },
+  { path: '/emergencias/contratar/:id',  element: <EmergencyCheckout /> },
+  { path: '/emergencias/contacto/:id',   element: <EmergencyContact /> },
 
   // Trabajos (jobs + presupuestos) — backend Supabase
   { path: '/trabajos',           element: <JobsPage /> },

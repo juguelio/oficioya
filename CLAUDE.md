@@ -265,33 +265,41 @@ Cuando `RubroPage` carga, lee `ciudad` de los URL params (`/:ciudad/:rubro`) y l
 ### CSS Variables (definidas en `theme.css`)
 
 ```css
-/* Fondos — usar en este orden de profundidad */
---color-noche:     #0E1510   /* fondo base de la app */
---color-sombra:    #1A2A1A   /* cards, panels */
-/* Stitch también usa: #1a2026, #252b30, #161c22, #090f14 */
+/* ⚠️ La app es LIGHT MODE — brand "Azul Andino". theme.css es la fuente de verdad. */
+
+/* Superficies (light) */
+--color-noche:      #F7F6F2   /* fondo de página — crema cálido */
+--color-sombra:     #FFFFFF   /* cards, panels — blanco */
 
 /* Texto */
---color-nieve:     #EFF3EE   /* texto principal */
---color-muted:     #7A9A79   /* texto secundario */
+--color-nieve:      #1A1714   /* texto principal — near-black cálido */
+--color-muted:      #9C9589   /* texto secundario — gris cálido */
 
-/* Acento primario */
---color-bosque-lt: #4A8C49   /* botones, links activos, highlights */
---color-bosque-dk: #1E3A1E   /* headers oscuros */
---color-lago:      #2E6E8A   /* info, badges secundarios */
+/* Brand: Azul Andino (el nombre `bosque` es histórico — HOY ES AZUL) */
+--color-bosque-lt:  #1E6FA5   /* brand — CTAs, links activos, iconos */
+--color-bosque-dk:  #174F77   /* hover/active de brand */
+--color-brand-tint: #E6F3FF   /* tint para fondos de badges */
 
-/* Fuera del sistema de variables — colores hardcodeados aceptados */
-#25D366   /* WhatsApp — solo para ese CTA, nunca otro uso */
-#F5C842   /* amarillo destacado premium */
-#ffb4ab   /* error / emergencias */
-#3de273   /* verde Stitch — acento emergencias */
+/* Semánticos */
+--color-lago:       #2563EB   /* info — azul eléctrico, uso raro */
+--color-amber:      #E8A020   /* ratings — solo estrellas */
+--color-line:       #ECEAE4   /* borde estándar — warm light gray */
+
+/* Emergencias (bloque oscuro dentro de la UI light) */
+--color-emergency:  #FF4F3B   /* rojo urgencia */
+--color-guardia:    #4AE87B   /* verde "en línea ahora" */
+--color-guardia-bg: #0A1628   /* fondo oscuro del hero de urgencias */
+
+/* Fuera del sistema de variables — hardcodeo aceptado */
+#25D366   /* WhatsApp — SOLO ese CTA, nunca otro uso */
+#ffb4ab   /* error */
 ```
 
-### Paleta Stitch (pantallas importadas de Stitch tienen estos valores)
-Las pantallas importadas de Stitch usan un sistema de colores diferente al `theme.css`. Al adaptar:
-- `surface` = `#0e1419` ≈ `--color-noche`
-- `surface-container` = `#1a2026` ≈ `--color-sombra`
-- `tertiary` = `#3de273` (usado en EmergencyPage, OnboardingPage)
-- `on-surface` = `#dde3eb` ≈ `--color-nieve`
+### Paleta histórica (Stitch — deprecado)
+Stitch ya no se usa y la paleta migró a light mode "Azul Andino". Si encontrás valores
+oscuros hardcodeados (`#0e1419`, `#1a2026`, `#090f14`, `#3de273`, etc.) en código viejo,
+son restos de Stitch: reemplazalos por las variables CSS de arriba. Nunca hardcodees colores
+nuevos — usá siempre `var(--color-*)`.
 
 ### Tipografía
 
@@ -318,7 +326,7 @@ En Tailwind: `rounded-[--radius-xl]`, `rounded-[--radius-full]`, etc.
 ```tsx
 <header
   className="fixed top-0 w-full z-50 backdrop-blur-xl flex items-center px-6 h-16"
-  style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+  style={{ backgroundColor: 'rgba(255,255,255,0.85)' }}
 >
 ```
 Todas las páginas usan `pt-16` o `pt-24` en el `<main>` para compensar.
@@ -327,7 +335,7 @@ Todas las páginas usan `pt-16` o `pt-24` en el `<main>` para compensar.
 ```tsx
 <nav
   className="fixed bottom-0 left-0 w-full z-50 backdrop-blur-xl flex justify-around items-center px-4 py-3"
-  style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+  style={{ backgroundColor: 'rgba(255,255,255,0.85)' }}
 >
 ```
 El `<main>` usa `pb-24` o `pb-32` para que el contenido no quede tapado.
@@ -369,7 +377,7 @@ export function ComponentName({ className }: ComponentNameProps) {
 ```tsx
 const variants = {
   primary:   'bg-[--color-bosque-lt] text-white',
-  secondary: 'bg-[--color-sombra] text-[--color-nieve] border border-[#2A3A2A]',
+  secondary: 'bg-[--color-sombra] text-[--color-nieve] border border-[--color-line]',
   ghost:     'bg-transparent text-[--color-muted] hover:text-[--color-nieve]',
 } as const
 type Variant = keyof typeof variants
@@ -424,14 +432,16 @@ function IconArrowLeft() {
 - Teléfonos: formato `+549XXXXXXXXXX` en base de datos, mostrar como `+54 9 XXX XXX-XXXX`
 - Zona horaria: `America/Argentina/Salta` (UTC-3, sin DST)
 
-### Dark mode only
-- Fondo siempre oscuro. Nunca fondos blancos ni grises claros.
-- Todo es dark mode — no hay modo light, no hay toggle.
+### Light mode (Azul Andino)
+- La app es light mode: fondo crema `--color-noche #F7F6F2`, cards blancas `--color-sombra`.
+- Texto oscuro sobre claro. No hay dark mode global ni toggle.
+- Única excepción: el hero de `/emergencias` usa un bloque oscuro (`--color-guardia-bg`) a propósito.
+- Nunca hardcodees colores — siempre `var(--color-*)`.
 
 ### Confianza visual
 - Fotos reales (de Stitch/CDN), no placeholders grises
 - Badge "✓ Verificado" visible cuando `isVerified: true`
-- Rating con `font-mono`, estrella en `--color-bosque-lt`
+- Rating con `font-mono`, estrella en `--color-amber` (#E8A020 — el color de ratings)
 - Bio con `line-clamp-2` — nunca truncar con "..."
 
 ---
@@ -500,11 +510,10 @@ const { register, handleSubmit, formState: { errors, isSubmitting } } =
 
 ### Estilo de inputs
 ```tsx
-// bg-[#090f14] para inputs (surface-container-lowest de Stitch)
 <input
-  className="w-full h-14 px-4 rounded-xl bg-[#090f14] text-[--color-nieve]
-             placeholder:text-[#414845] focus:outline-none
-             focus:ring-1 focus:ring-[rgba(173,206,192,0.4)]"
+  className="w-full h-14 px-4 rounded-xl bg-[--color-noche] text-[--color-nieve]
+             border border-[--color-line] placeholder:text-[--color-muted]
+             focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
 />
 ```
 
@@ -558,7 +567,7 @@ Pedir imágenes en `=w1600` del CDN de Stitch para máxima resolución.
 - ❌ Llamadas a Supabase/API en componentes — solo en hooks
 
 ### UI/UX
-- ❌ Fondo blanco o gris claro — todo es dark mode
+- ❌ Hardcodear colores fuera de las variables CSS — la app es light mode "Azul Andino", usar siempre `var(--color-*)`
 - ❌ `font-family: system-ui` o Arial — siempre las variables CSS
 - ❌ Colores hardcodeados fuera de los casos documentados en §10
 - ❌ `#25D366` para cualquier cosa que no sea WhatsApp
@@ -620,4 +629,4 @@ npx tsc --noEmit
 
 ---
 
-*Última actualización: 2026-06-19*
+*Última actualización: 2026-06-24*
