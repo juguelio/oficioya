@@ -2,6 +2,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { formatARS } from '@/shared/utils/formatARS'
 import { Logo } from '@/shared/components'
 import { cn } from '@/shared/utils/cn'
+import { useSubscription } from '@/features/subscriptions/hooks'
 import type { SubscriptionPlan } from '@/features/subscriptions/types'
 
 const plans: SubscriptionPlan[] = [
@@ -65,6 +66,18 @@ const planMeta: Record<SubscriptionPlan['id'], { tagline: string; features: stri
 
 export function PricingPage() {
   const navigate = useNavigate()
+  const { enabled, subscribe } = useSubscription()
+
+  // Con el flag prendido: dispara el checkout de suscripción. Sin sesión de prestador → login.
+  // Con el flag apagado (lanzamiento gratis): la card muestra "Gratis durante el lanzamiento".
+  async function handleSelect(planId: SubscriptionPlan['id']) {
+    try {
+      await subscribe(planId)
+    } catch (e) {
+      if ((e as Error).message === 'no_session') navigate('/login')
+      else alert('No pudimos iniciar la suscripción. Probá de nuevo en un momento.')
+    }
+  }
 
   return (
     <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
@@ -117,7 +130,8 @@ export function PricingPage() {
             <PlanCard
               key={plan.id}
               plan={plan}
-              onSelect={() => navigate('/registrarme')}
+              enabled={enabled}
+              onSelect={() => (enabled ? handleSelect(plan.id) : navigate('/registrarme'))}
             />
           ))}
         </div>
@@ -169,7 +183,7 @@ export function PricingPage() {
 
 // ─── PlanCard ─────────────────────────────────────────────────────────────────
 
-function PlanCard({ plan, onSelect }: { plan: SubscriptionPlan; onSelect: () => void }) {
+function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled: boolean; onSelect: () => void }) {
   const isDestacado   = plan.id === 'destacado'
   const isProfesional = plan.id === 'profesional'
   const meta          = planMeta[plan.id]
@@ -240,7 +254,7 @@ function PlanCard({ plan, onSelect }: { plan: SubscriptionPlan; onSelect: () => 
         ))}
       </ul>
 
-      {/* CTA */}
+      {/* CTA — con el flag prendido cobra (Suscribirme); dormido muestra el lanzamiento gratis. */}
       <button
         onClick={onSelect}
         className={cn(
@@ -248,14 +262,16 @@ function PlanCard({ plan, onSelect }: { plan: SubscriptionPlan; onSelect: () => 
           'border',
         )}
         style={
-          isDestacado
+          !enabled
+            ? { backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-dk)', borderColor: 'transparent' }
+            : isDestacado
             ? { backgroundColor: '#E8A020', color: '#fff', borderColor: 'transparent' }
             : isProfesional
             ? { backgroundColor: 'var(--color-bosque-lt)', color: '#fff', borderColor: 'transparent' }
             : { backgroundColor: 'var(--color-noche)', color: 'var(--color-nieve)', borderColor: 'var(--color-line)' }
         }
       >
-        Empezar con {plan.label}
+        {enabled ? `Suscribirme — ${plan.label}` : 'Gratis durante el lanzamiento 🎉'}
       </button>
     </div>
   )

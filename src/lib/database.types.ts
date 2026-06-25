@@ -448,6 +448,10 @@ export type Database = {
       }
     }
     Functions: {
+      get_my_subscription: {
+        Args: Record<string, never>
+        Returns: { tier_id: string; status: string; current_period_end: string | null }[]
+      }
       post_job: {
         Args: {
           p_title: string
