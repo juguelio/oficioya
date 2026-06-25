@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { mockProviders } from '@/data/mock-providers'
 import { useDashboardStore, getAverageRating } from '@/features/dashboard/store'
 import { useDashboardData } from '@/features/dashboard/hooks'
@@ -73,7 +73,13 @@ export function ProviderDashboard() {
     return <DashboardPending onExit={handleSignOut} />
   }
 
-  // ── Sin sesión: fallback mock (solo desarrollo) ──────────────────────────
+  // ── Sin sesión ───────────────────────────────────────────────────────────
+  // En PRODUCCIÓN nunca se muestra el selector mock: sin sesión → al login. Si no,
+  // cualquiera podría entrar al panel de cualquier prestador (impersonación) y ver el
+  // padrón completo. El selector de perfiles es solo una comodidad de desarrollo.
+  if (!import.meta.env.DEV) {
+    return <Navigate to="/login" replace />
+  }
   const provider = mockProviders.find(p => p.id === activeProviderId) ?? null
   if (!provider) {
     return <ProviderSelector onSelect={setActiveProvider} />
