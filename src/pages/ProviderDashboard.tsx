@@ -10,6 +10,7 @@ import type { Provider } from '@/features/providers/types'
 import type { DbProviderPublic } from '@/lib/database.types'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
+import { useSubscription } from '@/features/subscriptions/hooks'
 import { toProvider } from '@/features/providers/hooks/useProviders'
 
 const FALLBACK_PHOTO = '/images/user-avatar.png'
@@ -221,6 +222,8 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
 
   const photo = provider.photos?.[0] ?? FALLBACK_PHOTO
 
+  const { enabled: subsEnabled, status: subStatus, cancel: cancelSub, loading: subLoading } = useSubscription()
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
 
@@ -245,6 +248,33 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
       </header>
 
       <main className="pt-14 pb-6">
+
+        {/* ── Tu suscripción (solo con el módulo prendido) ──────────────────────── */}
+        {subsEnabled && (
+          <section className="mx-5 mt-5 rounded-[--radius-xl] p-5 border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>Tu suscripción</h3>
+            {subStatus && subStatus.status === 'authorized' ? (
+              <>
+                <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                  Plan <b style={{ color: 'var(--color-nieve)' }}>{subStatus.tier_id}</b> · activa
+                  {subStatus.current_period_end && ` · próximo cobro ${new Date(subStatus.current_period_end).toLocaleDateString('es-AR')}`}
+                </p>
+                <button
+                  onClick={() => cancelSub().catch(() => alert('No pudimos cancelar. Probá de nuevo en un momento.'))}
+                  disabled={subLoading}
+                  className="mt-3 px-4 py-2 rounded-[--radius-lg] text-xs font-semibold border active:scale-95 disabled:opacity-60"
+                  style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+                >
+                  Cancelar suscripción
+                </button>
+              </>
+            ) : (
+              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                No tenés una suscripción activa. <button onClick={() => navigate('/planes')} className="font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>Ver planes</button>
+              </p>
+            )}
+          </section>
+        )}
 
         {/* ── Hero — score ring + badge ─────────────────────────────────────────── */}
         <div
