@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { cn } from '@/shared/utils/cn'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { formatARS } from '@/shared/utils/formatARS'
+import { SUBSCRIPTION_PLANS } from '@/shared/config/plans'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { sendWelcomeEmail, sendNewProviderAlert } from '@/lib/notifications'
@@ -32,19 +33,20 @@ type Draft = {
   subscription_tier_id: 'basico' | 'profesional' | 'destacado' | ''
 }
 
-type PlanMeta = {
-  id:       'basico' | 'profesional' | 'destacado'
-  label:    string
-  priceARS: number
-  contacts: string
-  accent:   string
+// Presentación por plan (texto de contactos + acento). El label y el precio salen
+// de la fuente única SUBSCRIPTION_PLANS; acá solo vive lo específico de esta pantalla.
+const PLAN_PRESENTATION: Record<'basico' | 'profesional' | 'destacado', { contacts: string; accent: string }> = {
+  basico:      { contacts: '8 contactos/mes',      accent: 'var(--color-guardia)' },
+  profesional: { contacts: 'Contactos ilimitados', accent: 'var(--color-bosque-lt)' },
+  destacado:   { contacts: 'Ilimitados + banner',  accent: 'var(--color-amber)' },
 }
 
-const PLANS: PlanMeta[] = [
-  { id: 'basico',      label: 'Básico',      priceARS: 20000, contacts: '8 contactos/mes',      accent: '#4A8C49' },
-  { id: 'profesional', label: 'Profesional', priceARS: 35000, contacts: 'Contactos ilimitados', accent: '#2E6E8A' },
-  { id: 'destacado',   label: 'Destacado',   priceARS: 55000, contacts: 'Ilimitados + banner',  accent: '#F5C842' },
-]
+const PLANS = SUBSCRIPTION_PLANS.map(p => ({
+  id:       p.id,
+  label:    p.label,
+  priceARS: p.priceARS,
+  ...PLAN_PRESENTATION[p.id],
+}))
 
 const EMPTY_DRAFT: Draft = {
   name: '', whatsapp_number: '+549', ciudad_id: '', rubro_id: '',

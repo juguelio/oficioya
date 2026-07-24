@@ -489,6 +489,10 @@ export type Database = {
         Args: Record<string, never>
         Returns: number
       }
+      submit_review: {
+        Args: { p_provider_id: string; p_author_name: string; p_rating: number; p_comment: string }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

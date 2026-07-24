@@ -3,13 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { mockProviders } from '@/data/mock-providers'
 import { ciudades, rubros } from '@/design-system/tokens'
-import { useDashboardStore, getProviderReviews, getAverageRating } from '@/features/dashboard/store'
+import { useReviews } from '@/features/providers/hooks'
 import { track } from '@/lib/analytics'
 import { cn } from '@/shared/utils/cn'
 import { supabase } from '@/lib/supabase'
-import { toProvider } from '@/features/providers/hooks/useProviders'
+import { toProvider } from '@/shared/utils/toProvider'
 import type { Provider } from '@/features/providers/types'
 import type { DbProviderPublic } from '@/lib/database.types'
 
@@ -37,12 +36,12 @@ type ReviewFormData = z.infer<typeof reviewSchema>
 export function ProviderProfile() {
   const { id }     = useParams<{ id: string }>()
   const navigate   = useNavigate()
-  const allReviews = useDashboardStore(s => s.reviews)
-  const addReview  = useDashboardStore(s => s.addReview)
+  const { reviews: myReviews, avgRating, submitReview } = useReviews(id)
 
   const [showReviewSheet, setShowReviewSheet] = useState(false)
   const [hoverStar, setHoverStar]             = useState(0)
   const [reviewSent, setReviewSent]           = useState(false)
+  const [reviewError, setReviewError]         = useState<string | null>(null)
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } =
     useForm<ReviewFormData>({ resolver: zodResolver(reviewSchema), defaultValues: { rating: 0 } })
@@ -58,8 +57,7 @@ export function ProviderProfile() {
       if (!id) { setProvider(null); return }
       const { data } = await supabase.from('providers_public').select('*').eq('id', id).maybeSingle()
       if (cancelled) return
-      if (data) { setProvider(toProvider(data as DbProviderPublic)); return }
-      setProvider(mockProviders.find(p => p.id === id) ?? null)  // fallback ids mock viejos
+      setProvider(data ? toProvider(data as DbProviderPublic) : null)
     })()
     return () => { cancelled = true }
   }, [id])
@@ -91,11 +89,11 @@ export function ProviderProfile() {
   const rubroData   = rubros.find(r => r.id === provider.rubro)
   const img         = provider.photos?.[0] ?? (RUBRO_IMAGES[provider.rubro] ?? FALLBACK_IMG)
   const waLink      = `https://wa.me/${provider.phone.replace(/\D/g, '')}`
-  const myReviews   = getProviderReviews(allReviews, provider.id)
-  const avgRating   = getAverageRating(myReviews)
 
-  function onSubmitReview(data: ReviewFormData) {
-    addReview({ providerId: provider!.id, authorName: data.authorName, rating: data.rating, comment: data.comment })
+  async function onSubmitReview(data: ReviewFormData) {
+    setReviewError(null)
+    const result = await submitReview({ authorName: data.authorName, rating: data.rating, comment: data.comment })
+    if (!result.ok) { setReviewError(result.message); return }
     setShowReviewSheet(false)
     setReviewSent(true)
     reset()
@@ -239,8 +237,30 @@ export function ProviderProfile() {
           )}
 
           {/* Contacto — sólo si el perfil está reclamado (activo). Si no, queda oculto
-              hasta que el prestador confirme su membresía. */}
-          {provider.claimed ? (
+              hasta que el prestador confirme su membresía.
+              En modo guardia NUNCA se revela el WhatsApp directo: paywall primero (§8/§12). */}
+          {provider.claimed && provider.isEmergencyAvailable ? (
+            <>
+              <button
+                onClick={() => {
+                  track('emergency_contact_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'profile' })
+                  navigate(`/emergencias/contratar/${provider.id}`)
+                }}
+                className={cn(
+                  'flex w-full items-center justify-center gap-2 rounded-[--radius-full]',
+                  'py-4 font-bold text-white text-base',
+                  'active:scale-[0.98] transition-transform shadow-lg',
+                )}
+                style={{ backgroundColor: 'var(--color-emergency)' }}
+              >
+                <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-guardia)' }} />
+                En guardia ahora — Contactar urgencia
+              </button>
+              <p className="text-center text-xs text-[--color-muted] mt-3 mb-8">
+                Está atendiendo urgencias 24/7. El contacto se habilita al confirmar el servicio.
+              </p>
+            </>
+          ) : provider.claimed ? (
             <>
               <a
                 href={waLink}
@@ -427,13 +447,17 @@ export function ProviderProfile() {
                 {errors.comment && <p className="text-xs mt-0.5" style={{ color: '#ffb4ab' }}>{errors.comment.message}</p>}
               </div>
 
+              {reviewError && (
+                <p className="text-xs text-center" style={{ color: '#ffb4ab' }}>{reviewError}</p>
+              )}
+
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all disabled:opacity-60"
                 style={{ backgroundColor: 'var(--color-bosque-lt)' }}
               >
-                Publicar reseña
+                {isSubmitting ? 'Publicando…' : 'Publicar reseña'}
               </button>
             </form>
           </div>

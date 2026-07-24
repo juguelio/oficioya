@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { toProvider } from '@/features/providers/hooks/useProviders'
+import { toProvider } from '@/shared/utils/toProvider'
 import { haversineKm } from '@/shared/utils/distance'
-import type { Provider } from '@/features/providers/types'
+import type { Provider } from '@/shared/types'
 import type { CiudadId } from '@/design-system/tokens'
 import type { DbProviderPublic } from '@/lib/database.types'
 

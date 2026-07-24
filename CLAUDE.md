@@ -630,3 +630,8 @@ npx tsc --noEmit
 ---
 
 *Última actualización: 2026-06-24*
+
+## Knowledge (Obsidian vault)
+- Antes de empezar, leé `~/Dev/obsidian-vault/INDEX.md` y la nota de `memory/` relevante a este proyecto.
+- Fundá toda afirmación sobre estado, decisiones o prioridades del negocio en una nota del vault (Dashboard, decisions-log, memory/) — no en supuestos.
+- Al terminar, registrá el resultado en el vault (Daily + nota canónica). Sin registro en Obsidian, el trabajo no existe.

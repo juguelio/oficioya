@@ -4,6 +4,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { ciudades, rubros } from '@/design-system/tokens'
+// excepción documentada (§3): jobs consume el store de ciudad seleccionada de search.
+// useCityStore es un store Zustand con persist cuyo dueño natural es search (lo usan sus
+// páginas); moverlo a shared/ tocaría toda esa feature. Se deja como excepción, no se mueve.
 import { useCityStore } from '@/features/search/store'
 import { postJob } from '@/features/jobs/hooks'
 import { cn } from '@/shared/utils/cn'

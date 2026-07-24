@@ -1,8 +1,3 @@
-export type SubscriptionPlan = {
-  id: 'basico' | 'profesional' | 'destacado'
-  label: string
-  priceARS: number
-  contactsPerMonth: number | 'unlimited'
-  hasBadge: boolean
-  priority: 'normal' | 'alta' | 'maxima'
-}
+// El tipo vive en la fuente única de planes (shared) — re-exportado acá por
+// compatibilidad con imports existentes (@/features/subscriptions/types).
+export type { SubscriptionPlan } from '@/shared/config/plans'

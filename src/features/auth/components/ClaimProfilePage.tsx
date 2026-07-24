@@ -169,8 +169,8 @@ export function ClaimProfilePage() {
                 value={whatsapp}
                 onChange={e => setWhatsapp(e.target.value)}
                 placeholder="+549..."
-                className="w-full h-14 px-4 rounded-xl text-[--color-nieve] focus:outline-none focus:ring-1"
-                style={{ backgroundColor: '#090f14' }}
+                className="w-full h-14 px-4 rounded-xl text-[--color-nieve] placeholder:text-[--color-muted] border border-[--color-line] focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+                style={{ backgroundColor: 'var(--color-noche)' }}
               />
             </div>
           )}

@@ -2,11 +2,14 @@ import { useEffect } from 'react'
 import { useParams, useNavigate, Navigate, Link } from 'react-router-dom'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useCityStore } from '@/features/search/store'
+// excepción documentada (§3): search consume el hook useProviders de la feature providers.
+// El hook encapsula el fetch a Supabase (providers_public) — mover eso a shared/ sería un
+// refactor grande. Se deja como dependencia cross-feature explícita, no se mueve.
 import { useProviders } from '@/features/providers/hooks'
 import { track } from '@/lib/analytics'
 import { cn } from '@/shared/utils/cn'
 import type { RubroId, CiudadId } from '@/design-system/tokens'
-import type { Provider } from '@/features/providers/types'
+import type { Provider } from '@/shared/types'
 
 // ─── Placeholder images per rubro (from Stitch) ───────────────────────────────
 const RUBRO_IMAGES: Partial<Record<RubroId, string>> = {
@@ -203,6 +206,9 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
   const img         = provider.photos?.[0] ?? fallbackImg
   // Perfiles sin reclamar tienen el WhatsApp enmascarado (phone=''): NO mostramos un CTA muerto
   // a wa.me/ vacío — mandamos al perfil (que maneja el estado "sin confirmar" y el claim).
+  // Los en guardia vienen con el whatsapp enmascarado server-side (migración ..021):
+  // su CTA no necesita phone porque va al paywall de urgencias, no a wa.me.
+  const isGuardia   = provider.claimed && provider.isEmergencyAvailable
   const claimed     = provider.claimed && provider.phone.replace(/\D/g, '').length > 0
   const waLink      = `https://wa.me/${provider.phone.replace(/\D/g, '')}`
   const ciudadLabel = ciudades.find(c => c.id === provider.ciudad)?.label ?? provider.ciudad
@@ -226,16 +232,30 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
           style={{ objectPosition: 'center top' }}
           onError={e => { (e.target as HTMLImageElement).src = fallbackImg }}
         />
-        {/* Rating badge */}
-        <div
-          className="absolute top-3 right-3 px-2.5 py-1 rounded-full flex items-center gap-1 border border-[--color-line]"
-          style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
-        >
-          <span className="text-[--color-bosque-lt] text-xs leading-none">★</span>
-          <span className="text-[--color-nieve] text-xs font-bold" style={{ fontFamily: 'var(--font-mono)' }}>
-            {provider.rating.toFixed(1)}
-          </span>
-        </div>
+        {/* Rating badge — Oficio si reclamado; si no, señal externa (Google) etiquetada.
+            Nunca mostramos "★ 0.0" de un perfil sin reclamar como si fuera real. */}
+        {provider.claimed && provider.rating > 0 ? (
+          <div
+            className="absolute top-3 right-3 px-2.5 py-1 rounded-full flex items-center gap-1 border border-[--color-line]"
+            style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
+          >
+            <span className="text-[--color-bosque-lt] text-xs leading-none">★</span>
+            <span className="text-[--color-nieve] text-xs font-bold" style={{ fontFamily: 'var(--font-mono)' }}>
+              {provider.rating.toFixed(1)}
+            </span>
+          </div>
+        ) : provider.externalRating ? (
+          <div
+            className="absolute top-3 right-3 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-[--color-line]"
+            style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
+          >
+            <span className="text-[--color-amber] text-xs leading-none">★</span>
+            <span className="text-[--color-nieve] text-xs font-bold" style={{ fontFamily: 'var(--font-mono)' }}>
+              {provider.externalRating.toFixed(1)}
+            </span>
+            <span className="text-[--color-muted] text-[9px] font-semibold">Google</span>
+          </div>
+        ) : null}
         {/* Verified badge */}
         {provider.isVerified && (
           <div
@@ -287,7 +307,28 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
 
         {/* Bottom: CTAs */}
         <div className="mt-4">
-          {claimed ? (
+          {isGuardia ? (
+            /* Modo guardia: nunca WhatsApp directo — paywall de urgencias primero (§8/§12) */
+            <>
+              <button
+                onClick={() => {
+                  track('emergency_contact_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'rubro_list' })
+                  navigate(`/emergencias/contratar/${provider.id}`)
+                }}
+                className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
+                style={{ backgroundColor: 'var(--color-emergency)' }}
+              >
+                <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-guardia)' }} />
+                En guardia — Contactar urgencia
+              </button>
+              <button
+                onClick={() => navigate(`/prestador/${provider.id}`)}
+                className="w-full mt-1.5 py-2 text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors text-center active:scale-[0.98]"
+              >
+                Ver perfil completo →
+              </button>
+            </>
+          ) : claimed ? (
             <>
               <a
                 href={waLink}

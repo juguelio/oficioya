@@ -3,34 +3,7 @@ import { formatARS } from '@/shared/utils/formatARS'
 import { Logo } from '@/shared/components'
 import { cn } from '@/shared/utils/cn'
 import { useSubscription } from '@/features/subscriptions/hooks'
-import type { SubscriptionPlan } from '@/features/subscriptions/types'
-
-const plans: SubscriptionPlan[] = [
-  {
-    id: 'basico',
-    label: 'Básico',
-    priceARS: 20000,
-    contactsPerMonth: 8,
-    hasBadge: false,
-    priority: 'normal',
-  },
-  {
-    id: 'profesional',
-    label: 'Profesional',
-    priceARS: 35000,
-    contactsPerMonth: 'unlimited',
-    hasBadge: true,
-    priority: 'alta',
-  },
-  {
-    id: 'destacado',
-    label: 'Destacado',
-    priceARS: 55000,
-    contactsPerMonth: 'unlimited',
-    hasBadge: true,
-    priority: 'maxima',
-  },
-]
+import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/shared/config/plans'
 
 const planMeta: Record<SubscriptionPlan['id'], { tagline: string; features: string[] }> = {
   basico: {
@@ -126,7 +99,7 @@ export function PricingPage() {
 
         {/* ── Plan cards ─────────────────────────────────────────────────────────── */}
         <div className="space-y-4">
-          {plans.map(plan => (
+          {SUBSCRIPTION_PLANS.map(plan => (
             <PlanCard
               key={plan.id}
               plan={plan}
@@ -196,7 +169,7 @@ function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled
       style={{
         backgroundColor: 'var(--color-sombra)',
         border: `1px solid ${
-          isDestacado     ? '#F5C842'
+          isDestacado     ? 'var(--color-amber)'
           : isProfesional ? 'var(--color-bosque-lt)'
           : 'var(--color-line)'
         }`,
@@ -210,7 +183,7 @@ function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled
         {isDestacado && (
           <span
             className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
-            style={{ backgroundColor: '#E8A020', color: '#fff' }}
+            style={{ backgroundColor: 'var(--color-amber)', color: '#fff' }}
           >
             Popular
           </span>
@@ -265,7 +238,7 @@ function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled
           !enabled
             ? { backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-dk)', borderColor: 'transparent' }
             : isDestacado
-            ? { backgroundColor: '#E8A020', color: '#fff', borderColor: 'transparent' }
+            ? { backgroundColor: 'var(--color-amber)', color: '#fff', borderColor: 'transparent' }
             : isProfesional
             ? { backgroundColor: 'var(--color-bosque-lt)', color: '#fff', borderColor: 'transparent' }
             : { backgroundColor: 'var(--color-noche)', color: 'var(--color-nieve)', borderColor: 'var(--color-line)' }

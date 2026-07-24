@@ -2,10 +2,15 @@ import { useMemo, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useCityStore } from '@/features/search/store'
+// excepción documentada (§3): search consume el hook useProviders de la feature providers.
+// El hook encapsula el fetch a Supabase (providers_public) — mover eso a shared/ sería un
+// refactor grande. Se deja como dependencia cross-feature explícita, no se mueve.
 import { useProviders } from '@/features/providers/hooks'
 import { Logo } from '@/shared/components'
+import { formatARS } from '@/shared/utils/formatARS'
+import { BASE_PLAN } from '@/shared/config/plans'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
-import type { Provider } from '@/features/providers/types'
+import type { Provider } from '@/shared/types'
 
 const FALLBACK_PHOTO = '/images/user-avatar.png'
 
@@ -540,7 +545,7 @@ const orderedCiudades = useMemo(
             </h2>
             <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.65)' }}>
               Llegá a clientes verificados en tu zona. Desde {' '}
-              <span className="font-bold text-white">$20.000/mes</span>.
+              <span className="font-bold text-white">{formatARS(BASE_PLAN.priceARS)}/mes</span>.
             </p>
             <div className="flex gap-2">
               <Link
@@ -730,11 +735,24 @@ function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
           {provider.name}
         </p>
         <div className="flex items-center gap-1.5 mt-0.5 text-xs" style={{ color: 'var(--color-muted)' }}>
-          <span style={{ color: '#E8A020' }}>★</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
-            {provider.rating.toFixed(1)}
-          </span>
-          <span className="opacity-40">·</span>
+          {/* Nunca "★ 0.0": rating Oficio si es real, si no la señal externa (Google), si no sólo el rubro */}
+          {provider.claimed && provider.rating > 0 ? (
+            <>
+              <span style={{ color: 'var(--color-amber)' }}>★</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
+                {provider.rating.toFixed(1)}
+              </span>
+              <span className="opacity-40">·</span>
+            </>
+          ) : provider.externalRating ? (
+            <>
+              <span style={{ color: 'var(--color-amber)' }}>★</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
+                {provider.externalRating.toFixed(1)}
+              </span>
+              <span className="opacity-40">·</span>
+            </>
+          ) : null}
           <span className="capitalize truncate">{provider.rubro.replace('-', ' ')}</span>
         </div>
       </div>

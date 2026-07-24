@@ -11,7 +11,7 @@ import type { DbProviderPublic } from '@/lib/database.types'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/features/subscriptions/hooks'
-import { toProvider } from '@/features/providers/hooks/useProviders'
+import { toProvider } from '@/shared/utils/toProvider'
 
 const FALLBACK_PHOTO = '/images/user-avatar.png'
 

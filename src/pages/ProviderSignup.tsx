@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { cn } from '@/shared/utils/cn'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { formatARS } from '@/shared/utils/formatARS'
+import { SUBSCRIPTION_PLANS } from '@/shared/config/plans'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { sendWelcomeEmail, sendNewProviderAlert } from '@/lib/notifications'
@@ -36,32 +37,20 @@ const STEP_FIELDS: Record<number, (keyof FormData)[]> = {
 
 // ─── Plan metadata ─────────────────────────────────────────────────────────────
 
-const plans = [
-  {
-    id: 'basico'      as const,
-    label: 'Básico',
-    priceARS: 20000,
-    contacts: '8 contactos/mes',
-    features: ['Perfil público', 'Reseñas de clientes'],
-    accent: '#4A8C49',
-  },
-  {
-    id: 'profesional' as const,
-    label: 'Profesional',
-    priceARS: 35000,
-    contacts: 'Contactos ilimitados',
-    features: ['Badge ✓ verificado', 'Prioridad alta en búsquedas', 'Reseñas de clientes'],
-    accent: '#2E6E8A',
-  },
-  {
-    id: 'destacado'   as const,
-    label: 'Destacado',
-    priceARS: 55000,
-    contacts: 'Contactos ilimitados',
-    features: ['Badge ✓ verificado', 'Prioridad máxima + banner', 'Aparecés primero siempre'],
-    accent: '#F5C842',
-  },
-]
+// Presentación por plan (texto de contactos, features y acento). El label y el
+// precio salen de la fuente única SUBSCRIPTION_PLANS.
+const PLAN_PRESENTATION: Record<'basico' | 'profesional' | 'destacado', { contacts: string; features: string[]; accent: string }> = {
+  basico:      { contacts: '8 contactos/mes',      features: ['Perfil público', 'Reseñas de clientes'], accent: '#4A8C49' },
+  profesional: { contacts: 'Contactos ilimitados', features: ['Badge ✓ verificado', 'Prioridad alta en búsquedas', 'Reseñas de clientes'], accent: '#2E6E8A' },
+  destacado:   { contacts: 'Contactos ilimitados', features: ['Badge ✓ verificado', 'Prioridad máxima + banner', 'Aparecés primero siempre'], accent: '#F5C842' },
+}
+
+const plans = SUBSCRIPTION_PLANS.map(p => ({
+  id:       p.id,
+  label:    p.label,
+  priceARS: p.priceARS,
+  ...PLAN_PRESENTATION[p.id],
+}))
 
 // ─── ProviderSignup ───────────────────────────────────────────────────────────
 

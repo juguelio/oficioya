@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import { toProvider } from '@/features/providers/hooks/useProviders'
+import { toProvider } from '@/shared/utils/toProvider'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { formatARS } from '@/shared/utils/formatARS'
-import type { Provider } from '@/features/providers/types'
+import type { Provider } from '@/shared/types'
 import type { DbProviderPublic } from '@/lib/database.types'
 
 // Paywall de urgencia (§8): el cliente paga ANTES de que se revele el WhatsApp del prestador
