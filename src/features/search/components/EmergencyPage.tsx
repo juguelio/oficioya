@@ -285,7 +285,7 @@ export function EmergencyPage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t"
+        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t sm:hidden"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
         <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />

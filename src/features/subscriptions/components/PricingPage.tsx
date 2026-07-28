@@ -92,8 +92,8 @@ export function PricingPage() {
             Elegí tu<br />plan
           </h1>
           <p className="text-sm text-[--color-muted] leading-relaxed max-w-sm">
-            Publicá tu perfil y empezá a recibir clientes en tu ciudad.
-            Precios en pesos, sin costos ocultos.
+            Publicá tu perfil y empezá a recibir clientes en el radio San Martín + Junín.
+            Gratis durante el lanzamiento; precios en pesos, sin costos ocultos.
           </p>
         </section>
 
@@ -141,7 +141,7 @@ export function PricingPage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-[--color-line]"
+        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-[--color-line] sm:hidden"
         style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />

@@ -12,7 +12,11 @@ Marketplace hiperlocal que conecta clientes con trabajadores de oficios (electri
 - **Prestadores:** pagan suscripción mensual en ARS para aparecer en la plataforma
 - **Emergencias 24/7:** capa de negocio adicional — prestadores en "modo guardia" cobran $20.000 ARS por contacto, con paywall antes de revelar el WhatsApp
 
-### Las tres ciudades (y solo estas tres, en fase 1)
+### Alcance geográfico v1
+
+La fase 1 ya no se define como “ciudad única” ni como “tres ciudades”. La unidad de validación es un **radio operativo cercano**: San Martín de los Andes + Junín de los Andes (<40 km aprox.). Dentro de ese radio, cuantos más proveedores verificados haya, mejor para la liquidez del marketplace.
+
+Bariloche y Villa La Angostura quedan como ciudades modeladas en el código/seed actual, pero no son foco comercial de validación hasta que el radio SMA+Junín demuestre oferta/demanda.
 
 | Ciudad | CiudadId | Prefijo tel | Lat | Lng |
 |--------|----------|-------------|-----|-----|
@@ -20,7 +24,7 @@ Marketplace hiperlocal que conecta clientes con trabajadores de oficios (electri
 | Villa La Angostura | `villa-la-angostura` | `+5492972` | -40.7583 | -71.6466 |
 | Bariloche | `bariloche` | `+5492944` | -41.1335 | -71.3103 |
 
-Nunca mencionar "Junín de los Andes" — la ciudad correcta es San Martín de los Andes.
+**Actualización 2026-07-27:** Junín de los Andes ya no está vetado. Si el código necesita modelarlo como ciudad propia, agregar un `CiudadId` explícito y revisar filtros, mapas, seeds, Places/outreach y copy antes de usarlo en producción.
 
 ### Flujo cliente (happy path)
 ```

@@ -13,6 +13,7 @@ import type { CiudadId, RubroId } from '@/design-system/tokens'
 import type { Provider } from '@/shared/types'
 
 const FALLBACK_PHOTO = '/images/user-avatar.png'
+const MARKET_SCOPE_COPY = 'San Martín + Junín de los Andes'
 
 // Rubros con keywords de búsqueda por problema (no solo por nombre de oficio)
 const EMERGENCY_RUBROS: { id: RubroId; label: string; icon: string; keywords: string[] }[] = [
@@ -55,7 +56,7 @@ export function HomePage() {
   const [showLoginSheet, setShowLoginSheet]   = useState(false)
   const isRubroSearching = rubroSearch.trim().length > 0
 
-const orderedCiudades = useMemo(
+  const orderedCiudades = useMemo(
     () => ciudadId
       ? [ciudades.find(c => c.id === ciudadId)!, ...ciudades.filter(c => c.id !== ciudadId)]
       : [...ciudades],
@@ -66,18 +67,28 @@ const orderedCiudades = useMemo(
     ciudadId ? { ciudad: ciudadId } : {},
   )
 
-  const topProviders = useMemo<Provider[]>(
-    () => providers.slice(0, 8),
+  const visibleCiudades = useMemo(
+    () => orderedCiudades.filter(c => c.id === 'san-martin'),
+    [orderedCiudades],
+  )
+
+  const publicProviders = useMemo<Provider[]>(
+    () => providers.filter(p => p.claimed),
     [providers],
+  )
+
+  const topProviders = useMemo<Provider[]>(
+    () => publicProviders.slice(0, 8),
+    [publicProviders],
   )
 
   const rubroCounts = useMemo<Record<string, number>>(() => {
     const counts: Record<string, number> = {}
-    for (const p of providers) {
+    for (const p of publicProviders) {
       counts[p.rubro] = (counts[p.rubro] ?? 0) + 1
     }
     return counts
-  }, [providers])
+  }, [publicProviders])
 
   const filteredSearchRubros = useMemo(() => {
     const q = rubroSearch.toLowerCase().trim()
@@ -143,7 +154,7 @@ const orderedCiudades = useMemo(
             Encontrá al profesional<br />que necesitás
           </h1>
           <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.7)' }}>
-            Verificados en San Martín, La Angostura y Bariloche.
+            Oficios verificados en el radio {MARKET_SCOPE_COPY}.
           </p>
 
           {/* Search bar grande */}
@@ -231,9 +242,9 @@ const orderedCiudades = useMemo(
         <section style={{ backgroundColor: 'var(--color-bosque-dk)' }}>
           <div className="flex divide-x" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
           {[
-            { stat: '100%', label: 'Prestadores verificados' },
+            { stat: '90 días', label: 'Gratis para fundadores' },
             { stat: '24/7', label: 'Guardias disponibles' },
-            { stat: '3', label: 'Ciudades del corredor' },
+            { stat: '<40 km', label: 'Radio operativo' },
           ].map(({ stat, label }) => (
             <div key={label} className="flex-1 py-3 px-2 text-center" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
               <p
@@ -257,7 +268,7 @@ const orderedCiudades = useMemo(
             {ciudadId ? 'Tu ciudad' : '¿Dónde estás?'}
           </p>
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {orderedCiudades.map(c => (
+            {visibleCiudades.map(c => (
               <button
                 key={c.id}
                 onClick={() => setCiudad(c.id as CiudadId)}
@@ -280,7 +291,16 @@ const orderedCiudades = useMemo(
                 ×
               </button>
             )}
+            <span
+              className="px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap border shrink-0"
+              style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-line)', color: 'var(--color-bosque-dk)' }}
+            >
+              Junín de los Andes · sumando prestadores
+            </span>
           </div>
+          <p className="text-xs mt-3 leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+            Validamos un radio cercano: San Martín como núcleo y Junín como oferta útil si atiende la zona.
+          </p>
           </div>
         </section>
 
@@ -485,7 +505,7 @@ const orderedCiudades = useMemo(
                 className="text-xs font-bold"
                 style={{ color: 'var(--color-bosque-lt)', fontFamily: 'var(--font-mono)' }}
               >
-                {providersLoading ? '—' : `${providers.length} activos`}
+                {providersLoading ? '—' : `${publicProviders.length} verificados`}
               </span>
             </div>
             <div className="flex gap-3 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x snap-mandatory sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-4">
@@ -544,7 +564,7 @@ const orderedCiudades = useMemo(
               Sumá tu perfil
             </h2>
             <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.65)' }}>
-              Llegá a clientes verificados en tu zona. Desde {' '}
+              Sumate a la cohorte fundadora de {MARKET_SCOPE_COPY}. Gratis durante el lanzamiento; después desde{' '}
               <span className="font-bold text-white">{formatARS(BASE_PLAN.priceARS)}/mes</span>.
             </p>
             <div className="flex gap-2">
@@ -651,7 +671,7 @@ const orderedCiudades = useMemo(
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t"
+        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t sm:hidden"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
         <NavTab icon={<IconExplore />} label="Explorar" active />

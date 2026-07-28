@@ -45,10 +45,14 @@ export function RubroPage() {
   const ciudadData = ciudades.find(c => c.id === ciudadId)
   const rubroData  = rubros.find(r => r.id === rubro)
 
-  const { providers, total, isEmpty, loading } = useProviders({
+  const { providers, loading } = useProviders({
     ciudad: ciudadId ?? undefined,
     rubro:  rubro as RubroId,
   })
+
+  const publicProviders = providers.filter(p => p.claimed)
+  const publicTotal     = publicProviders.length
+  const publicIsEmpty   = publicTotal === 0
 
   if (!ciudadId || !ciudadData) return <Navigate to="/" replace />
 
@@ -129,13 +133,13 @@ export function RubroPage() {
           </div>
 
           {/* Count */}
-          {!loading && !isEmpty && (
+          {!loading && !publicIsEmpty && (
             <p
               className="text-xs text-[--color-muted] mt-5 uppercase tracking-[0.18em] font-semibold"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              <span className="text-[--color-bosque-lt]" style={{ fontFamily: 'var(--font-mono)' }}>{total}</span>
-              {' '}{total === 1 ? 'profesional' : 'profesionales'} disponibles en {ciudadData?.label}
+              <span className="text-[--color-bosque-lt]" style={{ fontFamily: 'var(--font-mono)' }}>{publicTotal}</span>
+              {' '}{publicTotal === 1 ? 'profesional verificado' : 'profesionales verificados'} disponibles en {ciudadData?.label}
             </p>
           )}
         </section>
@@ -154,7 +158,7 @@ export function RubroPage() {
               </div>
             ))}
           </div>
-        ) : isEmpty ? (
+        ) : publicIsEmpty ? (
           <EmptyState
             rubro={rubroData?.label}
             ciudad={ciudadData?.label}
@@ -162,7 +166,7 @@ export function RubroPage() {
           />
         ) : (
           <div className="grid gap-5">
-            {providers.map(p => (
+            {publicProviders.map(p => (
               <ProviderListCard
                 key={p.id}
                 provider={p}
@@ -176,7 +180,7 @@ export function RubroPage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-[--color-line]"
+        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-[--color-line] sm:hidden"
         style={{ backgroundColor: 'var(--color-noche)' }}
       >
         <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />
@@ -292,10 +296,16 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
           <div className="flex items-center gap-1.5 mb-3 text-[--color-muted]">
             <IconLocation />
             <span className="text-xs font-semibold truncate">{provider.barrio ?? ciudadLabel}</span>
-            <span className="text-xs shrink-0">·</span>
-            <span className="text-xs shrink-0" style={{ fontFamily: 'var(--font-mono)' }}>
-              {provider.totalJobs} trabajos
-            </span>
+            {claimed ? (
+              <>
+                <span className="text-xs shrink-0">·</span>
+                <span className="text-xs shrink-0" style={{ fontFamily: 'var(--font-mono)' }}>
+                  {provider.totalJobs} trabajos
+                </span>
+              </>
+            ) : (
+              <span className="text-xs shrink-0">Perfil por confirmar</span>
+            )}
           </div>
 
           {provider.bio && (
