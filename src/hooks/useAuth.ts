@@ -28,6 +28,7 @@ export function useAuth() {
   }, [])
 
   async function signUp(email: string, password: string, meta: Record<string, string>) {
+    await supabase.auth.signOut({ scope: 'local' })
     return supabase.auth.signUp({
       email,
       password,

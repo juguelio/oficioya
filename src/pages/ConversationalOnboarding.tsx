@@ -7,6 +7,7 @@ import { SUBSCRIPTION_PLANS } from '@/shared/config/plans'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { sendWelcomeEmail, sendNewProviderAlert } from '@/lib/notifications'
+import { signUpErrorMessage } from '@/lib/auth-signup'
 
 // ─── Tipos ──────────────────────────────────────────────────────────────────────
 
@@ -205,14 +206,17 @@ export function ConversationalOnboarding() {
       subscription_tier_id: draft.subscription_tier_id || 'basico',
     })
 
-    if (authError) {
-      setSubmitError(
-        authError.message === 'User already registered'
-          ? 'Ya existe una cuenta con ese email. Probá iniciando sesión.'
-          : authError.message,
-      )
-      setPhase('confirm')
-      pushAgent(['Ups, algo falló al crear la cuenta. Fijate el detalle abajo y reintentá.'])
+    const signUpMessage = signUpErrorMessage(authError, authData)
+    if (signUpMessage) {
+      await supabase.auth.signOut({ scope: 'local' })
+      setSubmitError(signUpMessage)
+      setDraft(prev => ({ ...prev, email: '' }))
+      setTextValue('')
+      setPhase('email')
+      pushAgent([
+        signUpMessage,
+        'Escribí el email correcto y volvemos a intentarlo sin mandarte al onboarding.',
+      ])
       return
     }
 

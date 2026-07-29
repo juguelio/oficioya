@@ -10,6 +10,7 @@ import { SUBSCRIPTION_PLANS } from '@/shared/config/plans'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { sendWelcomeEmail, sendNewProviderAlert } from '@/lib/notifications'
+import { signUpErrorMessage } from '@/lib/auth-signup'
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
@@ -70,7 +71,7 @@ export function ProviderSignup() {
     defaultValues: { whatsapp_number: '+549' },
   })
 
-  const { register, handleSubmit, trigger, watch, setValue, formState: { errors, isSubmitting } } = form
+  const { register, handleSubmit, trigger, watch, setValue, setError, formState: { errors, isSubmitting } } = form
 
   const ciudadId = watch('ciudad_id')
   const rubroId  = watch('rubro_id')
@@ -103,12 +104,13 @@ export function ProviderSignup() {
       subscription_tier_id: data.subscription_tier_id,
     })
 
-    if (authError) {
-      setSubmitError(
-        authError.message === 'User already registered'
-          ? 'Ya existe una cuenta con ese email. ¿Querés iniciar sesión?'
-          : authError.message,
-      )
+    const signUpMessage = signUpErrorMessage(authError, authData)
+    if (signUpMessage) {
+      await supabase.auth.signOut({ scope: 'local' })
+      setSubmitError(signUpMessage)
+      setValue('email', '')
+      setError('email', { type: 'manual', message: 'Probá con otro email o iniciá sesión.' })
+      setStep(1)
       return
     }
 
