@@ -34,12 +34,14 @@ const EMERGENCY_RUBROS: { id: RubroId; label: string; icon: string; keywords: st
   { id: 'leniero',         label: 'Leñero',           icon: '🪵', keywords: ['leña', 'madera combustible', 'estufa a leña'] },
   { id: 'limpieza',        label: 'Limpieza',         icon: '🧹', keywords: ['limpiar', 'limpieza', 'mucama', 'empleada', 'orden'] },
   { id: 'cabanas',         label: 'Mant. de cabañas', icon: '🏕️', keywords: ['cabaña', 'alquiler', 'mantenimiento', 'temporada'] },
+  { id: 'electrodomesticos', label: 'Electrodomésticos', icon: '🧊', keywords: ['heladera', 'freezer', 'lavarropas', 'secarropas', 'lavavajillas', 'microondas', 'cocina eléctrica', 'no enfría', 'no arranca', 'pierde agua', 'service', 'electrodoméstico'] },
 ]
 
 // Rubros principales — aparecen en el carrusel destacado
 const FEATURED_RUBRO_IDS = new Set<RubroId>([
   'electricista', 'plomero', 'gasista', 'calefaccionista',
   'cerrajero', 'carpintero', 'albanil', 'pintor',
+  'limpieza', 'electrodomesticos',
 ])
 const FEATURED_RUBROS = rubros.filter(r => FEATURED_RUBRO_IDS.has(r.id as RubroId))
 
@@ -375,7 +377,13 @@ export function HomePage() {
           </div>
 
           {/* Categorías — carrusel en mobile, grid en desktop */}
-          <div className="flex gap-2.5 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x sm:grid sm:grid-cols-4 md:grid-cols-8 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-3">
+          <div className="relative">
+          {/* Degradé de borde: avisa que el carrusel sigue. Solo mobile. */}
+          <div
+            className="pointer-events-none absolute top-0 right-0 bottom-2 w-10 z-10 sm:hidden"
+            style={{ background: 'linear-gradient(to right, rgba(247,246,242,0), var(--color-noche))' }}
+          />
+          <div className="flex gap-2.5 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x sm:grid sm:grid-cols-4 md:grid-cols-5 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-3">
             {FEATURED_RUBROS.map(r => {
               const count        = ciudadId ? (rubroCounts[r.id] ?? 0) : null
               const hasProviders = count === null || count > 0
@@ -405,6 +413,7 @@ export function HomePage() {
                 </button>
               )
             })}
+          </div>
           </div>
 
           {/* Search box — otros servicios / por descripción del problema */}
