@@ -526,7 +526,9 @@ export function HomePage() {
           <div className="space-y-3">
             {[
               { icon: '✓', title: 'Verificación con insignia', body: 'Los prestadores que confirman su perfil y presentan matrícula o DNI llevan la insignia ✓.' },
-              { icon: '★', title: 'Reseñas reales', body: 'Solo clientes que contrataron el servicio pueden dejar su opinión.' },
+              // No prometer que las reseñas están restringidas a clientes verificados:
+              // `submit_review` acepta envíos anónimos (v1 no tiene cuentas de cliente).
+              { icon: '★', title: 'Reseñas de vecinos', body: 'Cualquier vecino que lo contrató puede dejar su opinión, y se publica con nombre.' },
               { icon: '📍', title: 'Hiperlocal', body: 'Solo el radio San Martín + Junín de los Andes. Gente que llega a tu casa el mismo día.' },
             ].map(({ icon, title, body }) => (
               <div

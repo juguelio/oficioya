@@ -1,9 +1,15 @@
 -- =============================================================================
 -- 1) providers_public: enmascarar whatsapp_number de prestadores en guardia.
 --    El paywall de urgencias (§8/§12) se enforcea en UI, pero el número seguía
---    viniendo en la respuesta de la vista → cualquiera podía leerlo del network
---    tab. Ahora el WhatsApp de un prestador en guardia SOLO se revela vía la
---    edge function emergency-verify, post-pago.
+--    viniendo en la respuesta de la vista → cualquiera podía leerlo del network tab.
+--    ⚠️ CORRECCIÓN (2026-07-30): esta migración por sí sola NO alcanzaba. Quedaban
+--    dos caminos más al mismo número, cerrados después:
+--      · la tabla base `providers` era legible por anon (política
+--        providers_select_active, sin restricción de columnas) → 20260730015502
+--      · get_claimable_by_token devolvía el whatsapp sin mirar el status
+--        → 20260730015630
+--    Recién con esas tres el número sale sólo vía la edge function
+--    emergency-verify, post-pago.
 -- 2) submit_review: RPC security-definer para que un cliente (anónimo, no hay
 --    cuentas de cliente en v1) pueda dejar una reseña desde el perfil. La tabla
 --    reviews mantiene escritura service-role-only; este RPC es la única puerta.
