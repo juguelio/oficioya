@@ -34,6 +34,7 @@ const EMERGENCY_RUBROS: { id: RubroId; label: string; icon: string; keywords: st
   { id: 'leniero',         label: 'Leñero',           icon: '🪵', keywords: ['leña', 'madera combustible', 'estufa a leña'] },
   { id: 'limpieza',        label: 'Limpieza',         icon: '🧹', keywords: ['limpiar', 'limpieza', 'mucama', 'empleada', 'orden'] },
   { id: 'cabanas',         label: 'Mant. de cabañas', icon: '🏕️', keywords: ['cabaña', 'alquiler', 'mantenimiento', 'temporada'] },
+  { id: 'electrodomesticos', label: 'Electrodomésticos', icon: '🧊', keywords: ['heladera', 'freezer', 'lavarropas', 'secarropas', 'lavavajillas', 'microondas', 'cocina eléctrica', 'no enfría', 'no arranca', 'pierde agua', 'service', 'electrodoméstico'] },
 ]
 
 // Rubros principales — aparecen en el carrusel destacado

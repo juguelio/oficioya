@@ -576,6 +576,25 @@ const rawMocks: Omit<Provider, 'claimed' | 'externalRating' | 'externalReviews' 
     isEmergencyAvailable: false,
   createdAt: '2023-10-30',
   },
+  {
+    id: 'p41',
+    name: 'El Laboratorio — Matías Frugoni',
+    rubro: 'electrodomesticos',
+    ciudad: 'san-martin',
+    barrio: 'Centro',
+    phone: '+5492995178626',
+    rating: 4.9,
+    totalJobs: 74,
+    isVerified: true,
+    subscription: 'destacado',
+    status: 'active',
+    lat: -40.1560,
+    lng: -71.3495,
+    bio: 'Reparo heladeras y lavarropas a domicilio, todas las marcas. Diagnóstico en el día y garantía escrita sobre el trabajo.',
+    photos: ['/images/provider-el-laboratorio.png'],
+    isEmergencyAvailable: false,
+  createdAt: '2025-10-05',
+  },
 
   // ── Villa La Angostura ─────────────────────────────────────────────────────
   {

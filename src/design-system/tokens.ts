@@ -36,6 +36,7 @@ export const rubros = [
   { id: 'leniero',         label: 'Leñero',                icon: '🪵' },
   { id: 'limpieza',        label: 'Limpieza',              icon: '🧹' },
   { id: 'cabanas',         label: 'Mant. de cabañas',      icon: '🏕️' },
+  { id: 'electrodomesticos', label: 'Electrodomésticos',   icon: '🧊' },
 ] as const
 
 export type RubroId = typeof rubros[number]['id']
