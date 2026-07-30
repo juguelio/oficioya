@@ -2,11 +2,20 @@
 
 export const ciudades = [
   { id: 'san-martin',         label: 'San Martín de los Andes', cp: '8370', lat: -40.1573, lng: -71.3520 },
+  { id: 'junin',              label: 'Junín de los Andes',      cp: '8371', lat: -39.9497, lng: -71.0678 },
   { id: 'villa-la-angostura', label: 'Villa La Angostura',      cp: '8407', lat: -40.7583, lng: -71.6466 },
   { id: 'bariloche',          label: 'Bariloche',               cp: '8400', lat: -41.1335, lng: -71.3103 },
 ] as const
 
 export type CiudadId = typeof ciudades[number]['id']
+
+/**
+ * Radio operativo v1 (decisión de producto 2026-07-27): la unidad de validación es
+ * San Martín + Junín de los Andes (<40 km aprox.), no una ciudad sola.
+ * Bariloche y VLA siguen modeladas pero fuera del foco comercial: no se ofrecen
+ * en el selector hasta que este radio demuestre oferta y demanda.
+ */
+export const radioOperativoV1: readonly CiudadId[] = ['san-martin', 'junin']
 
 // ─── Rubros ──────────────────────────────────────────────────────────────────
 

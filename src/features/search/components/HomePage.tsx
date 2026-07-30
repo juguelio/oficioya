@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { ciudades, rubros } from '@/design-system/tokens'
+import { ciudades, rubros, radioOperativoV1 } from '@/design-system/tokens'
 import { useCityStore } from '@/features/search/store'
 // excepción documentada (§3): search consume el hook useProviders de la feature providers.
 // El hook encapsula el fetch a Supabase (providers_public) — mover eso a shared/ sería un
@@ -8,6 +8,7 @@ import { useCityStore } from '@/features/search/store'
 import { useProviders } from '@/features/providers/hooks'
 import { Logo } from '@/shared/components'
 import { formatARS } from '@/shared/utils/formatARS'
+import { initials } from '@/shared/utils/initials'
 import { BASE_PLAN } from '@/shared/config/plans'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
 import type { Provider } from '@/shared/types'
@@ -68,14 +69,13 @@ export function HomePage() {
   )
 
   const visibleCiudades = useMemo(
-    () => orderedCiudades.filter(c => c.id === 'san-martin'),
+    () => orderedCiudades.filter(c => radioOperativoV1.includes(c.id)),
     [orderedCiudades],
   )
 
-  const publicProviders = useMemo<Provider[]>(
-    () => providers.filter(p => p.claimed),
-    [providers],
-  )
+  // Se muestran también los perfiles sin reclamar: son negocios reales con rating de
+  // Google y el contacto oculto hasta que el prestador confirma (CLAIMABLE-PROFILES.md).
+  const publicProviders = providers
 
   const topProviders = useMemo<Provider[]>(
     () => publicProviders.slice(0, 8),
@@ -154,7 +154,7 @@ export function HomePage() {
             Encontrá al profesional<br />que necesitás
           </h1>
           <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.7)' }}>
-            Oficios verificados en el radio {MARKET_SCOPE_COPY}.
+            Los oficios de la zona, en un solo lugar. Radio {MARKET_SCOPE_COPY}.
           </p>
 
           {/* Search bar grande */}
@@ -243,7 +243,7 @@ export function HomePage() {
           <div className="flex divide-x" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
           {[
             { stat: '90 días', label: 'Gratis para fundadores' },
-            { stat: '24/7', label: 'Guardias disponibles' },
+            { stat: 'WhatsApp', label: 'Contacto directo' },
             { stat: '<40 km', label: 'Radio operativo' },
           ].map(({ stat, label }) => (
             <div key={label} className="flex-1 py-3 px-2 text-center" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
@@ -505,7 +505,7 @@ export function HomePage() {
                 className="text-xs font-bold"
                 style={{ color: 'var(--color-bosque-lt)', fontFamily: 'var(--font-mono)' }}
               >
-                {providersLoading ? '—' : `${publicProviders.length} verificados`}
+                {providersLoading ? '—' : `${publicProviders.length} en la zona`}
               </span>
             </div>
             <div className="flex gap-3 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x snap-mandatory sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-4">
@@ -525,9 +525,9 @@ export function HomePage() {
           </h2>
           <div className="space-y-3">
             {[
-              { icon: '✓', title: 'Prestadores verificados', body: 'Cada prestador pasa por un proceso de verificación antes de aparecer en la plataforma.' },
+              { icon: '✓', title: 'Verificación con insignia', body: 'Los prestadores que confirman su perfil y presentan matrícula o DNI llevan la insignia ✓.' },
               { icon: '★', title: 'Reseñas reales', body: 'Solo clientes que contrataron el servicio pueden dejar su opinión.' },
-              { icon: '🔴', title: 'Guardias 24/7', body: 'Para urgencias reales. Alguien disponible en minutos, cualquier día.' },
+              { icon: '📍', title: 'Hiperlocal', body: 'Solo el radio San Martín + Junín de los Andes. Gente que llega a tu casa el mismo día.' },
             ].map(({ icon, title, body }) => (
               <div
                 key={title}
@@ -715,7 +715,8 @@ type ProviderMiniCardProps = { provider: Provider }
 
 function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
   const navigate = useNavigate()
-  const photo    = provider.photos?.[0] ?? FALLBACK_PHOTO
+  const ownPhoto = provider.photos?.[0]
+  const photo    = ownPhoto ?? FALLBACK_PHOTO
 
   return (
     <button
@@ -726,13 +727,34 @@ function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
         className="relative aspect-square w-36 sm:w-full rounded-xl overflow-hidden border"
         style={{ borderColor: 'var(--color-line)' }}
       >
-        <img
-          src={photo}
-          alt={provider.name}
-          className="w-full h-full object-cover"
-          style={{ objectPosition: 'center top' }}
-          onError={e => { (e.target as HTMLImageElement).src = FALLBACK_PHOTO }}
-        />
+        {ownPhoto ? (
+          <img
+            src={photo}
+            alt={provider.name}
+            className="w-full h-full object-cover"
+            style={{ objectPosition: 'center top' }}
+            onError={e => { (e.target as HTMLImageElement).src = FALLBACK_PHOTO }}
+          />
+        ) : (
+          /* Sin foto propia el nombre es la imagen: una ilustración de stock repetida
+             en cientos de fichas se lee como relleno. */
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{ backgroundColor: 'var(--color-brand-tint)' }}
+          >
+            <span
+              className="leading-none select-none"
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '2rem',
+                letterSpacing: '-0.03em',
+                color: 'var(--color-bosque-lt)',
+              }}
+            >
+              {initials(provider.name)}
+            </span>
+          </div>
+        )}
         {provider.subscription === 'destacado' && (
           <div
             className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"

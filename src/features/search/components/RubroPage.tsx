@@ -8,6 +8,7 @@ import { useCityStore } from '@/features/search/store'
 import { useProviders } from '@/features/providers/hooks'
 import { track } from '@/lib/analytics'
 import { cn } from '@/shared/utils/cn'
+import { initials } from '@/shared/utils/initials'
 import type { RubroId, CiudadId } from '@/design-system/tokens'
 import type { Provider } from '@/shared/types'
 
@@ -50,7 +51,9 @@ export function RubroPage() {
     rubro:  rubro as RubroId,
   })
 
-  const publicProviders = providers.filter(p => p.claimed)
+  // Se muestran también los perfiles sin reclamar: son negocios reales con rating de
+  // Google y el contacto oculto hasta que el prestador confirma (CLAIMABLE-PROFILES.md).
+  const publicProviders = providers
   const publicTotal     = publicProviders.length
   const publicIsEmpty   = publicTotal === 0
 
@@ -139,7 +142,7 @@ export function RubroPage() {
               style={{ fontFamily: 'var(--font-body)' }}
             >
               <span className="text-[--color-bosque-lt]" style={{ fontFamily: 'var(--font-mono)' }}>{publicTotal}</span>
-              {' '}{publicTotal === 1 ? 'profesional verificado' : 'profesionales verificados'} disponibles en {ciudadData?.label}
+              {' '}{publicTotal === 1 ? 'profesional' : 'profesionales'} en {ciudadData?.label}
             </p>
           )}
         </section>
@@ -207,7 +210,12 @@ type ProviderListCardProps = {
 }
 
 function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
-  const img         = provider.photos?.[0] ?? fallbackImg
+  const ownPhoto    = provider.photos?.[0]
+  const img         = ownPhoto ?? fallbackImg
+  // Sin foto propia no ponemos una ilustración de stock: repetida a lo largo de cientos de
+  // fichas se lee como relleno y le saca credibilidad justo a lo que hay que transmitir.
+  // En su lugar, el nombre del negocio es la imagen.
+  const useInitials = !ownPhoto
   // Perfiles sin reclamar tienen el WhatsApp enmascarado (phone=''): NO mostramos un CTA muerto
   // a wa.me/ vacío — mandamos al perfil (que maneja el estado "sin confirmar" y el claim).
   // Los en guardia vienen con el whatsapp enmascarado server-side (migración ..021):
@@ -225,17 +233,45 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
     >
       {/* Photo — mobile: full width banner / desktop: fixed left column */}
       <button
-        className="relative h-48 w-full block text-left shrink-0 sm:w-52 sm:h-auto"
+        className={cn(
+          'relative w-full block text-left shrink-0 sm:w-52 sm:h-auto',
+          useInitials ? 'h-28' : 'h-48',
+        )}
         onClick={() => navigate(`/prestador/${provider.id}`)}
         aria-label={`Ver perfil de ${provider.name}`}
       >
-        <img
-          src={img}
-          alt={provider.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          style={{ objectPosition: 'center top' }}
-          onError={e => { (e.target as HTMLImageElement).src = fallbackImg }}
-        />
+        {useInitials ? (
+          <div
+            className="w-full h-full flex flex-col items-center justify-center gap-1.5"
+            style={{ backgroundColor: 'var(--color-brand-tint)' }}
+          >
+            <span
+              className="leading-none select-none"
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '2.75rem',
+                letterSpacing: '-0.03em',
+                color: 'var(--color-bosque-lt)',
+              }}
+            >
+              {initials(provider.name)}
+            </span>
+            <span
+              className="text-[10px] font-bold uppercase tracking-[0.15em]"
+              style={{ color: 'var(--color-bosque-lt)', opacity: 0.6 }}
+            >
+              {rubros.find(r => r.id === provider.rubro)?.label ?? provider.rubro}
+            </span>
+          </div>
+        ) : (
+          <img
+            src={img}
+            alt={provider.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            style={{ objectPosition: 'center top' }}
+            onError={e => { (e.target as HTMLImageElement).src = fallbackImg }}
+          />
+        )}
         {/* Rating badge — Oficio si reclamado; si no, señal externa (Google) etiquetada.
             Nunca mostramos "★ 0.0" de un perfil sin reclamar como si fuera real. */}
         {provider.claimed && provider.rating > 0 ? (
