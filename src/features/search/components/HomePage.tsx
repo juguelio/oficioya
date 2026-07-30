@@ -6,10 +6,11 @@ import { useCityStore } from '@/features/search/store'
 // El hook encapsula el fetch a Supabase (providers_public) — mover eso a shared/ sería un
 // refactor grande. Se deja como dependencia cross-feature explícita, no se mueve.
 import { useProviders } from '@/features/providers/hooks'
-import { Logo } from '@/shared/components'
+import { Logo, RubroIcon } from '@/shared/components'
 import { formatARS } from '@/shared/utils/formatARS'
 import { initials } from '@/shared/utils/initials'
 import { BASE_PLAN } from '@/shared/config/plans'
+import { rubroPhotos } from '@/shared/config/rubro-photos'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
 import type { Provider } from '@/shared/types'
 
@@ -213,7 +214,7 @@ export function HomePage() {
                           className="flex items-center gap-3 px-4 py-3 w-full text-left active:bg-gray-50 transition-colors border-b last:border-b-0"
                           style={{ borderColor: 'rgba(0,0,0,0.06)' }}
                         >
-                          <span className="text-xl leading-none shrink-0">{r.icon}</span>
+                          <RubroIcon rubro={r.id as RubroId} size={22} style={{ color: 'var(--color-bosque-lt)' }} />
                           <span className="text-sm font-semibold flex-1" style={{ color: 'var(--color-nieve)' }}>
                             {r.label}
                           </span>
@@ -387,11 +388,12 @@ export function HomePage() {
             {FEATURED_RUBROS.map(r => {
               const count        = ciudadId ? (rubroCounts[r.id] ?? 0) : null
               const hasProviders = count === null || count > 0
+              const photo        = rubroPhotos[r.id as RubroId]
               return (
                 <button
                   key={r.id}
                   onClick={() => handleRubro(r.id as RubroId)}
-                  className="snap-start shrink-0 w-[76px] sm:w-full relative flex flex-col items-center gap-2 pt-5 pb-4 px-2 rounded-2xl border text-center active:scale-[0.97] transition-all"
+                  className="snap-start shrink-0 w-[104px] sm:w-full relative flex flex-col rounded-2xl border overflow-hidden text-left active:scale-[0.97] transition-all"
                   style={{
                     backgroundColor: 'var(--color-sombra)',
                     borderColor: 'var(--color-line)',
@@ -400,14 +402,22 @@ export function HomePage() {
                 >
                   {count !== null && count > 0 && (
                     <span
-                      className="absolute top-2 right-2 text-[10px] font-black leading-none px-1.5 py-0.5 rounded-full"
+                      className="absolute top-2 right-2 z-10 text-[10px] font-black leading-none px-1.5 py-0.5 rounded-full"
                       style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff', fontFamily: 'var(--font-mono)' }}
                     >
                       {count}
                     </span>
                   )}
-                  <span className="text-[28px] leading-none">{r.icon}</span>
-                  <span className="text-[11px] font-semibold leading-tight" style={{ color: 'var(--color-nieve)' }}>
+                  {/* Foto del oficio; si todavía no hay, cae al icono sobre el tint de marca. */}
+                  <div
+                    className="w-full aspect-square flex items-center justify-center"
+                    style={{ backgroundColor: 'var(--color-brand-tint)' }}
+                  >
+                    {photo
+                      ? <img src={photo} alt="" className="w-full h-full object-cover" loading="lazy" />
+                      : <RubroIcon rubro={r.id as RubroId} size={30} style={{ color: 'var(--color-bosque-lt)' }} />}
+                  </div>
+                  <span className="text-[11px] font-semibold leading-tight px-2 py-2.5" style={{ color: 'var(--color-nieve)' }}>
                     {r.label}
                   </span>
                 </button>
@@ -463,7 +473,7 @@ export function HomePage() {
                             opacity: hasProviders ? 1 : 0.5,
                           }}
                         >
-                          <span className="text-2xl leading-none shrink-0">{r.icon}</span>
+                          <RubroIcon rubro={r.id as RubroId} size={24} style={{ color: 'var(--color-bosque-lt)' }} />
                           <span className="text-sm font-semibold flex-1" style={{ color: 'var(--color-nieve)' }}>
                             {r.label}
                           </span>

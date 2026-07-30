@@ -7,6 +7,7 @@ import { useCityStore } from '@/features/search/store'
 // refactor grande. Se deja como dependencia cross-feature explícita, no se mueve.
 import { useProviders } from '@/features/providers/hooks'
 import { track } from '@/lib/analytics'
+import { RubroIcon } from '@/shared/components'
 import { cn } from '@/shared/utils/cn'
 import { initials } from '@/shared/utils/initials'
 import type { RubroId, CiudadId } from '@/design-system/tokens'
@@ -77,10 +78,11 @@ export function RubroPage() {
           </button>
           <div className="min-w-0">
             <h1
-              className="font-bold text-base text-[--color-nieve] leading-tight truncate"
+              className="font-bold text-base text-[--color-nieve] leading-tight truncate flex items-center gap-2"
               style={{ letterSpacing: '-0.02em' }}
             >
-              {rubroData?.icon} {rubroData?.label}
+              {rubro && <RubroIcon rubro={rubro as RubroId} size={20} style={{ color: 'var(--color-bosque-lt)' }} />}
+              {rubroData?.label}
             </h1>
             <button
               onClick={clearCiudad}
@@ -123,13 +125,14 @@ export function RubroPage() {
                   key={r.id}
                   onClick={() => { setRubro(r.id); navigate(`/${ciudadId}/${r.id}`) }}
                   className={cn(
-                    'px-4 py-2 rounded-md text-sm font-semibold whitespace-nowrap transition-all shrink-0 border',
+                    'px-4 py-2 rounded-md text-sm font-semibold whitespace-nowrap transition-all shrink-0 border flex items-center gap-1.5',
                     r.id === rubro
                       ? 'bg-[--color-bosque-lt] text-white border-transparent'
                       : 'bg-[--color-sombra] text-[--color-muted] border-[--color-line] hover:text-[--color-nieve]',
                   )}
                 >
-                  {r.icon} {r.label}
+                  <RubroIcon rubro={r.id as RubroId} size={16} />
+                  {r.label}
                 </button>
               ))}
             </div>

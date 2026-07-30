@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
+import { signUpErrorMessage } from '@/lib/auth-signup'
 import { ciudades, rubros } from '@/design-system/tokens'
 
 // ─── Tipos del RPC ──────────────────────────────────────────────────────────────
@@ -15,7 +20,17 @@ type Claimable = {
   status: string
   already_claimed: boolean
 }
-type ClaimResult = { ok: boolean; id?: string; name?: string; error?: string }
+
+const schema = z.object({
+  email:    z.string().email('Revisá el email'),
+  password: z.string().min(8, 'Mínimo 8 caracteres'),
+  whatsapp: z.string().min(8, 'Ingresá tu WhatsApp'),
+})
+type FormData = z.infer<typeof schema>
+
+const INPUT_CLASS =
+  'w-full h-14 px-4 rounded-xl text-[--color-nieve] placeholder:text-[--color-muted] border ' +
+  'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40'
 
 function Center({ children }: { children: React.ReactNode }) {
   return (
@@ -25,20 +40,31 @@ function Center({ children }: { children: React.ReactNode }) {
   )
 }
 
+function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-4">
+      <label className="block text-xs font-bold uppercase tracking-[0.15em] mb-2 text-[--color-muted]">{label}</label>
+      {children}
+      {error && <p className="text-xs mt-1.5" style={{ color: '#ffb4ab' }}>{error}</p>}
+    </div>
+  )
+}
+
 // ─── ClaimProfilePage — /activar/:id ──────────────────────────────────────────────
 export function ClaimProfilePage() {
-  const { id } = useParams<{ id: string }>()
   const { hash } = useLocation()
   const navigate = useNavigate()
+  const { signUp } = useAuth()
   // token en el fragment (#t=...): no viaja al server (Referer/logs) ni a PostHog
   const token = new URLSearchParams(hash.replace(/^#/, '')).get('t')
 
-  const [profile, setProfile]   = useState<Claimable | null | undefined>(undefined) // undefined = cargando
-  const [whatsapp, setWhatsapp] = useState('')
-  const [editPhone, setEditPhone] = useState(false)
-  const [claiming, setClaiming] = useState(false)
-  const [claimed, setClaimed]   = useState<{ id: string; name: string } | null>(null)
-  const [error, setError]       = useState<string | null>(null)
+  const [profile, setProfile]     = useState<Claimable | null | undefined>(undefined) // undefined = cargando
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  // 'session' → ya está adentro; 'confirm' → falta confirmar el mail
+  const [done, setDone]           = useState<'session' | 'confirm' | null>(null)
+
+  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } =
+    useForm<FormData>({ resolver: zodResolver(schema) })
 
   useEffect(() => {
     let cancelled = false
@@ -48,19 +74,31 @@ export function ClaimProfilePage() {
       if (cancelled) return
       const p = (data as unknown as Claimable | null)
       setProfile(p)
-      if (p?.whatsapp_number) setWhatsapp(p.whatsapp_number)
+      if (p?.whatsapp_number) setValue('whatsapp', p.whatsapp_number)
     })()
     return () => { cancelled = true }
-  }, [token])
+  }, [token, setValue])
 
-  async function handleClaim() {
+  async function onSubmit(data: FormData) {
     if (!token) return
-    setClaiming(true); setError(null)
-    const { data, error: e } = await supabase.rpc('claim_provider', { p_token: token, p_whatsapp: whatsapp })
-    setClaiming(false)
-    const res = (data as unknown as ClaimResult | null)
-    if (e || !res?.ok) { setError('No se pudo activar. El link puede estar vencido o ya usado.'); return }
-    setClaimed({ id: res.id ?? id ?? '', name: res.name ?? '' })
+    setSubmitError(null)
+
+    const { data: authData, error } = await signUp(data.email, data.password, {
+      claim_token:     token,
+      whatsapp_number: data.whatsapp,
+    })
+
+    // El trigger aborta el alta si el token ya se usó → Supabase lo devuelve como
+    // error genérico de base. Traducimos para no mostrar el texto crudo.
+    if (error && /database error|claim_token/i.test(error.message)) {
+      setSubmitError('Este link ya fue usado o venció. Escribinos y te mandamos uno nuevo.')
+      return
+    }
+
+    const message = signUpErrorMessage(error, authData)
+    if (message) { setSubmitError(message); return }
+
+    setDone(authData.session ? 'session' : 'confirm')
   }
 
   if (profile === undefined) return <Center><p className="text-[--color-muted]">Cargando…</p></Center>
@@ -73,50 +111,52 @@ export function ClaimProfilePage() {
     </Center>
   )
 
-  // Éxito (recién reclamado) o ya estaba activo
-  if (claimed || profile.already_claimed) {
-    const pid = claimed?.id || profile.id
-    return (
-      <Center>
-        <span className="text-6xl mb-4">🎉</span>
-        <h1 className="font-black text-2xl text-[--color-nieve] mb-2" style={{ letterSpacing: '-0.02em' }}>
-          {claimed ? '¡Tu perfil está activo!' : 'Este perfil ya está activo'}
-        </h1>
-        <p className="text-sm text-[--color-muted] mb-7 max-w-xs">
-          {claimed
-            ? 'Ya podés recibir contactos de clientes. Sumá tu verificación y elegí un plan para destacar.'
-            : 'Ya fue confirmado. Entrá a tu perfil para gestionarlo.'}
-        </p>
-        <div className="flex flex-col gap-3 w-full max-w-xs">
-          <button
-            onClick={() => navigate(`/prestador/${pid}`)}
-            className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
-            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
-          >
-            Ver mi perfil
-          </button>
-          {claimed && (
-            <>
-              <button
-                onClick={() => navigate('/verificacion')}
-                className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
-                style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
-              >
-                Verificá tu identidad (DNI/matrícula)
-              </button>
-              <button
-                onClick={() => navigate('/planes')}
-                className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
-                style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
-              >
-                Ver planes para destacar
-              </button>
-            </>
-          )}
-        </div>
-      </Center>
-    )
-  }
+  // Cuenta creada recién
+  if (done) return (
+    <Center>
+      <span className="text-6xl mb-4">🎉</span>
+      <h1 className="font-black text-2xl text-[--color-nieve] mb-2" style={{ letterSpacing: '-0.02em' }}>
+        ¡Tu perfil está activo!
+      </h1>
+      <p className="text-sm text-[--color-muted] mb-7 max-w-xs">
+        {done === 'session'
+          ? 'Ya podés recibir contactos de clientes. Desde tu panel editás tus datos y prendés el modo guardia.'
+          : 'Te mandamos un mail para confirmar tu cuenta. Confirmalo y entrá a tu panel.'}
+      </p>
+      <div className="flex flex-col gap-3 w-full max-w-xs">
+        <button
+          onClick={() => navigate(done === 'session' ? '/dashboard' : '/login')}
+          className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
+          style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+        >
+          {done === 'session' ? 'Ir a mi panel' : 'Ir a iniciar sesión'}
+        </button>
+        <button
+          onClick={() => navigate(`/prestador/${profile.id}`)}
+          className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
+          style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+        >
+          Ver cómo me ven los clientes
+        </button>
+      </div>
+    </Center>
+  )
+
+  // El perfil ya tiene dueño — no ofrecemos crear cuenta encima
+  if (profile.already_claimed) return (
+    <Center>
+      <span className="text-5xl mb-3">✅</span>
+      <p className="text-[--color-nieve] font-bold text-lg mb-1">Este perfil ya tiene cuenta</p>
+      <p className="text-[--color-muted] text-sm mb-7 max-w-xs">Si es tuyo, entrá con tu email y contraseña.</p>
+      <button
+        onClick={() => navigate('/login')}
+        className="py-3.5 px-8 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
+        style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+      >
+        Iniciar sesión
+      </button>
+    </Center>
+  )
 
   const rubroData  = rubros.find(r => r.id === profile.rubro_id)
   const ciudadData = ciudades.find(c => c.id === profile.ciudad_id)
@@ -137,7 +177,7 @@ export function ClaimProfilePage() {
             Te armamos tu perfil en Oficio
           </h2>
           <p className="text-sm text-[--color-muted] mb-7 max-w-sm mx-auto">
-            Confirmá que sos vos y empezá a recibir contactos de clientes de la zona — <strong className="text-[--color-nieve]">gratis</strong>.
+            Creá tu clave para administrarlo y empezá a recibir contactos de clientes de la zona — <strong className="text-[--color-nieve]">gratis</strong>.
           </p>
         </div>
 
@@ -155,41 +195,53 @@ export function ClaimProfilePage() {
           )}
         </div>
 
-        {/* WhatsApp confirmado / editable */}
-        <div className="mb-7">
-          {!editPhone ? (
-            <p className="text-sm text-[--color-muted] text-center">
-              Te contactamos al <span className="font-mono text-[--color-nieve]">{whatsapp || '—'}</span>.{' '}
-              <button onClick={() => setEditPhone(true)} className="text-[--color-bosque-lt] font-semibold underline">¿Otro número?</button>
-            </p>
-          ) : (
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-widest mb-2 text-[--color-muted]">Tu WhatsApp</label>
-              <input
-                value={whatsapp}
-                onChange={e => setWhatsapp(e.target.value)}
-                placeholder="+549..."
-                className="w-full h-14 px-4 rounded-xl text-[--color-nieve] placeholder:text-[--color-muted] border border-[--color-line] focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
-                style={{ backgroundColor: 'var(--color-noche)' }}
-              />
-            </div>
-          )}
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Field label="Tu WhatsApp" error={errors.whatsapp?.message}>
+            <input
+              {...register('whatsapp')}
+              placeholder="+549..."
+              inputMode="tel"
+              className={INPUT_CLASS}
+              style={{ backgroundColor: 'var(--color-noche)', borderColor: errors.whatsapp ? '#ffb4ab' : 'var(--color-line)' }}
+            />
+          </Field>
 
-        {error && <p className="text-sm text-center mb-4" style={{ color: '#ffb4ab' }}>{error}</p>}
+          <Field label="Tu email" error={errors.email?.message}>
+            <input
+              {...register('email')}
+              type="email"
+              autoComplete="email"
+              placeholder="tunombre@mail.com"
+              className={INPUT_CLASS}
+              style={{ backgroundColor: 'var(--color-noche)', borderColor: errors.email ? '#ffb4ab' : 'var(--color-line)' }}
+            />
+          </Field>
 
-        {/* CTA: un toque */}
-        <button
-          onClick={handleClaim}
-          disabled={claiming}
-          className="w-full py-4 rounded-full font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-60"
-          style={{ backgroundColor: 'var(--color-bosque-lt)' }}
-        >
-          {claiming ? 'Activando…' : 'Sí, soy yo — activar mi perfil'}
-        </button>
-        <p className="text-center text-xs text-[--color-muted] mt-4">
-          Al activar, confirmás que sos el titular y aceptás recibir contactos por WhatsApp.
-        </p>
+          <Field label="Creá una contraseña" error={errors.password?.message}>
+            <input
+              {...register('password')}
+              type="password"
+              autoComplete="new-password"
+              placeholder="Mínimo 8 caracteres"
+              className={INPUT_CLASS}
+              style={{ backgroundColor: 'var(--color-noche)', borderColor: errors.password ? '#ffb4ab' : 'var(--color-line)' }}
+            />
+          </Field>
+
+          {submitError && <p className="text-sm text-center mb-4" style={{ color: '#ffb4ab' }}>{submitError}</p>}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-4 rounded-full font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-60"
+            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+          >
+            {isSubmitting ? 'Activando…' : 'Sí, soy yo — activar mi perfil'}
+          </button>
+          <p className="text-center text-xs text-[--color-muted] mt-4">
+            Al activar, confirmás que sos el titular y aceptás recibir contactos por WhatsApp.
+          </p>
+        </form>
       </main>
     </div>
   )

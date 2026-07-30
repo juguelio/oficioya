@@ -238,13 +238,24 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
           </div>
           <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{provider.name}</p>
         </div>
-        <button
-          onClick={onExit}
-          className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
-          style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
-        >
-          Salir
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          {isLive && (
+            <button
+              onClick={() => navigate('/perfil')}
+              className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
+              style={{ borderColor: 'var(--color-line)', color: 'var(--color-bosque-lt)' }}
+            >
+              Editar perfil
+            </button>
+          )}
+          <button
+            onClick={onExit}
+            className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
+            style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+          >
+            Salir
+          </button>
+        </div>
       </header>
 
       <main className="pt-14 pb-6">

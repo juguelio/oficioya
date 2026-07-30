@@ -16,6 +16,7 @@ const ProviderSignup     = lazy(() => import('@/pages/ProviderSignup').then(m =>
 const ConvOnboarding     = lazy(() => import('@/pages/ConversationalOnboarding').then(m => ({ default: m.ConversationalOnboarding })))
 const ProviderLogin      = lazy(() => import('@/pages/ProviderLogin').then(m => ({ default: m.ProviderLogin })))
 const ProviderDashboard  = lazy(() => import('@/pages/ProviderDashboard').then(m => ({ default: m.ProviderDashboard })))
+const ProviderProfileEdit = lazy(() => import('@/pages/ProviderProfileEdit').then(m => ({ default: m.ProviderProfileEdit })))
 const JobsPage           = lazy(() => import('@/features/jobs/components/JobsPage').then(m => ({ default: m.JobsPage })))
 const PostJobPage        = lazy(() => import('@/features/jobs/components/PostJobPage').then(m => ({ default: m.PostJobPage })))
 const JobDetailPage      = lazy(() => import('@/features/jobs/components/JobDetailPage').then(m => ({ default: m.JobDetailPage })))
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
 
   // Dashboard prestador (fase 1: auth mock vía store)
   { path: '/dashboard',          element: <ProviderDashboard /> },
+  { path: '/perfil',             element: <ProviderProfileEdit /> },
 
   // Catch-all: cualquier URL desconocida → 404 branded (no la pantalla de dev de React Router).
   { path: '*',                   element: <NotFoundPage /> },
