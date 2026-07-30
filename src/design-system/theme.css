@@ -54,3 +54,16 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* Oculta la scrollbar en los carruseles horizontales (categorías del home,
+   chips de rubro, filtros de trabajos). Se usaba en el JSX desde siempre pero
+   nunca estuvo definida: venía del plugin tailwind-scrollbar-hide, que no está
+   instalado. Definida acá para no sumar dependencia. */
+@utility scrollbar-hide {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE / Edge legacy */
+
+  &::-webkit-scrollbar {
+    display: none;                /* Chrome, Safari */
+  }
+}
