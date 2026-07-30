@@ -384,7 +384,9 @@ export function HomePage() {
             className="pointer-events-none absolute top-0 right-0 bottom-2 w-10 z-10 sm:hidden"
             style={{ background: 'linear-gradient(to right, rgba(247,246,242,0), var(--color-noche))' }}
           />
-          <div className="flex gap-2.5 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x sm:grid sm:grid-cols-4 md:grid-cols-5 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-3">
+          {/* 10 destacados: en lg entran en una sola fila. Sin tantas columnas la
+              tarjeta cuadrada se estira a 250px y el contenido queda perdido. */}
+          <div className="flex gap-2.5 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x sm:grid sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-3">
             {FEATURED_RUBROS.map(r => {
               const count        = ciudadId ? (rubroCounts[r.id] ?? 0) : null
               const hasProviders = count === null || count > 0
@@ -415,7 +417,14 @@ export function HomePage() {
                   >
                     {photo
                       ? <img src={photo} alt="" className="w-full h-full object-cover" loading="lazy" />
-                      : <RubroIcon rubro={r.id as RubroId} size={30} style={{ color: 'var(--color-bosque-lt)' }} />}
+                      : <RubroIcon
+                          rubro={r.id as RubroId}
+                          size={30}
+                          /* proporcional a la tarjeta: con size fijo el icono se
+                             pierde apenas la tarjeta crece */
+                          className="w-[42%] h-[42%]"
+                          style={{ color: 'var(--color-bosque-lt)' }}
+                        />}
                   </div>
                   <span className="text-[11px] font-semibold leading-tight px-2 py-2.5" style={{ color: 'var(--color-nieve)' }}>
                     {r.label}
