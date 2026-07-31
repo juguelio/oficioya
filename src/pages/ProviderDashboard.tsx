@@ -64,6 +64,14 @@ export function ProviderDashboard() {
     navigate('/')
   }
 
+  // ⚠️ ESTA GUARDA VA PRIMERA. Leer la sesión de Supabase es asincrónico: en el
+  // primer render `user` es null aunque el usuario esté logueado. Sin esto, el
+  // bloque "sin sesión" de más abajo se ejecutaba antes de que la sesión cargara
+  // y te devolvía a /login — el login parecía roto cuando en realidad el token
+  // se había emitido bien. Cualquier redirect por falta de `user` tiene que
+  // esperar a que `loading` sea false.
+  if (loading) return <DashboardLoading />
+
   // ── Usuario autenticado ──────────────────────────────────────────────────
   if (user) {
     if (authState === 'loading') return <DashboardLoading />
