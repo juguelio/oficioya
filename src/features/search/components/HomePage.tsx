@@ -6,6 +6,7 @@ import { useCityStore } from '@/features/search/store'
 // El hook encapsula el fetch a Supabase (providers_public) — mover eso a shared/ sería un
 // refactor grande. Se deja como dependencia cross-feature explícita, no se mueve.
 import { useProviders } from '@/features/providers/hooks'
+import { useAuth } from '@/hooks/useAuth'
 import { Logo, RubroIcon, Footer } from '@/shared/components'
 import { formatARS } from '@/shared/utils/formatARS'
 import { initials } from '@/shared/utils/initials'
@@ -49,6 +50,8 @@ export function HomePage() {
   const setCiudad   = useCityStore(s => s.setCiudad)
   const clearCiudad = useCityStore(s => s.clearCiudad)
   const navigate    = useNavigate()
+
+  const { user, loading: authLoading } = useAuth()
 
   const ciudadData = ciudades.find(c => c.id === ciudadId)
   const [emergencySearch, setEmergencySearch] = useState('')
@@ -130,21 +133,38 @@ export function HomePage() {
           <button onClick={clearCiudad} className="active:scale-95 transition-transform" aria-label="Inicio">
             <Logo size={26} withWordmark />
           </button>
+          {/* Con sesión iniciada el header mostraba igual "Ingresar / Registrate":
+              el usuario entraba bien, volvía al home y concluía que no había entrado.
+              Era la causa principal de que el login pareciera roto. */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowLoginSheet(true)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors active:scale-95"
-              style={{ color: 'var(--color-muted)' }}
-            >
-              Ingresar
-            </button>
-            <Link
-              to="/registro/prestador"
-              className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white"
-              style={{ backgroundColor: 'var(--color-bosque-lt)' }}
-            >
-              Registrate
-            </Link>
+            {authLoading ? (
+              <div className="h-7 w-24 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-line)' }} />
+            ) : user ? (
+              <Link
+                to="/dashboard"
+                className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white"
+                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+              >
+                Mi panel
+              </Link>
+            ) : (
+              <>
+                <button
+                  onClick={() => setShowLoginSheet(true)}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors active:scale-95"
+                  style={{ color: 'var(--color-muted)' }}
+                >
+                  Ingresar
+                </button>
+                <Link
+                  to="/registro/prestador"
+                  className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white"
+                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                >
+                  Registrate
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
