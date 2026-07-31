@@ -16,6 +16,8 @@ const ProviderSignup     = lazy(() => import('@/pages/ProviderSignup').then(m =>
 const ConvOnboarding     = lazy(() => import('@/pages/ConversationalOnboarding').then(m => ({ default: m.ConversationalOnboarding })))
 const ProviderLogin      = lazy(() => import('@/pages/ProviderLogin').then(m => ({ default: m.ProviderLogin })))
 const ProviderDashboard  = lazy(() => import('@/pages/ProviderDashboard').then(m => ({ default: m.ProviderDashboard })))
+const PrivacyPage        = lazy(() => import('@/features/legal/components/PrivacyPage').then(m => ({ default: m.PrivacyPage })))
+const TermsPage          = lazy(() => import('@/features/legal/components/TermsPage').then(m => ({ default: m.TermsPage })))
 const ProviderProfileEdit = lazy(() => import('@/pages/ProviderProfileEdit').then(m => ({ default: m.ProviderProfileEdit })))
 const JobsPage           = lazy(() => import('@/features/jobs/components/JobsPage').then(m => ({ default: m.JobsPage })))
 const PostJobPage        = lazy(() => import('@/features/jobs/components/PostJobPage').then(m => ({ default: m.PostJobPage })))
@@ -55,6 +57,11 @@ export const router = createBrowserRouter([
   // Dashboard prestador (fase 1: auth mock vía store)
   { path: '/dashboard',          element: <ProviderDashboard /> },
   { path: '/perfil',             element: <ProviderProfileEdit /> },
+
+  // Legales — la política de privacidad es además requisito de Google para verificar
+  // la pantalla de consentimiento del login con Google.
+  { path: '/privacidad',         element: <PrivacyPage /> },
+  { path: '/terminos',           element: <TermsPage /> },
 
   // Catch-all: cualquier URL desconocida → 404 branded (no la pantalla de dev de React Router).
   { path: '*',                   element: <NotFoundPage /> },

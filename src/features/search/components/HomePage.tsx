@@ -6,7 +6,7 @@ import { useCityStore } from '@/features/search/store'
 // El hook encapsula el fetch a Supabase (providers_public) — mover eso a shared/ sería un
 // refactor grande. Se deja como dependencia cross-feature explícita, no se mueve.
 import { useProviders } from '@/features/providers/hooks'
-import { Logo, RubroIcon } from '@/shared/components'
+import { Logo, RubroIcon, Footer } from '@/shared/components'
 import { formatARS } from '@/shared/utils/formatARS'
 import { initials } from '@/shared/utils/initials'
 import { BASE_PLAN } from '@/shared/config/plans'
@@ -38,13 +38,9 @@ const EMERGENCY_RUBROS: { id: RubroId; label: string; icon: string; keywords: st
   { id: 'electrodomesticos', label: 'Electrodomésticos', icon: '🧊', keywords: ['heladera', 'freezer', 'lavarropas', 'secarropas', 'lavavajillas', 'microondas', 'cocina eléctrica', 'no enfría', 'no arranca', 'pierde agua', 'service', 'electrodoméstico'] },
 ]
 
-// Rubros principales — aparecen en el carrusel destacado
-const FEATURED_RUBRO_IDS = new Set<RubroId>([
-  'electricista', 'plomero', 'gasista', 'calefaccionista',
-  'cerrajero', 'carpintero', 'albanil', 'pintor',
-  'limpieza', 'electrodomesticos',
-])
-const FEATURED_RUBROS = rubros.filter(r => FEATURED_RUBRO_IDS.has(r.id as RubroId))
+// El carrusel muestra LOS 17 rubros. Antes había una lista de 10 "destacados" y los
+// otros 7 (jardinero, herrero, techista, técnico en PC, flete, leñero, cabañas) sólo
+// aparecían si el cliente los buscaba por nombre — o sea, casi nunca.
 
 // ─── HomePage ─────────────────────────────────────────────────────────────────
 
@@ -92,6 +88,14 @@ export function HomePage() {
     }
     return counts
   }, [publicProviders])
+
+  // Con 17 rubros y oferta despareja, el orden fijo dejaba tarjetas vacías (grises)
+  // adelante y rubros con 59 prestadores al final. Con ciudad elegida se ordena por
+  // cantidad; sin ciudad no hay dato, así que queda el orden de tokens.ts.
+  const rubrosOrdenados = useMemo(() => {
+    if (!ciudadId) return rubros
+    return [...rubros].sort((a, b) => (rubroCounts[b.id] ?? 0) - (rubroCounts[a.id] ?? 0))
+  }, [ciudadId, rubroCounts])
 
   const filteredSearchRubros = useMemo(() => {
     const q = rubroSearch.toLowerCase().trim()
@@ -384,10 +388,10 @@ export function HomePage() {
             className="pointer-events-none absolute top-0 right-0 bottom-2 w-10 z-10 sm:hidden"
             style={{ background: 'linear-gradient(to right, rgba(247,246,242,0), var(--color-noche))' }}
           />
-          {/* 10 destacados: en lg entran en una sola fila. Sin tantas columnas la
-              tarjeta cuadrada se estira a 250px y el contenido queda perdido. */}
-          <div className="flex gap-2.5 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x sm:grid sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-3">
-            {FEATURED_RUBROS.map(r => {
+          {/* 17 rubros: 9 columnas en lg dan dos filas parejas (9 + 8). Con menos
+              columnas la tarjeta cuadrada se estira y el contenido queda perdido. */}
+          <div className="flex gap-2.5 overflow-x-auto pl-5 pr-5 pb-2 scrollbar-hide snap-x sm:grid sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9 sm:overflow-visible sm:px-10 lg:px-16 sm:gap-3">
+            {rubrosOrdenados.map(r => {
               const count        = ciudadId ? (rubroCounts[r.id] ?? 0) : null
               const hasProviders = count === null || count > 0
               const photo        = rubroPhotos[r.id as RubroId]
@@ -618,6 +622,9 @@ export function HomePage() {
         </section>
 
       </main>
+
+      {/* pb-20 en mobile: el bottom nav fijo tapaba el copyright del footer */}
+      <Footer className="pb-20 sm:pb-0" />
 
       {/* ── Login Sheet ────────────────────────────────────────────────────────── */}
       {showLoginSheet && (
