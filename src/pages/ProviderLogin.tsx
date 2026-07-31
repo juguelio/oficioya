@@ -19,9 +19,10 @@ type FormData = z.infer<typeof schema>
 
 export function ProviderLogin() {
   const navigate          = useNavigate()
-  const { signIn }        = useAuth()
+  const { signIn, signInWithGoogle } = useAuth()
   const [authError, setAuthError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
 
   const {
     register,
@@ -41,6 +42,17 @@ export function ProviderLogin() {
       return
     }
     navigate('/dashboard')
+  }
+
+  async function handleGoogleSignIn() {
+    setAuthError(null)
+    setGoogleLoading(true)
+    const { error } = await signInWithGoogle()
+    if (error) {
+      setAuthError('No pudimos iniciar sesión con Google. Probá de nuevo o usá tu email y contraseña.')
+      setGoogleLoading(false)
+    }
+    // Si no hay error, Supabase redirige fuera de la app al selector de Google.
   }
 
   return (
@@ -80,6 +92,23 @@ export function ProviderLogin() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={googleLoading || isSubmitting}
+            className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-3 border transition-all active:scale-[0.98] disabled:opacity-50"
+            style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-nieve)', borderColor: 'var(--color-line)' }}
+          >
+            <GoogleIcon />
+            {googleLoading ? 'Abriendo Google…' : 'Continuar con Google'}
+          </button>
+
+          <div className="flex items-center gap-3 py-1" aria-hidden="true">
+            <div className="h-px flex-1 bg-[--color-line]" />
+            <span className="text-[10px] font-bold tracking-[0.14em] text-[--color-muted]">O CON EMAIL</span>
+            <div className="h-px flex-1 bg-[--color-line]" />
+          </div>
 
           <Field label="Email" error={errors.email?.message}>
             <input
@@ -204,6 +233,17 @@ function IconEyeOff() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
       <line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
+  )
+}
+
+function GoogleIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285F4" d="M21.8 12.23c0-.71-.06-1.23-.2-1.77H12v3.45h5.64c-.11.86-.72 2.16-2.08 3.03l-.02.12 3.02 2.34.21.02c1.92-1.77 3.03-4.37 3.03-7.19Z" />
+      <path fill="#34A853" d="M12 22c2.76 0 5.08-.91 6.77-2.48l-3.22-2.49c-.86.6-2.02 1.02-3.55 1.02a6.14 6.14 0 0 1-5.8-4.24l-.11.01-3.14 2.43-.04.11A10.22 10.22 0 0 0 12 22Z" />
+      <path fill="#FBBC05" d="M6.2 13.81A6.3 6.3 0 0 1 5.86 12c0-.63.12-1.24.33-1.81v-.13L2.99 7.6l-.1.05A10.2 10.2 0 0 0 1.8 12c0 1.55.37 3.02 1.09 4.35l3.31-2.54Z" />
+      <path fill="#EA4335" d="M12 5.95c1.93 0 3.23.84 3.97 1.54l2.9-2.83C17.07 2.98 14.76 2 12 2a10.22 10.22 0 0 0-9.11 5.65l3.3 2.54A6.16 6.16 0 0 1 12 5.95Z" />
     </svg>
   )
 }

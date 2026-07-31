@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { useNavigate, Link } from 'react-router-dom'
 import { cn } from '@/shared/utils/cn'
 import { ciudades, rubros } from '@/design-system/tokens'
+import { toE164AR } from '@/shared/utils/phoneAR'
 import { formatARS } from '@/shared/utils/formatARS'
 import { SUBSCRIPTION_PLANS } from '@/shared/config/plans'
 import { supabase } from '@/lib/supabase'
@@ -18,7 +19,9 @@ const schema = z.object({
   name:                 z.string().min(2, 'Ingresá tu nombre completo'),
   email:                z.string().email('Email inválido'),
   password:             z.string().min(8, 'Mínimo 8 caracteres'),
-  whatsapp_number:      z.string().min(10, 'Número inválido').startsWith('+54', 'Incluí el código +54'),
+  // El +549 lo pone la app (prefijo fijo en la UI): acá entran sólo los 10 dígitos
+  // de código de área + abonado. toE164AR tolera 0, 15, espacios y guiones.
+  whatsapp_number:      z.string().refine(v => toE164AR(v) !== null, 'Poné los 10 dígitos, ej: 2972 41-5230'),
   barrio:               z.string().min(2, 'Ingresá tu barrio o zona'),
   ciudad_id:            z.string().min(1, 'Elegí tu ciudad'),
   rubro_id:             z.string().min(1, 'Elegí tu rubro'),
@@ -68,7 +71,7 @@ export function ProviderSignup() {
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
-    defaultValues: { whatsapp_number: '+549' },
+    defaultValues: { whatsapp_number: '' },
   })
 
   const { register, handleSubmit, trigger, watch, setValue, setError, formState: { errors, isSubmitting } } = form
@@ -94,10 +97,13 @@ export function ProviderSignup() {
     setSubmitError(null)
 
     // 1. Create auth user — trigger inserts provider row from metadata
+    // Normalizado UNA sola vez, acá: a la base entra siempre +549XXXXXXXXXX.
+    const whatsapp = toE164AR(data.whatsapp_number) ?? data.whatsapp_number
+
     const { data: authData, error: authError } = await signUp(data.email, data.password, {
       name:                 data.name,
-      phone:                data.whatsapp_number,
-      whatsapp_number:      data.whatsapp_number,
+      phone:                whatsapp,
+      whatsapp_number:      whatsapp,
       barrio:               data.barrio,
       ciudad_id:            data.ciudad_id,
       rubro_id:             data.rubro_id,
@@ -205,8 +211,23 @@ export function ProviderSignup() {
                 </Field>
 
                 <Field label="WhatsApp" error={errors.whatsapp_number?.message}>
-                  <input {...register('whatsapp_number')} type="tel" placeholder="+5492972..." className={inputCls(!!errors.whatsapp_number)} />
-                  <p className="text-xs text-[--color-muted] mt-1">Este número va a recibir los mensajes de los clientes.</p>
+                  {/* El +54 9 va fijo afuera del input: no se puede borrar ni escribir mal. */}
+                  <div className="flex items-stretch gap-2">
+                    <span
+                      className="flex items-center px-3 rounded-xl border text-sm font-mono shrink-0"
+                      style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)', backgroundColor: 'var(--color-noche)' }}
+                    >
+                      +54 9
+                    </span>
+                    <input
+                      {...register('whatsapp_number')}
+                      type="tel"
+                      inputMode="numeric"
+                      placeholder="2972 41-5230"
+                      className={inputCls(!!errors.whatsapp_number)}
+                    />
+                  </div>
+                  <p className="text-xs text-[--color-muted] mt-1">Código de área sin 0 y número sin 15. Este número recibe los mensajes de los clientes.</p>
                 </Field>
 
                 <Field label="Barrio / Zona" error={errors.barrio?.message}>

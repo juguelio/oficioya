@@ -70,8 +70,10 @@ export function ProviderDashboard() {
     if (authState === 'ready' && authProvider) {
       return <DashboardMain provider={authProvider} onExit={handleSignOut} isLive />
     }
-    // Logueado pero sin fila de prestador todavía (trigger pendiente / verificación)
-    return <DashboardPending onExit={handleSignOut} />
+    // Logueado sin fila de prestador = entró con Google. El trigger no pudo crear el
+    // perfil porque Google no manda ciudad ni rubro, así que se completa en el
+    // onboarding en vez de dejarlo en una pantalla muerta.
+    return <Navigate to="/onboarding" replace />
   }
 
   // ── Sin sesión ───────────────────────────────────────────────────────────
@@ -102,40 +104,9 @@ function DashboardLoading() {
   )
 }
 
-type DashboardPendingProps = { onExit: () => void }
+// DashboardPending se eliminó: la pantalla "tu perfil está en preparación" era un
+// callejón sin salida — nadie la sacaba de ahí. Ahora ese caso va a /onboarding.
 
-function DashboardPending({ onExit }: DashboardPendingProps) {
-  const navigate = useNavigate()
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center text-center px-6" style={{ backgroundColor: 'var(--color-noche)' }}>
-      <div className="max-w-sm space-y-4">
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
-          Tu perfil está en preparación
-        </h1>
-        <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
-          Estamos terminando de crear tu perfil de prestador. Si recién te registraste,
-          puede tardar unos segundos. Completá la verificación para activarlo.
-        </p>
-        <div className="flex flex-col gap-2 pt-2">
-          <button
-            onClick={() => navigate('/verificacion')}
-            className="w-full h-12 rounded-[--radius-full] font-bold text-sm transition-all active:scale-[0.98]"
-            style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
-          >
-            Ir a verificación
-          </button>
-          <button
-            onClick={onExit}
-            className="w-full h-12 text-sm font-semibold transition-colors"
-            style={{ color: 'var(--color-muted)' }}
-          >
-            Cerrar sesión
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 // ─── ProviderSelector ─────────────────────────────────────────────────────────
 

@@ -40,9 +40,20 @@ export function useAuth() {
     return supabase.auth.signInWithPassword({ email, password })
   }
 
+  async function signInWithGoogle() {
+    return supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        // Vuelve al panel luego del intercambio OAuth. Esta URL debe estar
+        // incluida en Redirect URLs de Supabase Auth.
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    })
+  }
+
   async function signOut() {
     return supabase.auth.signOut()
   }
 
-  return { ...state, signUp, signIn, signOut }
+  return { ...state, signUp, signIn, signInWithGoogle, signOut }
 }

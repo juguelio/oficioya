@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { cn } from '@/shared/utils/cn'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { formatARS } from '@/shared/utils/formatARS'
+import { toE164AR } from '@/shared/utils/phoneAR'
 import { SUBSCRIPTION_PLANS } from '@/shared/config/plans'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
@@ -50,7 +51,8 @@ const PLANS = SUBSCRIPTION_PLANS.map(p => ({
 }))
 
 const EMPTY_DRAFT: Draft = {
-  name: '', whatsapp_number: '+549', ciudad_id: '', rubro_id: '',
+  // whatsapp_number vacío: el +549 lo agrega toE164AR al guardar, no lo escribe el usuario.
+  name: '', whatsapp_number: '', ciudad_id: '', rubro_id: '',
   barrio: '', bio: '', email: '', password: '', subscription_tier_id: '',
 }
 
@@ -59,7 +61,7 @@ const EMPTY_DRAFT: Draft = {
 function agentPrompt(phase: Phase, draft: Draft): string[] {
   switch (phase) {
     case 'whatsapp':
-      return [`¡Bienvenido, ${draft.name.split(' ')[0]}! 👋`, '¿Cuál es tu WhatsApp? Ahí te van a llegar los contactos de los clientes.']
+      return [`¡Bienvenido, ${draft.name.split(' ')[0]}! 👋`, '¿Cuál es tu WhatsApp? Pasame código de área y número, sin el 0 ni el 15 — ej: 2972 41-5230.']
     case 'ciudad':   return ['¿En qué ciudad trabajás?']
     case 'rubro':    return ['Buenísimo. ¿Cuál es tu oficio?']
     case 'barrio':   return ['¿En qué barrio o zona estás? Así los clientes cercanos te encuentran primero.']
@@ -78,8 +80,8 @@ function agentPrompt(phase: Phase, draft: Draft): string[] {
 function validate(phase: Phase, value: string): string | null {
   switch (phase) {
     case 'name':     return value.trim().length >= 2 ? null : 'Necesito tu nombre completo (al menos 2 letras).'
-    case 'whatsapp': return value.startsWith('+54') && value.replace(/\D/g, '').length >= 11
-      ? null : 'Poné el número con código, ej: +5492944123456.'
+    case 'whatsapp': return toE164AR(value) !== null
+      ? null : 'Pasame los 10 dígitos, ej: 2972 41-5230. El +54 9 lo pongo yo.'
     case 'barrio':   return value.trim().length >= 2 ? null : 'Decime tu barrio o zona.'
     case 'email':    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? null : 'Ese email no parece válido.'
     case 'password': return value.length >= 8 ? null : 'La contraseña necesita al menos 8 caracteres.'
@@ -95,6 +97,10 @@ const NEXT: Record<string, Phase> = {
   photo: 'plan', plan: 'confirm',
 }
 
+// Con Google la cuenta ya existe: pedir email y contraseña sería absurdo (y la
+// contraseña no serviría para nada). Se saltean esas dos fases.
+const NEXT_CON_SESION: Record<string, Phase> = { ...NEXT, bio: 'photo' }
+
 // Mapea cada fase de texto a su campo real en Draft. 'whatsapp' → 'whatsapp_number'
 // (el nombre de fase no coincide con la clave) — sin esto, el número se perdía.
 const TEXT_FIELD: Partial<Record<Phase, keyof Draft>> = {
@@ -109,8 +115,12 @@ const TEXT_FIELD: Partial<Record<Phase, keyof Draft>> = {
 // ─── Componente ──────────────────────────────────────────────────────────────────
 
 export function ConversationalOnboarding() {
-  const navigate   = useNavigate()
-  const { signUp } = useAuth()
+  const navigate = useNavigate()
+  // `user` presente = llegó con sesión ya iniciada (Google). En ese caso la cuenta
+  // existe pero NO hay fila en providers: el trigger sólo la crea cuando el signup
+  // trae los datos en la metadata, y Google no manda ni ciudad ni rubro. Este
+  // onboarding es el que la crea.
+  const { signUp, user } = useAuth()
 
   const [messages, setMessages] = useState<Message[]>([
     { id: 0, role: 'agent', text: 'Hola, soy el asistente de Oficio. Te doy de alta como prestador en un par de minutos.' },
@@ -153,7 +163,7 @@ export function ConversationalOnboarding() {
     pushUser(displayText)
     const nextDraft = { ...draft, [field]: value }
     setDraft(nextDraft)
-    const next = NEXT[phase]
+    const next = (user ? NEXT_CON_SESION : NEXT)[phase]
     setPhase(next)
     pushAgent(agentPrompt(next, nextDraft))
   }
@@ -195,10 +205,57 @@ export function ConversationalOnboarding() {
     setPhase('creating')
     pushUser('Confirmar y crear perfil')
 
+    const whatsapp = toE164AR(draft.whatsapp_number) ?? draft.whatsapp_number
+
+    // ── Camino Google: la cuenta ya existe, sólo falta la fila de prestador ──
+    if (user) {
+      const { error } = await supabase.from('providers').insert({
+        auth_user_id:         user.id,
+        name:                 draft.name,
+        phone:                whatsapp,
+        whatsapp_number:      whatsapp,
+        ciudad_id:            draft.ciudad_id,
+        rubro_id:             draft.rubro_id,
+        barrio:               draft.barrio || null,
+        bio:                  draft.bio || null,
+        subscription_tier_id: draft.subscription_tier_id || 'basico',
+        status:               'active',
+        photos:               [],
+      })
+
+      if (error) {
+        setSubmitError('No pudimos crear tu perfil. Probá de nuevo.')
+        setPhase('confirm')
+        pushAgent(['Se me trabó al guardar el perfil. Tocá confirmar de nuevo.'])
+        return
+      }
+
+      if (photoFile) {
+        const ext  = photoFile.name.split('.').pop() ?? 'jpg'
+        const path = `${user.id}/${Date.now()}.${ext}`
+        const { error: upErr } = await supabase.storage
+          .from('provider-photos')
+          .upload(path, photoFile, { contentType: photoFile.type, upsert: false })
+        if (!upErr) {
+          const { data: urlData } = supabase.storage.from('provider-photos').getPublicUrl(path)
+          await supabase.from('providers').update({ photos: [urlData.publicUrl] }).eq('auth_user_id', user.id)
+        }
+      }
+
+      const mail = user.email ?? ''
+      sendWelcomeEmail({ email: mail, name: draft.name, plan: draft.subscription_tier_id || 'basico', ciudad: draft.ciudad_id })
+      sendNewProviderAlert({ name: draft.name, email: mail, rubro: draft.rubro_id, ciudad: draft.ciudad_id, plan: draft.subscription_tier_id || 'basico' })
+
+      setPhase('done')
+      setReferralOpen(true)
+      return
+    }
+
+    // ── Camino email + contraseña: el trigger crea la fila desde la metadata ──
     const { data: authData, error: authError } = await signUp(draft.email, draft.password, {
       name:                 draft.name,
-      phone:                draft.whatsapp_number,
-      whatsapp_number:      draft.whatsapp_number,
+      phone:                whatsapp,
+      whatsapp_number:      whatsapp,
       barrio:               draft.barrio,
       bio:                  draft.bio,
       ciudad_id:            draft.ciudad_id,
