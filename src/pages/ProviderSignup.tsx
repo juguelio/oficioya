@@ -149,13 +149,13 @@ export function ProviderSignup() {
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-[--color-line]"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-5 h-14 border-b"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
         <button
           type="button"
           onClick={() => step > 1 ? setStep(s => (s - 1) as typeof s) : navigate(-1)}
-          className="p-2 rounded-xl text-[--color-bosque-lt] hover:bg-white/5 transition-all active:scale-95"
+          className="p-2 rounded-xl text-[--color-bosque-lt] hover:bg-black/5 transition-all active:scale-95"
           aria-label="Volver"
         >
           <IconArrowLeft />
@@ -181,7 +181,7 @@ export function ProviderSignup() {
       </header>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <main className="pt-24 pb-32 px-6 max-w-xl mx-auto">
+        <main className="pt-20 pb-32 px-6 max-w-xl mx-auto">
 
           {/* ── Step 1: Datos personales ──────────────────────────────────── */}
           {step === 1 && (
@@ -465,7 +465,7 @@ export function ProviderSignup() {
                 type="button"
                 onClick={goNext}
                 className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-                style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
+                style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
               >
                 {step === 3 && !photoFile ? 'Saltar por ahora' : 'Siguiente'}
                 <IconArrowRight />
@@ -475,7 +475,7 @@ export function ProviderSignup() {
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
-                style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
+                style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
               >
                 {isSubmitting ? 'Creando tu perfil…' : 'Crear mi perfil'}
                 {!isSubmitting && <IconArrowRight />}
@@ -518,7 +518,7 @@ function Field({ label, error, children }: FieldProps) {
 function inputCls(hasError: boolean) {
   return cn(
     'w-full h-14 px-4 rounded-xl text-[--color-nieve]',
-    'bg-[--color-noche] border border-[--color-line]',
+    'bg-[--color-sombra] border border-[--color-line]',
     'placeholder:text-[--color-muted]/60 transition-shadow',
     'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40',
     hasError ? 'ring-1 ring-[#ffb4ab]/60 border-[#ffb4ab]/40' : '',

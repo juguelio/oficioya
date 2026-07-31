@@ -66,13 +66,13 @@ export function ProviderLogin() {
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center px-6 h-16 gap-4 border-b border-[--color-line]"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="fixed top-0 w-full z-50 flex items-center px-5 h-14 gap-3 border-b"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="p-2 rounded-xl text-[--color-bosque-lt] hover:bg-white/5 transition-all active:scale-95"
+          className="p-2 rounded-xl text-[--color-bosque-lt] hover:bg-black/5 transition-all active:scale-95"
           aria-label="Volver"
         >
           <IconArrowLeft />
@@ -85,7 +85,7 @@ export function ProviderLogin() {
         </h1>
       </header>
 
-      <main className="flex-1 flex flex-col justify-center pt-16 pb-24 px-6 max-w-xl mx-auto w-full">
+      <main className="flex-1 flex flex-col justify-center pt-14 pb-24 px-6 max-w-xl mx-auto w-full">
 
         <div className="mb-10">
           <h2
@@ -160,7 +160,7 @@ export function ProviderLogin() {
               type="submit"
               disabled={isSubmitting}
               className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
-              style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
+              style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
             >
               {isSubmitting ? 'Ingresando…' : 'Ingresar'}
               {!isSubmitting && <IconArrowRight />}
@@ -200,7 +200,7 @@ function Field({ label, error, children }: FieldProps) {
 function inputCls(hasError: boolean) {
   return cn(
     'w-full h-14 px-4 rounded-xl text-[--color-nieve]',
-    'bg-[--color-noche] border border-[--color-line]',
+    'bg-[--color-sombra] border border-[--color-line]',
     'placeholder:text-[--color-muted]/60 transition-shadow',
     'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40',
     hasError ? 'ring-1 ring-[#ffb4ab]/60 border-[#ffb4ab]/40' : '',

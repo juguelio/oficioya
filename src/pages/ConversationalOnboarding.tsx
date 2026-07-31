@@ -309,7 +309,7 @@ export function ConversationalOnboarding() {
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <header
         className="shrink-0 flex items-center gap-3 px-5 h-16 border-b border-[--color-line] backdrop-blur-xl"
-        style={{ backgroundColor: 'rgba(14,20,25,0.85)' }}
+        style={{ backgroundColor: 'rgba(255,255,255,0.85)' }}
       >
         <button
           type="button"
@@ -383,7 +383,7 @@ export function ConversationalOnboarding() {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             className="flex-1 h-12 rounded-[--radius-full] font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-            style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
+            style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
           >
             <IconCamera /> Subir foto
           </button>
@@ -428,7 +428,7 @@ export function ConversationalOnboarding() {
             type="button"
             onClick={createProfile}
             className="w-full py-3.5 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-            style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
+            style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
           >
             Confirmar y crear perfil <IconArrowRight />
           </button>
@@ -466,7 +466,7 @@ export function ConversationalOnboarding() {
           onClick={submitText}
           aria-label="Enviar"
           className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95"
-          style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
+          style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
         >
           <IconSend />
         </button>
@@ -535,7 +535,7 @@ function ReferralStep({ referrer, ciudad, onDone }: { referrer: string; ciudad: 
             onClick={send}
             disabled={sending}
             className="w-full py-3.5 rounded-[--radius-full] font-bold text-base transition-all active:scale-[0.98] disabled:opacity-60"
-            style={{ backgroundColor: 'var(--color-bosque-lt)', color: 'var(--color-noche)' }}
+            style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
           >
             {sending ? 'Enviando…' : 'Recomendar y terminar'}
           </button>
