@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { ciudades, rubros } from '@/design-system/tokens'
+import { Footer, Logo } from '@/shared/components'
 import { useReviews } from '@/features/providers/hooks'
 import { track } from '@/lib/analytics'
 import { cn } from '@/shared/utils/cn'
@@ -63,9 +64,14 @@ export function ProviderProfile() {
   }, [id])
 
   if (provider === undefined) {
+    // Skeleton, no spinner (§18): misma silueta que la página cargada.
     return (
-      <div className="min-h-screen flex items-center justify-center text-[--color-muted]" style={{ backgroundColor: 'var(--color-noche)' }}>
-        Cargando…
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+        <div className="max-w-xl mx-auto pt-20 px-6 space-y-4 animate-pulse">
+          <div className="h-64 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+          <div className="h-8 w-2/3 rounded-full" style={{ backgroundColor: 'var(--color-sombra)' }} />
+          <div className="h-24 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        </div>
       </div>
     )
   }
@@ -102,37 +108,37 @@ export function ProviderProfile() {
   return (
     <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
 
-      {/* ── TopAppBar ──────────────────────────────────────────────────────────── */}
+      {/* ── Header — mismo patrón que HomePage: barra sombra + logo + acciones ── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-[--color-line]"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="fixed top-0 w-full z-50 h-14 border-b"
+        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="text-[--color-bosque-lt] hover:bg-black/5 transition-colors active:scale-95 p-2 rounded-xl"
-            aria-label="Volver"
-          >
-            <IconArrowLeft />
-          </button>
-          <h1
-            className="font-bold text-base text-[--color-nieve] leading-tight truncate"
-            style={{ letterSpacing: '-0.02em' }}
-          >
-            {provider.name}
-          </h1>
+        <div className="px-5 h-full flex items-center justify-between">
+          <div className="flex items-center gap-2 min-w-0">
+            <button
+              onClick={() => navigate(-1)}
+              className="text-[--color-bosque-lt] transition-colors active:scale-95 p-2 -ml-2 rounded-xl shrink-0"
+              aria-label="Volver"
+            >
+              <IconArrowLeft />
+            </button>
+            <button onClick={() => navigate('/')} className="active:scale-95 transition-transform" aria-label="Inicio">
+              <Logo size={26} withWordmark />
+            </button>
+          </div>
+          {provider.subscription === 'destacado' && (
+            <span className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0" style={{ backgroundColor: '#E8A020', color: '#fff' }}>
+              Destacado
+            </span>
+          )}
         </div>
-        {provider.subscription === 'destacado' && (
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0" style={{ backgroundColor: '#E8A020', color: '#fff' }}>
-            Destacado
-          </span>
-        )}
       </header>
 
-      <main className="pt-16 pb-32 max-w-xl mx-auto">
+      <main className="pt-14 pb-16 max-w-xl mx-auto">
 
-        {/* ── Hero photo ─────────────────────────────────────────────────────────── */}
-        <div className="relative h-72 w-full">
+        {/* ── Hero photo — card redondeada como el resto del sistema, no full-bleed ── */}
+        <div className="px-5 pt-4">
+        <div className="relative h-72 w-full rounded-2xl overflow-hidden border" style={{ borderColor: 'var(--color-line)' }}>
           <img
             src={img}
             alt={provider.name}
@@ -168,15 +174,16 @@ export function ProviderProfile() {
             </div>
           ) : null}
         </div>
+        </div>
 
         {/* ── Info block ─────────────────────────────────────────────────────────── */}
-        <div className="px-6 pt-5">
+        <div className="px-5 pt-5">
 
-          {/* Name + rubro */}
+          {/* Name + rubro — misma voz tipográfica que los títulos de la home */}
           <div className="mb-4">
             <h2
-              className="text-2xl font-bold text-[--color-nieve] mb-1"
-              style={{ letterSpacing: '-0.02em' }}
+              className="text-2xl font-black text-[--color-nieve] mb-1 leading-tight"
+              style={{ letterSpacing: '-0.03em' }}
             >
               {provider.name}
             </h2>
@@ -191,45 +198,46 @@ export function ProviderProfile() {
             </div>
           </div>
 
-          {/* Stats row */}
-          <div
-            className="flex gap-6 py-4 border-y mb-5"
-            style={{ borderColor: 'var(--color-line)', fontFamily: 'var(--font-mono)' }}
-          >
-            <div>
-              <p className="text-xl font-bold text-[--color-nieve]">{provider.totalJobs}</p>
-              <p className="text-xs text-[--color-muted] uppercase tracking-widest">Trabajos</p>
+          {/* Stats — mismas cards con borde que usan la home y el panel */}
+          <div className="grid grid-cols-3 gap-3 mb-6" style={{ fontFamily: 'var(--font-mono)' }}>
+            <div className="flex flex-col items-center py-3.5 rounded-xl border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+              <p className="text-xl font-bold text-[--color-nieve]" style={{ fontVariantNumeric: 'tabular-nums' }}>{provider.totalJobs}</p>
+              <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">Trabajos</p>
             </div>
-            <div>
+            <div className="flex flex-col items-center py-3.5 rounded-xl border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
               {provider.claimed && provider.rating > 0 ? (
                 <>
-                  <p className="text-xl font-bold text-[--color-nieve]">{provider.rating.toFixed(1)}</p>
-                  <p className="text-xs text-[--color-muted] uppercase tracking-widest">Calificación</p>
+                  <p className="text-xl font-bold text-[--color-nieve]" style={{ fontVariantNumeric: 'tabular-nums' }}>{provider.rating.toFixed(1)}</p>
+                  <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">Calificación</p>
                 </>
               ) : provider.externalRating ? (
                 <>
-                  <p className="text-xl font-bold text-[--color-nieve]">★ {provider.externalRating.toFixed(1)}</p>
-                  <p className="text-xs text-[--color-muted] uppercase tracking-widest">en Google{provider.externalReviews ? ` · ${provider.externalReviews}` : ''}</p>
+                  <p className="text-xl font-bold text-[--color-nieve]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    <span style={{ color: '#E8A020' }}>★</span> {provider.externalRating.toFixed(1)}
+                  </p>
+                  <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">en Google{provider.externalReviews ? ` · ${provider.externalReviews}` : ''}</p>
                 </>
               ) : (
                 <>
                   <p className="text-xl font-bold text-[--color-muted]">—</p>
-                  <p className="text-xs text-[--color-muted] uppercase tracking-widest">Calificación</p>
+                  <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">Calificación</p>
                 </>
               )}
             </div>
-            <div>
+            <div className="flex flex-col items-center py-3.5 rounded-xl border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
               <p className="text-xl font-bold" style={{ color: provider.isVerified ? 'var(--color-bosque-lt)' : 'var(--color-muted)' }}>
                 {provider.isVerified ? '✓' : '—'}
               </p>
-              <p className="text-xs text-[--color-muted] uppercase tracking-widest">Verificado</p>
+              <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">Verificado</p>
             </div>
           </div>
 
-          {/* Bio */}
+          {/* Bio — mismo estilo de título de sección que "Reseñas" y la home */}
           {provider.bio && (
             <div className="mb-6">
-              <p className="text-xs font-bold tracking-[0.15em] text-[--color-muted] uppercase mb-2">Sobre mí</p>
+              <h3 className="font-black text-lg mb-1.5" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
+                Sobre mí
+              </h3>
               <p className="text-sm text-[--color-nieve]/80 leading-relaxed">
                 {provider.bio}
               </p>
@@ -295,7 +303,7 @@ export function ProviderProfile() {
         </div>
 
         {/* ── Reseñas ──────────────────────────────────────────────────────────── */}
-        <div className="px-6 pb-8">
+        <div className="px-5 pb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-black text-lg" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
@@ -376,6 +384,9 @@ export function ProviderProfile() {
         </div>
 
       </main>
+
+      {/* ── Footer — el mismo de la home, para que el perfil no parezca otra app ── */}
+      <Footer />
 
       {/* ── Sheet: Dejar reseña ─────────────────────────────────────────────────── */}
       {showReviewSheet && (
