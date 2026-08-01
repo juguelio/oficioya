@@ -58,7 +58,7 @@ const EMPTY_DRAFT: Draft = {
 
 // ─── Prompts del agente por fase ─────────────────────────────────────────────────
 
-function agentPrompt(phase: Phase, draft: Draft): string[] {
+function agentPrompt(phase: Phase, draft: Draft, conSesion: boolean): string[] {
   switch (phase) {
     case 'whatsapp':
       return [`¡Bienvenido, ${draft.name.split(' ')[0]}! 👋`, '¿Cuál es tu WhatsApp? Pasame código de área y número, sin el 0 ni el 15 — ej: 2972 41-5230.']
@@ -69,7 +69,9 @@ function agentPrompt(phase: Phase, draft: Draft): string[] {
     case 'email':    return ['Vamos a crear tu cuenta. ¿Cuál es tu email?']
     case 'password': return ['Elegí una contraseña (mínimo 8 caracteres).']
     case 'photo':    return ['¿Querés subir una foto de perfil? Genera más confianza. Podés saltarlo y agregarla después.']
-    case 'plan':     return ['Último paso: elegí tu plan. El pago lo confirmás después de crear el perfil.']
+    case 'plan':     return conSesion
+      ? ['Último paso: elegí tu plan. El pago lo confirmás después de crear el perfil.']
+      : ['Tu foto de perfil la subís después desde tu panel, cuando confirmes tu email.', 'Último paso: elegí tu plan. El pago lo confirmás después de crear el perfil.']
     case 'confirm':  return [`Listo, ${draft.name.split(' ')[0]}. Revisá que esté todo bien y creamos tu perfil. 🚀`]
     default:         return []
   }
@@ -91,14 +93,19 @@ function validate(phase: Phase, value: string): string | null {
 
 // ─── Orden de fases ──────────────────────────────────────────────────────────────
 
+// Flujo SIN sesión (alta con email): la fase 'photo' NO existe acá a propósito.
+// Con "Confirm email" activo, signUp() no devuelve sesión, y sin sesión la foto
+// no se puede subir a Storage (RLS) — antes se pedía igual y se descartaba en
+// silencio, y el prestador tenía que volver a subirla desde /perfil. La foto se
+// sube desde el panel una vez confirmado el email.
 const NEXT: Record<string, Phase> = {
   name: 'whatsapp', whatsapp: 'ciudad', ciudad: 'rubro', rubro: 'barrio',
-  barrio: 'bio', bio: 'email', email: 'password', password: 'photo',
+  barrio: 'bio', bio: 'email', email: 'password', password: 'plan',
   photo: 'plan', plan: 'confirm',
 }
 
-// Con Google la cuenta ya existe: pedir email y contraseña sería absurdo (y la
-// contraseña no serviría para nada). Se saltean esas dos fases.
+// Con Google la cuenta ya existe: se saltean email y contraseña, y como HAY
+// sesión, la foto sí se puede subir acá mismo.
 const NEXT_CON_SESION: Record<string, Phase> = { ...NEXT, bio: 'photo' }
 
 // Mapea cada fase de texto a su campo real en Draft. 'whatsapp' → 'whatsapp_number'
@@ -165,7 +172,7 @@ export function ConversationalOnboarding() {
     setDraft(nextDraft)
     const next = (user ? NEXT_CON_SESION : NEXT)[phase]
     setPhase(next)
-    pushAgent(agentPrompt(next, nextDraft))
+    pushAgent(agentPrompt(next, nextDraft, !!user))
   }
 
   function submitText() {
@@ -187,7 +194,7 @@ export function ConversationalOnboarding() {
     } else if (phase === 'photo') {
       pushUser('Subo la foto después')
       setPhase('plan')
-      pushAgent(agentPrompt('plan', draft))
+      pushAgent(agentPrompt('plan', draft, !!user))
     }
   }
 
@@ -197,7 +204,7 @@ export function ConversationalOnboarding() {
     setPhotoFile(file)
     pushUser('📷 Foto subida')
     setPhase('plan')
-    pushAgent(agentPrompt('plan', draft))
+    pushAgent(agentPrompt('plan', draft, !!user))
   }
 
   async function createProfile() {

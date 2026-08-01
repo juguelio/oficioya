@@ -9,7 +9,7 @@ import { cn } from '@/shared/utils/cn'
 type UploadStatus = 'pending' | 'uploaded'
 
 type DocCard = {
-  id: 'matricula' | 'dni' | 'foto'
+  id: 'matricula' | 'dni-frente' | 'dni-dorso' | 'foto'
   title: string
   subtitle: string
   icon: React.ReactNode
@@ -19,14 +19,21 @@ type DocCard = {
 // ─── VerificationPage ─────────────────────────────────────────────────────────
 
 export function VerificationPage() {
-  const navigate     = useNavigate()
-  const { user }     = useAuth()
+  const navigate = useNavigate()
+  const { user, loading } = useAuth()
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [status, setStatus] = useState<Record<string, UploadStatus>>({
-    matricula: 'pending',
-    dni:       'pending',
-    foto:      'pending',
+    'matricula':  'pending',
+    'dni-frente': 'pending',
+    'dni-dorso':  'pending',
+    'foto':       'pending',
   })
+
+  // Con "Confirm email" activo, el alta con email llega acá SIN sesión (falta
+  // confirmar el mail). Sin sesión no se puede subir nada a provider-docs, así
+  // que se avisa y se bloquean las subidas — antes esta pantalla marcaba
+  // "Subido ✓" sin subir nada, y los documentos se perdían en silencio.
+  const sinSesion = !loading && !user
 
   const cards: DocCard[] = [
     {
@@ -37,9 +44,16 @@ export function VerificationPage() {
       required: true,
     },
     {
-      id:       'dni',
-      title:    'DNI',
-      subtitle: 'Frente y dorso',
+      id:       'dni-frente',
+      title:    'DNI — frente',
+      subtitle: 'Foto clara del frente del documento',
+      icon:     <IconBadge />,
+      required: true,
+    },
+    {
+      id:       'dni-dorso',
+      title:    'DNI — dorso',
+      subtitle: 'Foto clara del dorso del documento',
       icon:     <IconBadge />,
       required: true,
     },
@@ -60,7 +74,7 @@ export function VerificationPage() {
     setUploadError(null)
 
     if (!user) {
-      setStatus(prev => ({ ...prev, [id]: 'uploaded' }))
+      setUploadError('Todavía no confirmaste tu cuenta. Buscá el mail que te mandamos, tocá el link y entrá con tu email y contraseña — recién ahí se guardan tus documentos.')
       return
     }
 
@@ -72,7 +86,7 @@ export function VerificationPage() {
       .upload(path, file, { contentType: file.type, upsert: true })
 
     if (error) {
-      setUploadError(`Error al subir ${id}: ${error.message}`)
+      setUploadError(`No pudimos subir el archivo. Probá de nuevo en un momento.`)
       return
     }
 
@@ -148,6 +162,27 @@ export function VerificationPage() {
           </div>
         </section>
 
+        {/* ── Aviso sin sesión ──────────────────────────────────────────────────── */}
+        {sinSesion && (
+          <section
+            className="mb-6 px-5 py-4 rounded-2xl border text-left"
+            style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
+          >
+            <p className="text-sm font-semibold leading-relaxed" style={{ color: 'var(--color-bosque-lt)' }}>
+              Te mandamos un mail para confirmar tu cuenta. Confirmalo, iniciá sesión
+              y volvé acá (o al panel) para subir tu documentación.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/login')}
+              className="mt-3 px-4 py-2 rounded-full text-sm font-bold text-white active:scale-95 transition-all"
+              style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+            >
+              Ya confirmé — iniciar sesión
+            </button>
+          </section>
+        )}
+
         {/* ── Upload cards ──────────────────────────────────────────────────────── */}
         <section className="space-y-4 mb-12">
           {cards.map(card => (
@@ -155,6 +190,7 @@ export function VerificationPage() {
               key={card.id}
               card={card}
               status={status[card.id]}
+              disabled={sinSesion}
               onUpload={file => handleUpload(card.id, file)}
             />
           ))}
@@ -219,10 +255,11 @@ export function VerificationPage() {
 type UploadCardProps = {
   card: DocCard
   status: UploadStatus
+  disabled?: boolean
   onUpload: (file: File) => void
 }
 
-function UploadCard({ card, status, onUpload }: UploadCardProps) {
+function UploadCard({ card, status, disabled, onUpload }: UploadCardProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const uploaded = status === 'uploaded'
 
@@ -289,9 +326,10 @@ function UploadCard({ card, status, onUpload }: UploadCardProps) {
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
+        disabled={disabled}
         className={cn(
           'w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 border',
-          'active:scale-[0.98] transition-all',
+          'active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed',
           uploaded ? 'border-[--color-bosque-lt]/40' : 'border-[--color-line]',
         )}
         style={{
