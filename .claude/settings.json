@@ -5,6 +5,7 @@
       "Bash(npx:*)",
       "Bash(git:*)",
       "Bash(curl:*)",
+      "Bash(ssh ssr:*)",
       "Read(src/**)",
       "Write(src/**)",
       "Edit(src/**)",

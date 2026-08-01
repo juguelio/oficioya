@@ -36,13 +36,15 @@ export function ProviderLogin() {
     if (error) {
       // Los mensajes crudos de Supabase vienen en inglés y no dicen qué hacer.
       // El caso que más confunde: te registraste con Google y después intentás
-      // entrar con contraseña — esa cuenta no tiene una.
+      // entrar con contraseña — esa cuenta no tiene una, y Supabase responde el
+      // mismo "Invalid login credentials" que para una contraseña mal escrita
+      // (a propósito, para no revelar qué cuentas existen). El copy cubre los dos.
       const raw = error.message.toLowerCase()
       setAuthError(
         raw.includes('email not confirmed')
           ? 'Te falta confirmar tu email. Buscá el mail que te mandamos y tocá el link.'
         : raw.includes('invalid login credentials')
-          ? 'Email o contraseña incorrectos. Si te registraste con Google, entrá con el botón de arriba.'
+          ? 'Ese email y contraseña no coinciden. Revisalos — y si te registraste con Google, entrá con «Continuar con Google» acá arriba.'
         : error.message,
       )
       return

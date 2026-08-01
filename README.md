@@ -77,17 +77,31 @@ git push origin main
 En Supabase → Authentication → URL Configuration:
 
 ```
-Site URL:              https://oficio.app
-Redirect URLs:         https://oficio.app/**
+Site URL:              https://oficioya.app
+Redirect URLs:         https://oficioya.app/**
                        https://*.vercel.app/**   ← para preview deploys
 ```
 
-**5. Verificar**
+**5. Habilitar Google Login**
 
-- `https://oficio.app/` — HomePage carga, pills de ciudad visibles
-- `https://oficio.app/san-martin/electricista` — RubroPage carga prestadores desde Supabase
-- `https://oficio.app/registro/prestador` — form de signup funciona
-- `https://oficio.app/cualquier-ruta-inventada` — debe cargar la app (SPA rewrite activo)
+En Supabase → Authentication → Sign In / Providers → **Google**, habilitar el
+proveedor y cargar el Client ID y Client Secret de Google Cloud. En Google Cloud
+Console, el redirect URI autorizado debe ser exactamente:
+
+```
+https://dmzdvjfctkfxefhxjmkm.supabase.co/auth/v1/callback
+```
+
+El botón de Google vuelve a `/dashboard`; por eso la URL de producción y los
+preview deploys del paso anterior deben quedar incluidos en Redirect URLs.
+
+**6. Verificar**
+
+- `https://oficioya.app/` — HomePage carga, pills de ciudad visibles
+- `https://oficioya.app/san-martin/electricista` — RubroPage carga prestadores desde Supabase
+- `https://oficioya.app/registro/prestador` — form de signup funciona
+- `https://oficioya.app/login` → “Continuar con Google” — vuelve a `/dashboard`
+- `https://oficioya.app/cualquier-ruta-inventada` — debe cargar la app (SPA rewrite activo)
 
 ### Variables de entorno para servicios VPS (no van en Vercel)
 

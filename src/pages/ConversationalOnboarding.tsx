@@ -120,7 +120,7 @@ export function ConversationalOnboarding() {
   // existe pero NO hay fila en providers: el trigger sólo la crea cuando el signup
   // trae los datos en la metadata, y Google no manda ni ciudad ni rubro. Este
   // onboarding es el que la crea.
-  const { signUp, user } = useAuth()
+  const { signUp, user, loading: authLoading } = useAuth()
 
   const [messages, setMessages] = useState<Message[]>([
     { id: 0, role: 'agent', text: 'Hola, soy el asistente de Oficio. Te doy de alta como prestador en un par de minutos.' },
@@ -298,6 +298,21 @@ export function ConversationalOnboarding() {
 
   const ciudadLabel = ciudades.find(c => c.id === draft.ciudad_id)?.label ?? ''
   const rubroLabel  = rubros.find(r => r.id === draft.rubro_id)?.label ?? ''
+
+  // ⚠️ No arrancar el chat hasta saber si hay sesión: el flujo cambia según `user`
+  // (con Google se saltean email y contraseña, y el alta usa el camino con sesión).
+  // Sin esta espera, un usuario Google recién logueado podía caer al camino
+  // email+contraseña — y signUp() le cerraba la sesión con signOut({ scope: 'local' }).
+  if (authLoading) {
+    return (
+      <div
+        className="flex h-[100dvh] items-center justify-center"
+        style={{ backgroundColor: 'var(--color-noche)' }}
+      >
+        <div className="w-48 h-4 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
+      </div>
+    )
+  }
 
   if (referralOpen) {
     return <ReferralStep referrer={draft.name} ciudad={draft.ciudad_id} onDone={() => navigate('/verificacion')} />

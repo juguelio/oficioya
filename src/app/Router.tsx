@@ -1,7 +1,9 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 import { lazy } from 'react'
 // No-lazy a propósito: la pantalla de error/404 debe renderizar aunque falle la carga de un chunk.
-import { NotFoundPage, RootBoundary } from '@/shared/components'
+// ProtectedRoute tampoco es lazy: es el guard de las rutas privadas y decide (esperando
+// `loading` de la sesión) antes de que cargue cualquier chunk protegido.
+import { NotFoundPage, ProtectedRoute, RootBoundary } from '@/shared/components'
 
 const HomePage           = lazy(() => import('@/features/search/components/HomePage').then(m => ({ default: m.HomePage })))
 const RubroPage          = lazy(() => import('@/features/search/components/RubroPage').then(m => ({ default: m.RubroPage })))
@@ -12,7 +14,6 @@ const EmergencyCheckout  = lazy(() => import('@/features/search/components/Emerg
 const EmergencyContact   = lazy(() => import('@/features/search/components/EmergencyContactPage').then(m => ({ default: m.EmergencyContactPage })))
 const OnboardingPage     = lazy(() => import('@/features/auth/components/OnboardingPage').then(m => ({ default: m.OnboardingPage })))
 const VerificationPage   = lazy(() => import('@/features/auth/components/VerificationPage').then(m => ({ default: m.VerificationPage })))
-const ProviderSignup     = lazy(() => import('@/pages/ProviderSignup').then(m => ({ default: m.ProviderSignup })))
 const ConvOnboarding     = lazy(() => import('@/pages/ConversationalOnboarding').then(m => ({ default: m.ConversationalOnboarding })))
 const ProviderLogin      = lazy(() => import('@/pages/ProviderLogin').then(m => ({ default: m.ProviderLogin })))
 const ProviderDashboard  = lazy(() => import('@/pages/ProviderDashboard').then(m => ({ default: m.ProviderDashboard })))
@@ -34,7 +35,10 @@ export const router = createBrowserRouter([
   { path: '/onboarding',         element: <OnboardingPage /> },
   { path: '/registro/prestador', element: <ConvOnboarding /> },
   { path: '/sumarme',            element: <Navigate to="/registro/prestador" replace /> },
-  { path: '/registro/clasico',   element: <ProviderSignup /> },
+  // Onboarding único: el clásico (ProviderSignup) duplicaba validaciones y lógica de
+  // alta con el conversacional y ya causó arreglos aplicados en uno solo de los dos.
+  // El archivo sigue en src/pages/ por si hay que revivirlo, pero sin ruta.
+  { path: '/registro/clasico',   element: <Navigate to="/registro/prestador" replace /> },
   { path: '/verificacion',       element: <VerificationPage /> },
   { path: '/activar/:id',        element: <ClaimProfilePage /> },
   { path: '/login',              element: <ProviderLogin /> },
@@ -54,9 +58,12 @@ export const router = createBrowserRouter([
   { path: '/trabajos/nuevo',     element: <PostJobPage /> },
   { path: '/trabajos/:id',       element: <JobDetailPage /> },
 
-  // Dashboard prestador (fase 1: auth mock vía store)
-  { path: '/dashboard',          element: <ProviderDashboard /> },
-  { path: '/perfil',             element: <ProviderProfileEdit /> },
+  // Dashboard prestador. ProtectedRoute espera `loading` y exige sesión (en dev deja
+  // pasar sin sesión para el selector mock). /dashboard es además el único punto que
+  // decide el destino post-login: sesión + fila en providers → panel; sesión sin
+  // fila → /registro/prestador; sin sesión → /login.
+  { path: '/dashboard',          element: <ProtectedRoute><ProviderDashboard /></ProtectedRoute> },
+  { path: '/perfil',             element: <ProtectedRoute><ProviderProfileEdit /></ProtectedRoute> },
 
   // Legales — la política de privacidad es además requisito de Google para verificar
   // la pantalla de consentimiento del login con Google.
