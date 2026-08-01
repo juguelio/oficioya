@@ -81,7 +81,10 @@ export function ProviderDashboard() {
     // Logueado sin fila de prestador = entró con Google. El trigger no pudo crear el
     // perfil porque Google no manda ciudad ni rubro, así que se completa en el
     // onboarding en vez de dejarlo en una pantalla muerta.
-    return <Navigate to="/onboarding" replace />
+    // OJO: va a /registro/prestador (el onboarding conversacional, que SÍ crea la
+    // fila), no a /onboarding — esa ruta es la pantalla de presentación y no crea
+    // nada, así que mandaba al usuario a un loop de vuelta al login.
+    return <Navigate to="/registro/prestador" replace />
   }
 
   // ── Sin sesión ───────────────────────────────────────────────────────────
