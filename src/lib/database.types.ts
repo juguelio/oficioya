@@ -469,6 +469,10 @@ export type Database = {
         Args: { p_token: string }
         Returns: Json
       }
+      get_my_jobs: {
+        Args: Record<string, never>
+        Returns: Json
+      }
       accept_quote_by_token: {
         Args: { p_token: string; p_quote_id: string }
         Returns: Json

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
-import type { Job, JobStatus, QuoteStatus } from '@/features/jobs/types'
+import type { Job, JobStatus, MyJob, QuoteStatus } from '@/features/jobs/types'
 
 // ─── Tipos del seguimiento por token (vista del cliente) ──────────────────────
 
@@ -99,6 +99,36 @@ export async function postJob(input: NewJobInput): Promise<{ id: string; token: 
   if (error || !data) return null
   const r = data as { id: string; token: string }
   return { id: r.id, token: r.token }
+}
+
+// ─── Mis trabajos (cliente con cuenta) ────────────────────────────────────────
+// El flujo anónimo por token sigue siendo el principal. Esto es para quien eligió
+// crear una cuenta: ve todos sus trabajos sin depender de guardar el link.
+
+type MyJobRow = {
+  id: string; title: string; rubro_id: string; ciudad_id: string
+  status: string; created_at: string; client_token: string; quote_count: number
+}
+
+export function useMyJobs() {
+  const [jobs, setJobs]       = useState<MyJob[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    const { data } = await supabase.rpc('get_my_jobs')
+    const rows = (data ?? []) as MyJobRow[]
+    setJobs(rows.map(r => ({
+      id: r.id, title: r.title, rubro: r.rubro_id as RubroId, ciudad: r.ciudad_id as CiudadId,
+      status: r.status as JobStatus, createdAt: r.created_at,
+      clientToken: r.client_token, quoteCount: r.quote_count ?? 0,
+    })))
+    setLoading(false)
+  }, [])
+
+  useEffect(() => { load() }, [load])
+
+  return { jobs, loading, refetch: load }
 }
 
 // ─── Seguimiento por token (cliente) ──────────────────────────────────────────

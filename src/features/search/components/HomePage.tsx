@@ -7,6 +7,7 @@ import { useCityStore } from '@/features/search/store'
 // refactor grande. Se deja como dependencia cross-feature explícita, no se mueve.
 import { useProviders } from '@/features/providers/hooks'
 import { useAuth } from '@/hooks/useAuth'
+import { useViewer } from '@/hooks/useViewer'
 import { Logo, RubroIcon, Footer } from '@/shared/components'
 import { formatARS } from '@/shared/utils/formatARS'
 import { initials } from '@/shared/utils/initials'
@@ -52,6 +53,7 @@ export function HomePage() {
   const navigate    = useNavigate()
 
   const { user, loading: authLoading } = useAuth()
+  const { role: viewerRole, loading: viewerLoading } = useViewer()
 
   const ciudadData = ciudades.find(c => c.id === ciudadId)
   const [emergencySearch, setEmergencySearch] = useState('')
@@ -135,17 +137,20 @@ export function HomePage() {
           </button>
           {/* Con sesión iniciada el header mostraba igual "Ingresar / Registrate":
               el usuario entraba bien, volvía al home y concluía que no había entrado.
-              Era la causa principal de que el login pareciera roto. */}
+              Era la causa principal de que el login pareciera roto.
+              Y con sesión mostraba SIEMPRE "Mi panel" → /dashboard, que es el panel
+              del prestador: un cliente terminaba en el onboarding de alta. Ahora el
+              destino depende de qué es la cuenta. */}
           <div className="flex items-center gap-2">
-            {authLoading ? (
+            {authLoading || viewerLoading ? (
               <div className="h-7 w-24 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-line)' }} />
             ) : user ? (
               <Link
-                to="/dashboard"
+                to={viewerRole === 'cliente' ? '/mis-trabajos' : '/dashboard'}
                 className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white"
                 style={{ backgroundColor: 'var(--color-bosque-lt)' }}
               >
-                Mi panel
+                {viewerRole === 'cliente' ? 'Mis trabajos' : 'Mi panel'}
               </Link>
             ) : (
               <>
@@ -156,8 +161,11 @@ export function HomePage() {
                 >
                   Ingresar
                 </button>
+                {/* Al selector de rol (/onboarding), NO directo al alta de prestador:
+                    un cliente que toca "Registrate" no tiene que caer en el chat de
+                    alta — en v1 el cliente ni siquiera necesita cuenta. */}
                 <Link
-                  to="/registro/prestador"
+                  to="/onboarding"
                   className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white"
                   style={{ backgroundColor: 'var(--color-bosque-lt)' }}
                 >
@@ -541,6 +549,43 @@ export function HomePage() {
           )}
         </section>
 
+        {/* ── PUBLICÁ TU TRABAJO ───────────────────────────────────────────────── */}
+        {/* El cliente postea SIN cuenta (anónimo + token, /trabajos/nuevo): la
+            feature ya existía pero era invisible desde la home. */}
+        <section className="pt-8">
+          <div className="px-5 sm:px-10 lg:px-16">
+            <div
+              className="rounded-2xl border p-5 sm:flex sm:items-center sm:justify-between sm:gap-6"
+              style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
+            >
+              <div className="mb-4 sm:mb-0">
+                <h2 className="font-black text-lg mb-1" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
+                  ¿Preferís que te contacten ellos?
+                </h2>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+                  Contá qué necesitás y recibí presupuestos de la zona. Sin cuenta: seguís las respuestas con un link.
+                </p>
+              </div>
+              <div className="flex items-center gap-4 shrink-0">
+                <button
+                  onClick={() => navigate('/trabajos/nuevo')}
+                  className="px-5 py-3 rounded-[--radius-full] font-bold text-sm text-white active:scale-[0.98] transition-all"
+                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                >
+                  Publicar un trabajo
+                </button>
+                <button
+                  onClick={() => navigate('/trabajos')}
+                  className="text-sm font-bold"
+                  style={{ color: 'var(--color-bosque-lt)' }}
+                >
+                  Ver trabajos
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── TOP PRESTADORES ──────────────────────────────────────────────────── */}
         {ciudadId && (providersLoading || topProviders.length > 0) && (
           <section className="pt-8">
@@ -673,9 +718,11 @@ export function HomePage() {
               Elegí tu perfil para continuar
             </p>
             <div className="space-y-3">
-              {/* Cliente */}
+              {/* Cliente — en v1 NO tiene cuenta (decisión de producto): buscar y
+                  contactar por WhatsApp no requiere registro. Acá solo se le
+                  explica y se cierra el sheet, nada de mandarlo al login. */}
               <button
-                onClick={() => { navigate('/login'); setShowLoginSheet(false) }}
+                onClick={() => setShowLoginSheet(false)}
                 className="w-full flex items-center gap-4 p-4 rounded-xl border text-left active:scale-[0.98] transition-all"
                 style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-line)' }}
               >
@@ -690,16 +737,17 @@ export function HomePage() {
                     Soy cliente
                   </p>
                   <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                    Buscás un servicio para tu hogar
+                    No necesitás cuenta: buscá y contactá directo por WhatsApp
                   </p>
                 </div>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-muted)', flexShrink: 0 }}>
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </button>
-              {/* Prestador */}
+              {/* Prestador — tocó "Ingresar", quiere loguearse: al login directo
+                  (antes iba a /onboarding, la pantalla de presentación). */}
               <button
-                onClick={() => { navigate('/onboarding'); setShowLoginSheet(false) }}
+                onClick={() => { navigate('/login'); setShowLoginSheet(false) }}
                 className="w-full flex items-center gap-4 p-4 rounded-xl border text-left active:scale-[0.98] transition-all"
                 style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-bosque-lt)' }}
               >
@@ -714,7 +762,7 @@ export function HomePage() {
                     Soy prestador
                   </p>
                   <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                    Ofrecés servicios y querés más clientes
+                    Entrá a tu panel para gestionar tu perfil y contactos
                   </p>
                 </div>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-bosque-lt)', flexShrink: 0 }}>
@@ -745,6 +793,14 @@ export function HomePage() {
           </span>
         </button>
         <Link
+          to="/trabajos"
+          className="flex flex-col items-center gap-1 active:scale-90 transition-all"
+          style={{ color: 'var(--color-muted)' }}
+        >
+          <IconClipboard />
+          <span className="text-[10px] font-semibold uppercase tracking-widest">Trabajos</span>
+        </Link>
+        <Link
           to="/registro/prestador"
           className="flex flex-col items-center gap-1 active:scale-90 transition-all"
           style={{ color: 'var(--color-muted)' }}
@@ -753,7 +809,7 @@ export function HomePage() {
           <span className="text-[10px] font-semibold uppercase tracking-widest">Sumate</span>
         </Link>
         <Link
-          to="/onboarding"
+          to="/login"
           className="flex flex-col items-center gap-1 active:scale-90 transition-all"
           style={{ color: 'var(--color-muted)' }}
         >
@@ -933,6 +989,16 @@ function IconPerson() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+    </svg>
+  )
+}
+
+function IconClipboard() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+      <rect x="8" y="2" width="8" height="4" rx="1" />
+      <path d="M9 12h6M9 16h4" />
     </svg>
   )
 }

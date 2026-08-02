@@ -18,6 +18,19 @@ export type Job = {
   createdAt: string   // ISO
 }
 
+// Trabajo propio visto desde la cuenta del cliente (/mis-trabajos). Incluye el
+// client_token porque el dueño ES el cliente: es su acceso al seguimiento.
+export type MyJob = {
+  id: string
+  title: string
+  rubro: RubroId
+  ciudad: CiudadId
+  status: JobStatus
+  createdAt: string   // ISO
+  clientToken: string
+  quoteCount: number
+}
+
 export type Quote = {
   id: string
   jobId: string

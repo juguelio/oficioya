@@ -9,6 +9,7 @@ import { ciudades, rubros } from '@/design-system/tokens'
 // páginas); moverlo a shared/ tocaría toda esa feature. Se deja como excepción, no se mueve.
 import { useCityStore } from '@/features/search/store'
 import { postJob } from '@/features/jobs/hooks'
+import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/shared/utils/cn'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
 
@@ -28,6 +29,9 @@ type FormData = z.infer<typeof schema>
 export function PostJobPage() {
   const navigate  = useNavigate()
   const storedCiudadId = useCityStore(s => s.ciudadId)
+  // Con sesión, el trabajo queda vinculado a la cuenta (post_job usa auth.uid())
+  // y aparece en /mis-trabajos sin depender del link privado.
+  const { user } = useAuth()
 
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } =
     useForm<FormData>({
@@ -84,12 +88,23 @@ export function PostJobPage() {
           >
             Ver mis presupuestos
           </button>
+          {/* Sin cuenta, el link privado es el ÚNICO acceso: si se pierde, se
+              pierde el seguimiento. Acá es donde la cuenta se ofrece sola. */}
+          {!user && (
+            <button
+              onClick={() => navigate('/registro/cliente')}
+              className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
+              style={{ borderColor: 'var(--color-bosque-lt)', color: 'var(--color-bosque-lt)' }}
+            >
+              Crear cuenta y no perder el link
+            </button>
+          )}
           <button
-            onClick={() => navigate('/trabajos')}
+            onClick={() => navigate(user ? '/mis-trabajos' : '/trabajos')}
             className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
             style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
           >
-            Ver todos los trabajos
+            {user ? 'Ver todos mis trabajos' : 'Ver todos los trabajos'}
           </button>
         </div>
       </div>

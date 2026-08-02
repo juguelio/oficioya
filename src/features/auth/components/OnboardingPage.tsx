@@ -43,17 +43,26 @@ export function OnboardingPage() {
             iconBg="var(--color-noche)"
             iconColor="var(--color-nieve)"
             title="Necesito un profesional"
-            description="Encontrá electricistas, plomeros y más cerca tuyo con la confianza de nuestra red."
+            description="Encontrá electricistas, plomeros y más cerca tuyo. Sin cuenta ni registro: contactás directo por WhatsApp."
             cardBg="var(--color-sombra)"
             borderColor="var(--color-line)"
             cta={
-              <button
-                onClick={() => navigate('/')}
-                className="w-full py-3 px-6 rounded-full border font-bold text-sm tracking-wide text-[--color-nieve] transition-colors active:scale-[0.98]"
-                style={{ borderColor: 'var(--color-line)' }}
-              >
-                Buscar ahora
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => navigate('/')}
+                  className="w-full py-3 px-6 rounded-full border font-bold text-sm tracking-wide text-[--color-nieve] transition-colors active:scale-[0.98]"
+                  style={{ borderColor: 'var(--color-line)' }}
+                >
+                  Buscar ahora
+                </button>
+                <button
+                  onClick={() => navigate('/registro/cliente')}
+                  className="w-full py-2 text-xs font-semibold transition-colors"
+                  style={{ color: 'var(--color-bosque-lt)' }}
+                >
+                  Crear cuenta para publicar trabajos
+                </button>
+              </div>
             }
           />
 

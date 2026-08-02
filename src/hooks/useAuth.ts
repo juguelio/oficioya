@@ -68,17 +68,25 @@ async function signIn(email: string, password: string) {
   return supabase.auth.signInWithPassword({ email, password })
 }
 
-async function signInWithGoogle() {
+async function signInWithGoogle(next?: string) {
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
       // Vuelve al panel luego del intercambio OAuth. Esta URL debe estar
       // incluida en Redirect URLs de Supabase Auth. /dashboard es además el
       // único punto que decide a dónde sigue el usuario según tenga o no fila
-      // en providers (panel vs onboarding).
-      redirectTo: `${window.location.origin}/dashboard`,
+      // en providers (panel de prestador vs onboarding vs panel de cliente).
+      // `next` permite que el alta de cliente vuelva directo a /mis-trabajos.
+      redirectTo: `${window.location.origin}${next ?? '/dashboard'}`,
     },
   })
+}
+
+// Marca a qué vino la cuenta. Las cuentas de Google llegan sin declararlo, y
+// hasta ahora TODA cuenta se asumía prestador: un cliente que entraba terminaba
+// en el onboarding de alta de prestador, sin salida.
+async function setAccountType(type: 'cliente' | 'prestador') {
+  return supabase.auth.updateUser({ data: { account_type: type } })
 }
 
 async function signOut() {
@@ -89,5 +97,5 @@ async function signOut() {
 
 export function useAuth() {
   const snapshot = useSyncExternalStore(subscribe, getSnapshot)
-  return { ...snapshot, signUp, signIn, signInWithGoogle, signOut }
+  return { ...snapshot, signUp, signIn, signInWithGoogle, signOut, setAccountType }
 }

@@ -24,6 +24,8 @@ const JobsPage           = lazy(() => import('@/features/jobs/components/JobsPag
 const PostJobPage        = lazy(() => import('@/features/jobs/components/PostJobPage').then(m => ({ default: m.PostJobPage })))
 const JobDetailPage      = lazy(() => import('@/features/jobs/components/JobDetailPage').then(m => ({ default: m.JobDetailPage })))
 const ClaimProfilePage   = lazy(() => import('@/features/auth/components/ClaimProfilePage').then(m => ({ default: m.ClaimProfilePage })))
+const ClientSignup       = lazy(() => import('@/pages/ClientSignup').then(m => ({ default: m.ClientSignup })))
+const MyJobsPage         = lazy(() => import('@/features/jobs/components/MyJobsPage').then(m => ({ default: m.MyJobsPage })))
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +45,9 @@ export const router = createBrowserRouter([
   { path: '/activar/:id',        element: <ClaimProfilePage /> },
   { path: '/login',              element: <ProviderLogin /> },
   { path: '/registrarme',        element: <Navigate to="/registro/prestador" replace /> },
+  // Cuenta de cliente: opcional. Publicar un trabajo sigue sin requerir cuenta;
+  // esto es para no depender del link privado y ver todo junto en /mis-trabajos.
+  { path: '/registro/cliente',   element: <ClientSignup /> },
 
   // App
   { path: '/',                   element: <HomePage /> },
@@ -57,6 +62,8 @@ export const router = createBrowserRouter([
   { path: '/trabajos',           element: <JobsPage /> },
   { path: '/trabajos/nuevo',     element: <PostJobPage /> },
   { path: '/trabajos/:id',       element: <JobDetailPage /> },
+  // Panel del CLIENTE (equivalente a /dashboard para prestadores).
+  { path: '/mis-trabajos',       element: <ProtectedRoute><MyJobsPage /></ProtectedRoute> },
 
   // Dashboard prestador. ProtectedRoute espera `loading` y exige sesión (en dev deja
   // pasar sin sesión para el selector mock). /dashboard es además el único punto que

@@ -78,13 +78,16 @@ export function ProviderDashboard() {
     if (authState === 'ready' && authProvider) {
       return <DashboardMain provider={authProvider} onExit={handleSignOut} isLive />
     }
-    // Logueado sin fila de prestador = entró con Google. El trigger no pudo crear el
-    // perfil porque Google no manda ciudad ni rubro, así que se completa en el
-    // onboarding en vez de dejarlo en una pantalla muerta.
-    // OJO: va a /registro/prestador (el onboarding conversacional, que SÍ crea la
-    // fila), no a /onboarding — esa ruta es la pantalla de presentación y no crea
-    // nada, así que mandaba al usuario a un loop de vuelta al login.
-    return <Navigate to="/registro/prestador" replace />
+    // Logueado SIN fila de prestador. Antes se asumía que toda cuenta venía a darse
+    // de alta como prestador y se la empujaba al onboarding conversacional: un
+    // cliente que entraba quedaba atrapado en el chat de alta, sin salida. Ahora se
+    // respeta a qué vino la cuenta.
+    const accountType = (user.user_metadata as { account_type?: string } | undefined)?.account_type
+    if (accountType === 'cliente')   return <Navigate to="/mis-trabajos" replace />
+    if (accountType === 'prestador') return <Navigate to="/registro/prestador" replace />
+    // Sin declarar (típico de Google, que no manda esta info): se pregunta en vez
+    // de adivinar. Adivinar "prestador" fue justamente el bug.
+    return <ElegiTuCamino onExit={handleSignOut} />
   }
 
   // ── Sin sesión ───────────────────────────────────────────────────────────
@@ -117,6 +120,81 @@ function DashboardLoading() {
 
 // DashboardPending se eliminó: la pantalla "tu perfil está en preparación" era un
 // callejón sin salida — nadie la sacaba de ahí. Ahora ese caso va a /onboarding.
+
+// ─── ElegiTuCamino ────────────────────────────────────────────────────────────
+// Hay sesión, no hay fila de prestador y la cuenta no declaró a qué vino (Google
+// no lo manda). En vez de asumir "prestador" y empujar al alta, se pregunta.
+
+type ElegiTuCaminoProps = { onExit: () => void }
+
+function ElegiTuCamino({ onExit }: ElegiTuCaminoProps) {
+  const navigate = useNavigate()
+  const { setAccountType } = useAuth()
+  const [saving, setSaving] = useState<'cliente' | 'prestador' | null>(null)
+
+  async function elegir(tipo: 'cliente' | 'prestador') {
+    setSaving(tipo)
+    await setAccountType(tipo)
+    navigate(tipo === 'cliente' ? '/mis-trabajos' : '/registro/prestador', { replace: true })
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col justify-center px-6 py-16" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <div className="w-full max-w-md mx-auto">
+        <h1 className="font-black text-2xl mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.03em' }}>
+          ¿Qué querés hacer en Oficio?
+        </h1>
+        <p className="text-sm mb-7" style={{ color: 'var(--color-muted)' }}>
+          Ya entraste con tu cuenta. Elegí cómo la vas a usar — después lo podés cambiar.
+        </p>
+
+        <div className="space-y-3">
+          <button
+            onClick={() => elegir('cliente')}
+            disabled={saving !== null}
+            className="w-full flex items-center gap-4 p-4 rounded-xl border text-left active:scale-[0.98] transition-all disabled:opacity-50"
+            style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+          >
+            <span className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)' }}>
+              🏠
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>Necesito un profesional</p>
+              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                {saving === 'cliente' ? 'Preparando tus trabajos…' : 'Publicar trabajos y recibir presupuestos'}
+              </p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => elegir('prestador')}
+            disabled={saving !== null}
+            className="w-full flex items-center gap-4 p-4 rounded-xl border text-left active:scale-[0.98] transition-all disabled:opacity-50"
+            style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-bosque-lt)' }}
+          >
+            <span className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)' }}>
+              🔧
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>Ofrezco mis servicios</p>
+              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                {saving === 'prestador' ? 'Abriendo el alta…' : 'Crear mi perfil de prestador y recibir clientes'}
+              </p>
+            </div>
+          </button>
+        </div>
+
+        <button
+          onClick={onExit}
+          className="w-full mt-6 py-2 text-sm font-semibold"
+          style={{ color: 'var(--color-muted)' }}
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  )
+}
 
 
 // ─── ProviderSelector ─────────────────────────────────────────────────────────
