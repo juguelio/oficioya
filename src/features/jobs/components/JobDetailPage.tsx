@@ -183,13 +183,22 @@ function ProviderJobView({ jobId }: { jobId: string }) {
           ) : !provider ? (
             <div className="text-center py-6">
               <InfoBox title="Iniciá sesión para ofertar" body="Necesitás tu cuenta de prestador para enviar un presupuesto." />
-              <button
-                onClick={() => navigate('/login')}
-                className="mt-4 px-6 py-3 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
-                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
-              >
-                Iniciar sesión
-              </button>
+              <div className="mt-4 flex justify-center gap-2">
+                <button
+                  onClick={() => navigate('/login')}
+                  className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
+                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                >
+                  Iniciar sesión
+                </button>
+                <button
+                  onClick={() => navigate('/registro/prestador')}
+                  className="px-5 py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
+                  style={{ borderColor: 'var(--color-bosque-lt)', color: 'var(--color-bosque-lt)' }}
+                >
+                  Crear perfil gratis
+                </button>
+              </div>
             </div>
           ) : !provider.active ? (
             <InfoBox title="Tu perfil todavía no está activo" body="Completá la verificación para poder enviar presupuestos." />

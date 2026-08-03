@@ -43,7 +43,7 @@ export function OnboardingPage() {
             iconBg="var(--color-noche)"
             iconColor="var(--color-nieve)"
             title="Necesito un profesional"
-            description="Encontrá electricistas, plomeros y más cerca tuyo. Sin cuenta ni registro: contactás directo por WhatsApp."
+            description="Encontrá electricistas, plomeros y más cerca tuyo. Publicá sin cuenta; si querés, después guardá tus presupuestos en un solo lugar."
             cardBg="var(--color-sombra)"
             borderColor="var(--color-line)"
             cta={
@@ -60,7 +60,7 @@ export function OnboardingPage() {
                   className="w-full py-2 text-xs font-semibold transition-colors"
                   style={{ color: 'var(--color-bosque-lt)' }}
                 >
-                  Crear cuenta para publicar trabajos
+                  Crear cuenta para seguir mis trabajos
                 </button>
               </div>
             }

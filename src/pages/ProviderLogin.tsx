@@ -105,7 +105,7 @@ export function ProviderLogin() {
           >
             Bienvenido de vuelta
           </h2>
-          <p className="text-sm text-[--color-muted]">Ingresá para gestionar tu perfil y contactos.</p>
+          <p className="text-sm text-[--color-muted]">Ingresá para seguir tus trabajos o gestionar tu perfil profesional.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">

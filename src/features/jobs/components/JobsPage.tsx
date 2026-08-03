@@ -1,11 +1,12 @@
-import { useState, useMemo } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { ciudades, rubros } from '@/design-system/tokens'
 // excepción documentada (§3): jobs consume el store de ciudad seleccionada de search.
 // useCityStore es un store Zustand con persist cuyo dueño natural es search (lo usan sus
 // páginas); moverlo a shared/ tocaría toda esa feature. Se deja como excepción, no se mueve.
 import { useCityStore } from '@/features/search/store'
 import { useOpenJobs } from '@/features/jobs/hooks'
+import { useAuth } from '@/hooks/useAuth'
 import { Logo } from '@/shared/components'
 import { cn } from '@/shared/utils/cn'
 import { formatARS } from '@/shared/utils/formatARS'
@@ -40,8 +41,23 @@ export function JobsPage() {
   const ciudadId  = useCityStore(s => s.ciudadId)
   const setCiudad = useCityStore(s => s.setCiudad)
   const navigate  = useNavigate()
+  const { user, loading: authLoading } = useAuth()
+  const [searchParams] = useSearchParams()
 
   const [rubroFilter, setRubroFilter] = useState<RubroId | null>(null)
+
+  // Desde el panel del prestador conservamos la zona y el rubro en la URL: no
+  // depende de lo último que ese navegador haya buscado como cliente.
+  useEffect(() => {
+    const ciudadParam = searchParams.get('ciudad')
+    const rubroParam = searchParams.get('rubro')
+    if (ciudadParam && ciudades.some(c => c.id === ciudadParam) && ciudadParam !== ciudadId) {
+      setCiudad(ciudadParam as CiudadId)
+    }
+    if (rubroParam && rubros.some(r => r.id === rubroParam)) {
+      setRubroFilter(rubroParam as RubroId)
+    }
+  }, [ciudadId, searchParams, setCiudad])
 
   // Todos los trabajos de la ciudad (sin filtro de rubro), desde la vista sanitizada
   const { jobs: cityJobs, quoteCountByJob } = useOpenJobs({ ciudad: ciudadId })
@@ -79,6 +95,43 @@ export function JobsPage() {
       </header>
 
       <main className="pt-14 pb-28">
+
+        {/* El tablero es público; para prestadores el siguiente paso queda claro:
+            entrar/crear perfil, elegir una oportunidad y cotizar. */}
+        <section className="px-5 pt-5">
+          <div className="rounded-2xl p-4 border" style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl" aria-hidden="true">🔧</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-black text-sm mb-1" style={{ color: 'var(--color-bosque-dk)' }}>
+                  ¿Sos prestador? Estos son clientes que están buscando ayuda.
+                </p>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--color-bosque-dk)' }}>
+                  Elegí los trabajos de tu rubro y ciudad, enviá tu presupuesto y seguí la respuesta desde tu panel.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => navigate('/dashboard')}
+                disabled={authLoading}
+                className="flex-1 py-2.5 rounded-xl text-center font-bold text-xs text-white active:scale-95 transition-all disabled:opacity-60"
+                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+              >
+                {user ? 'Ir a mi panel' : 'Ingresar para cotizar'}
+              </button>
+              {!user && (
+                <Link
+                  to="/registro/prestador"
+                  className="flex-1 py-2.5 rounded-xl text-center font-bold text-xs border active:scale-95 transition-all"
+                  style={{ borderColor: 'var(--color-bosque-lt)', color: 'var(--color-bosque-dk)' }}
+                >
+                  Crear perfil gratis
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
 
         {/* ── Ciudad selector ──────────────────────────────────────────────────── */}
         <section className="px-5 pt-5 pb-1">
@@ -217,12 +270,12 @@ export function JobsPage() {
         </button>
         <NavTab icon={<IconBriefcase active />} label="Trabajos" active />
         <Link
-          to="/planes"
+          to="/dashboard"
           className="flex flex-col items-center gap-1 active:scale-90 transition-all"
           style={{ color: 'var(--color-muted)' }}
         >
           <IconPerson />
-          <span className="text-[10px] font-semibold uppercase tracking-widest">Prestador</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest">Mi panel</span>
         </Link>
       </nav>
 
