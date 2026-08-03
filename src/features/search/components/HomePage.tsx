@@ -718,11 +718,10 @@ export function HomePage() {
               Elegí tu perfil para continuar
             </p>
             <div className="space-y-3">
-              {/* Cliente — en v1 NO tiene cuenta (decisión de producto): buscar y
-                  contactar por WhatsApp no requiere registro. Acá solo se le
-                  explica y se cierra el sheet, nada de mandarlo al login. */}
+              {/* Cliente: publicar sigue sin cuenta obligatoria. Crear cuenta es
+                  opcional y sirve para conservar trabajos y presupuestos. */}
               <button
-                onClick={() => setShowLoginSheet(false)}
+                onClick={() => { navigate('/registro/cliente'); setShowLoginSheet(false) }}
                 className="w-full flex items-center gap-4 p-4 rounded-xl border text-left active:scale-[0.98] transition-all"
                 style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-line)' }}
               >
@@ -737,7 +736,7 @@ export function HomePage() {
                     Soy cliente
                   </p>
                   <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                    No necesitás cuenta: buscá y contactá directo por WhatsApp
+                    Publicá sin cuenta o ingresá para seguir todos tus presupuestos
                   </p>
                 </div>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-muted)', flexShrink: 0 }}>

@@ -11,6 +11,7 @@ import type { DbProviderPublic } from '@/lib/database.types'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/features/subscriptions/hooks'
+import { useOpenJobs } from '@/features/jobs/hooks'
 import { toProvider } from '@/shared/utils/toProvider'
 
 const FALLBACK_PHOTO = '/images/user-avatar.png'
@@ -469,6 +470,8 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
         ))}
       </div>
 
+      <ProviderOpportunities provider={provider} onNavigate={onNavigate} />
+
       {/* Plan */}
       <div
         className="flex items-center justify-between p-4 rounded-xl border"
@@ -566,6 +569,61 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
       )}
 
     </div>
+  )
+}
+
+// ─── Oportunidades ─────────────────────────────────────────────────────────────
+// El dashboard ya no deja escondido el motivo principal para volver: encontrar
+// clientes de la misma ciudad y rubro, cotizar y recibir la respuesta.
+function ProviderOpportunities({ provider, onNavigate }: { provider: Provider; onNavigate: (path: string) => void }) {
+  const { jobs, loading } = useOpenJobs({ ciudad: provider.ciudad, rubro: provider.rubro })
+  const latest = jobs.filter(job => job.status === 'open').slice(0, 3)
+
+  return (
+    <section className="rounded-xl border overflow-hidden" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+      <div className="flex items-start justify-between gap-3 px-4 pt-4 pb-3">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--color-muted)' }}>Oportunidades</p>
+          <h3 className="font-black text-base" style={{ color: 'var(--color-nieve)' }}>Trabajos para vos</h3>
+          <p className="text-xs mt-1 capitalize" style={{ color: 'var(--color-muted)' }}>
+            {provider.rubro.replace(/-/g, ' ')} · {provider.ciudad.replace(/-/g, ' ')}
+          </p>
+        </div>
+        <button onClick={() => onNavigate(`/trabajos?ciudad=${encodeURIComponent(provider.ciudad)}&rubro=${encodeURIComponent(provider.rubro)}`)} className="text-xs font-bold shrink-0" style={{ color: 'var(--color-bosque-lt)' }}>
+          Ver todos →
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="px-4 pb-4 space-y-2 animate-pulse">
+          <div className="h-10 rounded-lg" style={{ backgroundColor: 'var(--color-noche)' }} />
+          <div className="h-10 rounded-lg" style={{ backgroundColor: 'var(--color-noche)' }} />
+        </div>
+      ) : latest.length > 0 ? (
+        <div className="border-t" style={{ borderColor: 'var(--color-line)' }}>
+          {latest.map(job => (
+            <button
+              key={job.id}
+              onClick={() => onNavigate(`/trabajos/${job.id}`)}
+              className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left border-b last:border-b-0 active:bg-black/[0.02] transition-colors"
+              style={{ borderColor: 'var(--color-line)' }}
+            >
+              <div className="min-w-0">
+                <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{job.title}</p>
+                <p className="text-xs truncate mt-0.5" style={{ color: 'var(--color-muted)' }}>{job.barrio ? `${job.barrio} · ` : ''}{job.description}</p>
+              </div>
+              <span className="text-xs font-bold shrink-0" style={{ color: 'var(--color-bosque-lt)' }}>Cotizar</span>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="px-4 pb-4">
+          <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+            Todavía no hay trabajos abiertos de tu rubro en esta ciudad. Mirá el tablero completo por si aparece uno cercano.
+          </p>
+        </div>
+      )}
+    </section>
   )
 }
 
