@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -29,6 +29,15 @@ export function ProviderLogin() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) })
+
+  // Al cancelar OAuth y volver con el botón Atrás, Safari/Chrome pueden restaurar
+  // esta pantalla desde el bfcache, conservando `googleLoading: true`. Escuchamos
+  // pageshow para volver a habilitar el botón sin obligar a recargar la página.
+  useEffect(() => {
+    const resetGoogleLoading = () => setGoogleLoading(false)
+    window.addEventListener('pageshow', resetGoogleLoading)
+    return () => window.removeEventListener('pageshow', resetGoogleLoading)
+  }, [])
 
   async function onSubmit(data: FormData) {
     setAuthError(null)
