@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { cn } from '@/shared/utils/cn'
 import { useAuth } from '@/hooks/useAuth'
 import { Field, FormError, PageHeader, inputClasses } from '@/shared/components'
@@ -20,7 +20,12 @@ type FormData = z.infer<typeof schema>
 
 export function ProviderLogin() {
   const navigate          = useNavigate()
+  const [searchParams]    = useSearchParams()
   const { signIn, signInWithGoogle } = useAuth()
+
+  // A dónde volver después de entrar. Lo pone ProtectedRoute cuando te frena
+  // en una ruta privada; si no hay, el destino natural es el panel.
+  const next = searchParams.get('next') || '/dashboard'
   const [authError, setAuthError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -50,13 +55,13 @@ export function ProviderLogin() {
       )
       return
     }
-    navigate('/dashboard')
+    navigate(next, { replace: true })
   }
 
   async function handleGoogleSignIn() {
     setAuthError(null)
     setGoogleLoading(true)
-    const { error } = await signInWithGoogle()
+    const { error } = await signInWithGoogle(next)
     if (error) {
       setAuthError('No pudimos iniciar sesión con Google. Probá de nuevo o usá tu email y contraseña.')
       setGoogleLoading(false)
@@ -144,9 +149,15 @@ export function ProviderLogin() {
           </div>
 
           <p className="text-xs text-center text-muted pt-2">
-            ¿Todavía no tenés perfil?{' '}
+            ¿Todavía no tenés cuenta?{' '}
+            <Link to="/registro/cliente" className="text-bosque-lt font-semibold hover:underline">
+              Creá una para publicar trabajos
+            </Link>
+          </p>
+          <p className="text-xs text-center text-muted">
+            ¿Ofrecés servicios?{' '}
             <Link to="/registro/prestador" className="text-bosque-lt font-semibold hover:underline">
-              Registrate
+              Registrate como prestador
             </Link>
           </p>
         </form>

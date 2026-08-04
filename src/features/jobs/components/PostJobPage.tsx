@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -24,6 +24,20 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
+// El borrador sobrevive a que te vayas a crear una cuenta y vuelvas. Antes,
+// cualquier desvío en el medio (login, registro, "¿qué era mi WhatsApp?")
+// vaciaba el formulario y había que escribir todo de nuevo.
+const DRAFT_KEY = 'oficio-borrador-trabajo'
+
+function leerBorrador(): Partial<FormData> | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY)
+    return raw ? (JSON.parse(raw) as Partial<FormData>) : null
+  } catch {
+    return null
+  }
+}
+
 // ─── PostJobPage ──────────────────────────────────────────────────────────────
 
 export function PostJobPage() {
@@ -33,14 +47,30 @@ export function PostJobPage() {
   // y aparece en /mis-trabajos sin depender del link privado.
   const { user } = useAuth()
 
+  // Se lee una sola vez al montar: si se leyera en cada render, pisaría lo que
+  // el usuario está tipeando.
+  const borrador = useRef(leerBorrador()).current
+
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } =
     useForm<FormData>({
       resolver: zodResolver(schema),
       defaultValues: {
         ciudad: storedCiudadId ?? '',
         authorPhone: '+549',
+        ...(borrador ?? {}),
       },
     })
+
+  useEffect(() => {
+    const sub = watch(values => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(values))
+      } catch {
+        // storage lleno o bloqueado: perder el borrador no puede romper el alta
+      }
+    })
+    return () => sub.unsubscribe()
+  }, [watch])
 
   const selectedRubro  = watch('rubro')
   const selectedCiudad = watch('ciudad')
@@ -60,6 +90,8 @@ export function PostJobPage() {
       authorPhone: data.authorPhone,
     })
     if (!res) { setError('No se pudo publicar el trabajo. Probá de nuevo.'); return }
+    // Publicado: el borrador ya no sirve y no tiene por qué quedar guardado.
+    try { localStorage.removeItem(DRAFT_KEY) } catch { /* nada que limpiar */ }
     // El aviso a prestadores se dispara SERVER-SIDE (trigger trg_notify_new_job →
     // n8n vía pg_net con header secreto). Ya no se llama al webhook desde el browser.
     setResult(res)
