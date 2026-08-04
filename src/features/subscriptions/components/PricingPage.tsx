@@ -63,7 +63,7 @@ export function PricingPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="text-[--color-bosque-lt] hover:bg-white/5 transition-colors active:scale-95 p-2 rounded-xl"
+            className="text-[--color-bosque-lt] hover:bg-white/5 transition-colors active:scale-95 p-2 rounded-lg"
             aria-label="Volver"
           >
             <IconArrowLeft />
@@ -125,7 +125,7 @@ export function PricingPage() {
           ].map(({ q, a }) => (
             <details
               key={q}
-              className="rounded-[--radius-xl] p-4 group cursor-pointer border border-[--color-line]"
+              className="rounded-xl p-4 group cursor-pointer border border-[--color-line]"
               style={{ backgroundColor: 'var(--color-sombra)' }}
             >
               <summary className="list-none flex items-center justify-between text-sm font-semibold text-[--color-nieve] select-none">
@@ -164,7 +164,7 @@ function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled
   return (
     <div
       className={cn(
-        'rounded-[--radius-xl] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30',
+        'rounded-xl p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30',
       )}
       style={{
         backgroundColor: 'var(--color-sombra)',
@@ -259,7 +259,7 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
     <button
       onClick={onClick}
       className={cn(
-        'flex flex-col items-center justify-center px-4 py-2 rounded-xl transition-all active:scale-90 duration-150',
+        'flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-all active:scale-90 duration-150',
         active ? 'text-[--color-bosque-lt]' : 'text-[--color-muted] hover:text-[--color-bosque-lt]',
       )}
       style={undefined}

@@ -68,9 +68,9 @@ export function ProviderProfile() {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
         <div className="max-w-xl mx-auto pt-20 px-6 space-y-4 animate-pulse">
-          <div className="h-64 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+          <div className="h-64 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
           <div className="h-8 w-2/3 rounded-full" style={{ backgroundColor: 'var(--color-sombra)' }} />
-          <div className="h-24 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+          <div className="h-24 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
         </div>
       </div>
     )
@@ -82,7 +82,7 @@ export function ProviderProfile() {
         <p className="text-[--color-muted]">Prestador no encontrado.</p>
         <button
           onClick={() => navigate(-1)}
-          className="px-5 py-2.5 rounded-[--radius-lg] text-sm font-semibold border border-[--color-bosque-lt]/40 hover:border-[--color-bosque-lt] transition-all active:scale-95"
+          className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-[--color-bosque-lt]/40 hover:border-[--color-bosque-lt] transition-all active:scale-95"
           style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-nieve)' }}
         >
           ← Volver
@@ -117,7 +117,7 @@ export function ProviderProfile() {
           <div className="flex items-center gap-2 min-w-0">
             <button
               onClick={() => navigate(-1)}
-              className="text-[--color-bosque-lt] transition-colors active:scale-95 p-2 -ml-2 rounded-xl shrink-0"
+              className="text-[--color-bosque-lt] transition-colors active:scale-95 p-2 -ml-2 rounded-lg shrink-0"
               aria-label="Volver"
             >
               <IconArrowLeft />
@@ -138,7 +138,7 @@ export function ProviderProfile() {
 
         {/* ── Hero photo — card redondeada como el resto del sistema, no full-bleed ── */}
         <div className="px-5 pt-4">
-        <div className="relative h-72 w-full rounded-2xl overflow-hidden border" style={{ borderColor: 'var(--color-line)' }}>
+        <div className="relative h-72 w-full rounded-xl overflow-hidden border" style={{ borderColor: 'var(--color-line)' }}>
           <img
             src={img}
             alt={provider.name}
@@ -200,11 +200,11 @@ export function ProviderProfile() {
 
           {/* Stats — mismas cards con borde que usan la home y el panel */}
           <div className="grid grid-cols-3 gap-3 mb-6" style={{ fontFamily: 'var(--font-mono)' }}>
-            <div className="flex flex-col items-center py-3.5 rounded-xl border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <div className="flex flex-col items-center py-3.5 rounded-lg border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
               <p className="text-xl font-bold text-[--color-nieve]" style={{ fontVariantNumeric: 'tabular-nums' }}>{provider.totalJobs}</p>
               <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">Trabajos</p>
             </div>
-            <div className="flex flex-col items-center py-3.5 rounded-xl border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <div className="flex flex-col items-center py-3.5 rounded-lg border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
               {provider.claimed && provider.rating > 0 ? (
                 <>
                   <p className="text-xl font-bold text-[--color-nieve]" style={{ fontVariantNumeric: 'tabular-nums' }}>{provider.rating.toFixed(1)}</p>
@@ -224,7 +224,7 @@ export function ProviderProfile() {
                 </>
               )}
             </div>
-            <div className="flex flex-col items-center py-3.5 rounded-xl border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <div className="flex flex-col items-center py-3.5 rounded-lg border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
               <p className="text-xl font-bold" style={{ color: provider.isVerified ? 'var(--color-bosque-lt)' : 'var(--color-muted)' }}>
                 {provider.isVerified ? '✓' : '—'}
               </p>
@@ -255,7 +255,7 @@ export function ProviderProfile() {
                   navigate(`/emergencias/contratar/${provider.id}`)
                 }}
                 className={cn(
-                  'flex w-full items-center justify-center gap-2 rounded-[--radius-full]',
+                  'flex w-full items-center justify-center gap-2 rounded-full',
                   'py-4 font-bold text-white text-base',
                   'active:scale-[0.98] transition-transform shadow-lg',
                 )}
@@ -276,7 +276,7 @@ export function ProviderProfile() {
                 rel="noopener noreferrer"
                 onClick={() => track('whatsapp_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'profile' })}
                 className={cn(
-                  'flex w-full items-center justify-center gap-2 rounded-[--radius-full]',
+                  'flex w-full items-center justify-center gap-2 rounded-full',
                   'py-4 font-bold text-white text-base',
                   'active:scale-[0.98] transition-transform shadow-lg',
                 )}
@@ -290,7 +290,7 @@ export function ProviderProfile() {
               </p>
             </>
           ) : (
-            <div className="rounded-[--radius-xl] px-5 py-5 mb-8 text-center border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <div className="rounded-xl px-5 py-5 mb-8 text-center border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
               <p className="text-sm font-bold text-[--color-nieve] mb-1">
                 Este profesional todavía no activó su perfil en Oficio.
               </p>
@@ -328,7 +328,7 @@ export function ProviderProfile() {
 
           {reviewSent && (
             <div
-              className="flex items-center gap-2 px-4 py-3 rounded-xl mb-4 border"
+              className="flex items-center gap-2 px-4 py-3 rounded-lg mb-4 border"
               style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
             >
               <span>✅</span>
@@ -338,7 +338,7 @@ export function ProviderProfile() {
 
           {myReviews.length === 0 ? (
             <div
-              className="flex flex-col items-center py-10 rounded-xl border text-center"
+              className="flex flex-col items-center py-10 rounded-lg border text-center"
               style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
             >
               <span className="text-4xl mb-2">💬</span>
@@ -350,7 +350,7 @@ export function ProviderProfile() {
               {myReviews.map(r => (
                 <div
                   key={r.id}
-                  className="p-4 rounded-xl border"
+                  className="p-4 rounded-lg border"
                   style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -439,7 +439,7 @@ export function ProviderProfile() {
                 <input
                   {...register('authorName')}
                   placeholder="Ej: Marcela R."
-                  className="w-full h-11 px-3 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
+                  className="w-full h-11 px-3 rounded-lg text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
                   style={{ backgroundColor: 'var(--color-noche)', border: `1px solid ${errors.authorName ? '#ffb4ab' : 'var(--color-line)'}`, color: 'var(--color-nieve)' }}
                 />
                 {errors.authorName && <p className="text-xs mt-0.5" style={{ color: '#ffb4ab' }}>{errors.authorName.message}</p>}
@@ -452,7 +452,7 @@ export function ProviderProfile() {
                   {...register('comment')}
                   rows={3}
                   placeholder="Contá cómo fue el trabajo, puntualidad, precio..."
-                  className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none resize-none placeholder:text-[var(--color-muted)]"
+                  className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none resize-none placeholder:text-[var(--color-muted)]"
                   style={{ backgroundColor: 'var(--color-noche)', border: `1px solid ${errors.comment ? '#ffb4ab' : 'var(--color-line)'}`, color: 'var(--color-nieve)' }}
                 />
                 {errors.comment && <p className="text-xs mt-0.5" style={{ color: '#ffb4ab' }}>{errors.comment.message}</p>}

@@ -71,7 +71,7 @@ export function RubroPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="text-[--color-bosque-lt] hover:bg-black/5 transition-colors active:scale-95 p-2 rounded-xl"
+            className="text-[--color-bosque-lt] hover:bg-black/5 transition-colors active:scale-95 p-2 rounded-lg"
             aria-label="Volver"
           >
             <IconArrowLeft />
@@ -112,7 +112,7 @@ export function RubroPage() {
               </div>
               <input
                 readOnly
-                className="w-full rounded-xl py-4 pl-12 pr-4 text-[--color-nieve] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40 transition-all border border-[--color-line]"
+                className="w-full rounded-lg py-4 pl-12 pr-4 text-[--color-nieve] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40 transition-all border border-[--color-line]"
                 style={{ backgroundColor: 'var(--color-sombra)' }}
                 placeholder={`Buscar ${rubroData?.label?.toLowerCase() ?? 'profesionales'} en ${ciudadData?.label}…`}
               />
@@ -154,7 +154,7 @@ export function RubroPage() {
         {loading ? (
           <div className="grid gap-5">
             {[1, 2, 3].map(n => (
-              <div key={n} className="rounded-xl overflow-hidden animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }}>
+              <div key={n} className="rounded-lg overflow-hidden animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }}>
                 <div className="h-48 w-full" style={{ backgroundColor: 'var(--color-noche)' }} />
                 <div className="p-5 flex flex-col gap-3">
                   <div className="h-5 w-2/3 rounded-md" style={{ backgroundColor: 'var(--color-noche)' }} />
@@ -231,7 +231,7 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
 
   return (
     <article
-      className="rounded-xl overflow-hidden transition-all duration-300 group border border-[--color-line] sm:flex sm:flex-row"
+      className="rounded-lg overflow-hidden transition-all duration-300 group border border-[--color-line] sm:flex sm:flex-row"
       style={{ backgroundColor: 'var(--color-sombra)' }}
     >
       {/* Photo — mobile: full width banner / desktop: fixed left column */}
@@ -419,7 +419,7 @@ function EmptyState({ rubro, ciudad, onBack }: { rubro?: string; ciudad?: string
   return (
     <div className="flex flex-col items-center text-center py-16 gap-5 max-w-xs mx-auto">
       <div
-        className="w-16 h-16 rounded-[--radius-xl] flex items-center justify-center text-3xl border border-[--color-line]"
+        className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl border border-[--color-line]"
         style={{ backgroundColor: 'var(--color-sombra)' }}
       >
         🔍
@@ -437,7 +437,7 @@ function EmptyState({ rubro, ciudad, onBack }: { rubro?: string; ciudad?: string
       </div>
       <button
         onClick={onBack}
-        className="px-6 py-3 rounded-[--radius-lg] text-sm font-semibold text-[--color-nieve] border border-[--color-bosque-lt]/40 hover:border-[--color-bosque-lt] transition-all"
+        className="px-6 py-3 rounded-lg text-sm font-semibold text-[--color-nieve] border border-[--color-bosque-lt]/40 hover:border-[--color-bosque-lt] transition-all"
         style={{ backgroundColor: 'var(--color-sombra)' }}
       >
         ← Ver otros rubros
@@ -455,7 +455,7 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
     <button
       onClick={onClick}
       className={cn(
-        'flex flex-col items-center justify-center px-4 py-2 rounded-xl transition-all active:scale-90 duration-150',
+        'flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-all active:scale-90 duration-150',
         active ? 'text-[--color-bosque-lt]' : 'text-[--color-muted] hover:text-[--color-bosque-lt]',
       )}
     >

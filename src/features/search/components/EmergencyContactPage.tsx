@@ -53,7 +53,7 @@ export function EmergencyContactPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-noche)' }}>
       <header className="flex items-center gap-3 px-5 h-14 border-b" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-        <button onClick={() => navigate('/emergencias')} className="p-2 rounded-xl active:scale-95" style={{ color: 'var(--color-bosque-lt)' }} aria-label="Volver">
+        <button onClick={() => navigate('/emergencias')} className="p-2 rounded-lg active:scale-95" style={{ color: 'var(--color-bosque-lt)' }} aria-label="Volver">
           <IconArrowLeft />
         </button>
         <h1 className="font-bold text-base" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>Tu contacto</h1>
@@ -75,7 +75,7 @@ export function EmergencyContactPage() {
 
         {state === 'approved' && data && (
           <>
-            <div className="rounded-[--radius-xl] p-5 border mb-5 text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-guardia)' }}>
+            <div className="rounded-xl p-5 border mb-5 text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-guardia)' }}>
               <span className="text-3xl">✅</span>
               <p className="font-black text-lg mt-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>¡Listo! Contactá a {data.name.split(' ')[0]}</p>
               <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>
@@ -88,7 +88,7 @@ export function EmergencyContactPage() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => track('whatsapp_click', { providerId: id, ciudad: data.ciudad, rubro: data.rubro, source: 'emergency' })}
-              className="flex w-full items-center justify-center gap-2 rounded-[--radius-full] py-4 font-bold text-white text-base active:scale-[0.98] transition-transform shadow-lg"
+              className="flex w-full items-center justify-center gap-2 rounded-full py-4 font-bold text-white text-base active:scale-[0.98] transition-transform shadow-lg"
               style={{ background: '#25D366' }}
             >
               <IconWhatsApp />
@@ -106,12 +106,12 @@ export function EmergencyContactPage() {
 
 function Box({ icon, title, body, cta }: { icon: string; title: string; body: string; cta?: { label: string; onClick: () => void } }) {
   return (
-    <div className="rounded-[--radius-xl] p-6 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+    <div className="rounded-xl p-6 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
       <span className="text-3xl">{icon}</span>
       <p className="font-bold text-base mt-2" style={{ color: 'var(--color-nieve)' }}>{title}</p>
       <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--color-muted)' }}>{body}</p>
       {cta && (
-        <button onClick={cta.onClick} className="mt-4 px-5 py-2.5 rounded-[--radius-lg] text-sm font-semibold border active:scale-95" style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}>
+        <button onClick={cta.onClick} className="mt-4 px-5 py-2.5 rounded-lg text-sm font-semibold border active:scale-95" style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}>
           {cta.label}
         </button>
       )}

@@ -99,7 +99,7 @@ export function JobsPage() {
         {/* El tablero es público; para prestadores el siguiente paso queda claro:
             entrar/crear perfil, elegir una oportunidad y cotizar. */}
         <section className="px-5 pt-5">
-          <div className="rounded-2xl p-4 border" style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}>
+          <div className="rounded-xl p-4 border" style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}>
             <div className="flex items-start gap-3">
               <span className="text-2xl" aria-hidden="true">🔧</span>
               <div className="flex-1 min-w-0">
@@ -115,7 +115,7 @@ export function JobsPage() {
               <button
                 onClick={() => navigate('/dashboard')}
                 disabled={authLoading}
-                className="flex-1 py-2.5 rounded-xl text-center font-bold text-xs text-white active:scale-95 transition-all disabled:opacity-60"
+                className="flex-1 py-2.5 rounded-lg text-center font-bold text-xs text-white active:scale-95 transition-all disabled:opacity-60"
                 style={{ backgroundColor: 'var(--color-bosque-lt)' }}
               >
                 {user ? 'Ir a mi panel' : 'Ingresar para cotizar'}
@@ -123,7 +123,7 @@ export function JobsPage() {
               {!user && (
                 <Link
                   to="/registro/prestador"
-                  className="flex-1 py-2.5 rounded-xl text-center font-bold text-xs border active:scale-95 transition-all"
+                  className="flex-1 py-2.5 rounded-lg text-center font-bold text-xs border active:scale-95 transition-all"
                   style={{ borderColor: 'var(--color-bosque-lt)', color: 'var(--color-bosque-dk)' }}
                 >
                   Crear perfil gratis
@@ -143,7 +143,7 @@ export function JobsPage() {
               <button
                 key={c.id}
                 onClick={() => { setCiudad(c.id as CiudadId); setRubroFilter(null) }}
-                className="px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all shrink-0 border active:scale-95"
+                className="px-4 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap transition-all shrink-0 border active:scale-95"
                 style={
                   ciudadId === c.id
                     ? { backgroundColor: 'var(--color-bosque-lt)', borderColor: 'var(--color-bosque-lt)', color: '#fff' }
@@ -293,7 +293,7 @@ function JobCard({ job, quotesCount, onPress }: JobCardProps) {
   return (
     <button
       onClick={onPress}
-      className={cn('w-full text-left rounded-xl border active:scale-[0.99] transition-all overflow-hidden')}
+      className={cn('w-full text-left rounded-lg border active:scale-[0.99] transition-all overflow-hidden')}
       style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
     >
       <div className="p-4">
@@ -358,7 +358,7 @@ function JobCard({ job, quotesCount, onPress }: JobCardProps) {
 type NavTabProps = { icon: React.ReactNode; label: string; active?: boolean; onClick?: () => void }
 function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
   return (
-    <button onClick={onClick} className="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all active:scale-90" style={{ color: active ? 'var(--color-bosque-lt)' : 'var(--color-muted)' }}>
+    <button onClick={onClick} className="flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition-all active:scale-90" style={{ color: active ? 'var(--color-bosque-lt)' : 'var(--color-muted)' }}>
       {icon}
       <span className="text-[10px] font-semibold uppercase tracking-widest">{label}</span>
     </button>

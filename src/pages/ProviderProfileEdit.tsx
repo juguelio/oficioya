@@ -20,7 +20,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 const INPUT_CLASS =
-  'w-full h-14 px-4 rounded-xl text-[--color-nieve] placeholder:text-[--color-muted] border ' +
+  'w-full h-14 px-4 rounded-lg text-[--color-nieve] placeholder:text-[--color-muted] border ' +
   'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40'
 
 function IconBack() {
@@ -129,9 +129,9 @@ export function ProviderProfileEdit() {
   if (state === 'loading') {
     return (
       <div className="min-h-screen pt-24 px-6 max-w-xl mx-auto" style={{ backgroundColor: 'var(--color-noche)' }}>
-        <div className="h-8 w-40 rounded-lg animate-pulse mb-6" style={{ backgroundColor: 'var(--color-line)' }} />
+        <div className="h-8 w-40 rounded-md animate-pulse mb-6" style={{ backgroundColor: 'var(--color-line)' }} />
         {[0, 1, 2, 3].map(i => (
-          <div key={i} className="h-14 rounded-xl animate-pulse mb-5" style={{ backgroundColor: 'var(--color-line)' }} />
+          <div key={i} className="h-14 rounded-lg animate-pulse mb-5" style={{ backgroundColor: 'var(--color-line)' }} />
         ))}
       </div>
     )
@@ -154,7 +154,7 @@ export function ProviderProfileEdit() {
       >
         <button
           onClick={() => navigate(-1)}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition-all"
+          className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all"
           style={{ backgroundColor: 'var(--color-noche)', color: 'var(--color-nieve)' }}
         >
           <IconBack />
@@ -166,7 +166,7 @@ export function ProviderProfileEdit() {
 
         {/* Foto */}
         <div className="flex items-center gap-4 py-6">
-          <div className="w-20 h-20 rounded-2xl overflow-hidden border shrink-0" style={{ borderColor: 'var(--color-line)' }}>
+          <div className="w-20 h-20 rounded-xl overflow-hidden border shrink-0" style={{ borderColor: 'var(--color-line)' }}>
             <img
               src={photo ?? FALLBACK_PHOTO}
               alt="Tu foto"
@@ -245,7 +245,7 @@ export function ProviderProfileEdit() {
               {...register('bio')}
               rows={4}
               placeholder="Reparo heladeras y lavarropas a domicilio, todas las marcas…"
-              className="w-full px-4 py-3 rounded-xl text-[--color-nieve] placeholder:text-[--color-muted] border focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+              className="w-full px-4 py-3 rounded-lg text-[--color-nieve] placeholder:text-[--color-muted] border focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
               style={{ backgroundColor: 'var(--color-sombra)', borderColor: errors.bio ? '#ffb4ab' : 'var(--color-line)' }}
             />
           </Field>

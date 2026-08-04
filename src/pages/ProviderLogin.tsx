@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate, Link } from 'react-router-dom'
 import { cn } from '@/shared/utils/cn'
 import { useAuth } from '@/hooks/useAuth'
+import { Field, FormError, PageHeader, inputClasses } from '@/shared/components'
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
@@ -29,15 +30,6 @@ export function ProviderLogin() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) })
-
-  // Al cancelar OAuth y volver con el botón Atrás, Safari/Chrome pueden restaurar
-  // esta pantalla desde el bfcache, conservando `googleLoading: true`. Escuchamos
-  // pageshow para volver a habilitar el botón sin obligar a recargar la página.
-  useEffect(() => {
-    const resetGoogleLoading = () => setGoogleLoading(false)
-    window.addEventListener('pageshow', resetGoogleLoading)
-    return () => window.removeEventListener('pageshow', resetGoogleLoading)
-  }, [])
 
   async function onSubmit(data: FormData) {
     setAuthError(null)
@@ -75,26 +67,7 @@ export function ProviderLogin() {
   return (
     <div className="min-h-screen flex flex-col text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
 
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <header
-        className="fixed top-0 w-full z-50 flex items-center px-5 h-14 gap-3 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
-      >
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-xl text-[--color-bosque-lt] hover:bg-black/5 transition-all active:scale-95"
-          aria-label="Volver"
-        >
-          <IconArrowLeft />
-        </button>
-        <h1
-          className="font-bold text-base text-[--color-nieve]"
-          style={{ letterSpacing: '-0.02em' }}
-        >
-          Iniciar sesión
-        </h1>
-      </header>
+      <PageHeader title="Iniciar sesión" />
 
       <main className="flex-1 flex flex-col justify-center pt-14 pb-24 px-6 max-w-xl mx-auto w-full">
 
@@ -105,7 +78,7 @@ export function ProviderLogin() {
           >
             Bienvenido de vuelta
           </h2>
-          <p className="text-sm text-[--color-muted]">Ingresá para seguir tus trabajos o gestionar tu perfil profesional.</p>
+          <p className="text-sm text-[--color-muted]">Ingresá para gestionar tu perfil y contactos.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
@@ -114,7 +87,7 @@ export function ProviderLogin() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={googleLoading || isSubmitting}
-            className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-3 border transition-all active:scale-[0.98] disabled:opacity-50"
+            className="w-full h-14 rounded-full font-bold text-base flex items-center justify-center gap-3 border transition-all active:scale-[0.98] disabled:opacity-50"
             style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-nieve)', borderColor: 'var(--color-line)' }}
           >
             <GoogleIcon />
@@ -132,7 +105,7 @@ export function ProviderLogin() {
               {...register('email')}
               type="email"
               placeholder="tu@email.com"
-              className={inputCls(!!errors.email)}
+              className={inputClasses(!!errors.email)}
               autoComplete="email"
             />
           </Field>
@@ -143,7 +116,7 @@ export function ProviderLogin() {
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Tu contraseña"
-                className={cn(inputCls(!!errors.password), 'pr-12')}
+                className={cn(inputClasses(!!errors.password), 'pr-12')}
                 autoComplete="current-password"
               />
               <button
@@ -157,20 +130,13 @@ export function ProviderLogin() {
             </div>
           </Field>
 
-          {authError && (
-            <div
-              className="px-4 py-3 rounded-[--radius-lg] text-sm font-semibold"
-              style={{ backgroundColor: '#ffb4ab18', color: '#ffb4ab', border: '1px solid #ffb4ab30' }}
-            >
-              {authError}
-            </div>
-          )}
+          {authError && <FormError>{authError}</FormError>}
 
           <div className="pt-2">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
+              className="w-full h-14 rounded-full font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
               style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
             >
               {isSubmitting ? 'Ingresando…' : 'Ingresar'}
@@ -190,43 +156,8 @@ export function ProviderLogin() {
   )
 }
 
-// ─── Field wrapper ─────────────────────────────────────────────────────────────
-
-type FieldProps = { label: string; error?: string; children: React.ReactNode }
-
-function Field({ label, error, children }: FieldProps) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-bold tracking-[0.12em] uppercase text-[--color-muted]">
-        {label}
-      </label>
-      {children}
-      {error && <p className="text-xs font-semibold" style={{ color: '#ffb4ab' }}>{error}</p>}
-    </div>
-  )
-}
-
-// ─── Style helpers ─────────────────────────────────────────────────────────────
-
-function inputCls(hasError: boolean) {
-  return cn(
-    'w-full h-14 px-4 rounded-xl text-[--color-nieve]',
-    'bg-[--color-sombra] border border-[--color-line]',
-    'placeholder:text-[--color-muted]/60 transition-shadow',
-    'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40',
-    hasError ? 'ring-1 ring-[#ffb4ab]/60 border-[#ffb4ab]/40' : '',
-  )
-}
 
 // ─── Icons ─────────────────────────────────────────────────────────────────────
-
-function IconArrowLeft() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 5l-7 7 7 7" />
-    </svg>
-  )
-}
 
 function IconArrowRight() {
   return (

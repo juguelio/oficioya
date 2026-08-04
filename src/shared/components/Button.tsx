@@ -40,7 +40,7 @@ export function Button({
   className,
 }: ButtonProps) {
   const base = cn(
-    'inline-flex items-center justify-center gap-2 font-semibold rounded-[--radius-md]',
+    'inline-flex items-center justify-center gap-2 font-semibold rounded-md',
     'transition-all duration-150 cursor-pointer',
     variants[variant],
     sizes[size],

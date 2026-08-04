@@ -19,7 +19,7 @@ export function LegalLayout({ title, updated, children }: LegalLayoutProps) {
       >
         <button
           onClick={() => navigate(-1)}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition-all"
+          className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all"
           style={{ backgroundColor: 'var(--color-noche)', color: 'var(--color-nieve)' }}
           aria-label="Volver"
         >

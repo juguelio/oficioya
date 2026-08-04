@@ -92,7 +92,7 @@ function ClientJobView({ token }: { token: string }) {
         const q = quotes.find(x => x.id === confirmQuoteId)!
         return (
           <div className="fixed inset-0 z-[300] flex items-center justify-center px-6" style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}>
-            <div className="w-full max-w-xs rounded-2xl p-6" style={{ backgroundColor: 'var(--color-sombra)' }}>
+            <div className="w-full max-w-xs rounded-xl p-6" style={{ backgroundColor: 'var(--color-sombra)' }}>
               <p className="font-black text-base mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.01em' }}>
                 ¿Aceptar este presupuesto?
               </p>
@@ -170,7 +170,7 @@ function ProviderJobView({ jobId }: { jobId: string }) {
 
         <section className="px-5 pt-6">
           {sent ? (
-            <div className="flex items-center gap-3 px-4 py-3 rounded-xl border" style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-lg border" style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}>
               <span className="text-xl">✅</span>
               <p className="text-sm font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>
                 ¡Presupuesto enviado! El cliente lo verá en su panel.
@@ -233,7 +233,7 @@ function ProviderJobView({ jobId }: { jobId: string }) {
                       {...register('amount')}
                       type="number"
                       placeholder="45000"
-                      className="w-full h-11 pl-6 pr-3 rounded-xl text-sm focus:outline-none"
+                      className="w-full h-11 pl-6 pr-3 rounded-lg text-sm focus:outline-none"
                       style={{ backgroundColor: 'var(--color-noche)', border: `1px solid ${errors.amount ? '#ffb4ab' : 'var(--color-line)'}`, color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)' }}
                     />
                   </div>
@@ -245,7 +245,7 @@ function ProviderJobView({ jobId }: { jobId: string }) {
                     {...register('estimatedDays')}
                     type="number"
                     placeholder="2"
-                    className="w-full h-11 px-3 rounded-xl text-sm focus:outline-none"
+                    className="w-full h-11 px-3 rounded-lg text-sm focus:outline-none"
                     style={{ backgroundColor: 'var(--color-noche)', border: '1px solid var(--color-line)', color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)' }}
                   />
                 </div>
@@ -256,7 +256,7 @@ function ProviderJobView({ jobId }: { jobId: string }) {
                   {...register('message')}
                   rows={3}
                   placeholder="Explicá cómo encarás el trabajo, qué incluye el precio, disponibilidad..."
-                  className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none resize-none placeholder:text-[var(--color-muted)]"
+                  className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none resize-none placeholder:text-[var(--color-muted)]"
                   style={{ backgroundColor: 'var(--color-noche)', border: `1px solid ${errors.message ? '#ffb4ab' : 'var(--color-line)'}`, color: 'var(--color-nieve)' }}
                 />
                 {errors.message && <p className="text-[10px] mt-0.5" style={{ color: '#ffb4ab' }}>{errors.message.message}</p>}
@@ -288,7 +288,7 @@ type JobInfoData = {
 function JobHeader({ title, status, onBack }: { title: string; status: string; onBack: () => void }) {
   return (
     <header className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-      <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition-all" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all" style={{ backgroundColor: 'var(--color-noche)' }}>
         <IconBack />
       </button>
       <div className="flex-1 min-w-0">
@@ -336,7 +336,7 @@ function CenterMsg({ text }: { text: string }) {
 
 function EmptyBox({ icon, title, body }: { icon: string; title: string; body: string }) {
   return (
-    <div className="flex flex-col items-center py-10 rounded-xl border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+    <div className="flex flex-col items-center py-10 rounded-lg border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
       <span className="text-4xl mb-3">{icon}</span>
       <p className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>{title}</p>
       <p className="text-xs px-6" style={{ color: 'var(--color-muted)' }}>{body}</p>
@@ -346,7 +346,7 @@ function EmptyBox({ icon, title, body }: { icon: string; title: string; body: st
 
 function InfoBox({ title, body }: { title: string; body: string }) {
   return (
-    <div className="rounded-xl border p-4" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+    <div className="rounded-lg border p-4" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
       <p className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>{title}</p>
       <p className="text-xs" style={{ color: 'var(--color-muted)' }}>{body}</p>
     </div>
@@ -361,7 +361,7 @@ function QuoteCard({ quote, isOpen, onAccept }: QuoteCardProps) {
   const isAccepted = quote.status === 'accepted'
   const isRejected = quote.status === 'rejected'
   return (
-    <div className={cn('rounded-xl border overflow-hidden')} style={{ backgroundColor: 'var(--color-sombra)', borderColor: isAccepted ? 'var(--color-bosque-lt)' : 'var(--color-line)', opacity: isRejected ? 0.5 : 1 }}>
+    <div className={cn('rounded-lg border overflow-hidden')} style={{ backgroundColor: 'var(--color-sombra)', borderColor: isAccepted ? 'var(--color-bosque-lt)' : 'var(--color-line)', opacity: isRejected ? 0.5 : 1 }}>
       <div className="p-4">
         <div className="flex items-center gap-2.5 mb-3">
           <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}>

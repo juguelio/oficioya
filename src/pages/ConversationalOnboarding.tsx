@@ -336,7 +336,7 @@ export function ConversationalOnboarding() {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="p-2 -ml-2 rounded-xl text-[--color-bosque-lt] hover:bg-white/5 transition-all active:scale-95"
+          className="p-2 -ml-2 rounded-lg text-[--color-bosque-lt] hover:bg-white/5 transition-all active:scale-95"
           aria-label="Volver"
         >
           <IconArrowLeft />
@@ -387,7 +387,7 @@ export function ConversationalOnboarding() {
               key={r.id}
               type="button"
               onClick={() => advance('rubro_id', r.id, r.label)}
-              className="flex items-center gap-2 px-3 py-2.5 rounded-[--radius-lg] border border-[--color-line] bg-[--color-sombra] text-left transition-all active:scale-[0.98] hover:border-[--color-bosque-lt]/40"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-[--color-line] bg-[--color-sombra] text-left transition-all active:scale-[0.98] hover:border-[--color-bosque-lt]/40"
             >
               <span className="text-lg leading-none">{r.icon}</span>
               <span className="text-sm font-semibold text-[--color-muted]">{r.label}</span>
@@ -404,7 +404,7 @@ export function ConversationalOnboarding() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex-1 h-12 rounded-[--radius-full] font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            className="flex-1 h-12 rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
             style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
           >
             <IconCamera /> Subir foto
@@ -424,7 +424,7 @@ export function ConversationalOnboarding() {
               key={p.id}
               type="button"
               onClick={() => advance('subscription_tier_id', p.id, `Plan ${p.label}`)}
-              className="flex items-center justify-between px-4 py-3 rounded-[--radius-lg] border border-[--color-line] bg-[--color-sombra] text-left transition-all active:scale-[0.98] hover:border-[--color-bosque-lt]/40"
+              className="flex items-center justify-between px-4 py-3 rounded-lg border border-[--color-line] bg-[--color-sombra] text-left transition-all active:scale-[0.98] hover:border-[--color-bosque-lt]/40"
             >
               <span className="flex flex-col">
                 <span className="text-sm font-bold" style={{ color: p.accent }}>{p.label}</span>
@@ -449,7 +449,7 @@ export function ConversationalOnboarding() {
           <button
             type="button"
             onClick={createProfile}
-            className="w-full py-3.5 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            className="w-full py-3.5 rounded-full font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
             style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
           >
             Confirmar y crear perfil <IconArrowRight />
@@ -476,7 +476,7 @@ export function ConversationalOnboarding() {
           autoComplete={isPassword ? 'new-password' : phase === 'email' ? 'email' : 'off'}
           placeholder={placeholderFor(phase)}
           autoFocus
-          className="flex-1 h-12 px-4 rounded-[--radius-full] text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+          className="flex-1 h-12 px-4 rounded-full text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
         />
         {isOptional && (
           <button type="button" onClick={skipOptional} className="px-3 h-12 text-sm font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors">
@@ -537,7 +537,7 @@ function ReferralStep({ referrer, ciudad, onDone }: { referrer: string; ciudad: 
                 value={r.name}
                 onChange={e => update(i, 'name', e.target.value)}
                 placeholder="Nombre del colega"
-                className="flex-1 h-12 px-4 rounded-[--radius-full] text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+                className="flex-1 h-12 px-4 rounded-full text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
               />
               <input
                 value={r.phone}
@@ -545,7 +545,7 @@ function ReferralStep({ referrer, ciudad, onDone }: { referrer: string; ciudad: 
                 type="tel"
                 inputMode="tel"
                 placeholder="+5492972..."
-                className="w-40 h-12 px-3 rounded-[--radius-full] text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+                className="w-40 h-12 px-3 rounded-full text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
               />
             </div>
           ))}
@@ -556,7 +556,7 @@ function ReferralStep({ referrer, ciudad, onDone }: { referrer: string; ciudad: 
             type="button"
             onClick={send}
             disabled={sending}
-            className="w-full py-3.5 rounded-[--radius-full] font-bold text-base transition-all active:scale-[0.98] disabled:opacity-60"
+            className="w-full py-3.5 rounded-full font-bold text-base transition-all active:scale-[0.98] disabled:opacity-60"
             style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
           >
             {sending ? 'Enviando…' : 'Recomendar y terminar'}
@@ -599,8 +599,8 @@ function Bubble({ role, text }: BubbleProps) {
         className={cn(
           'max-w-[80%] px-4 py-2.5 text-sm leading-relaxed',
           isAgent
-            ? 'rounded-[--radius-xl] rounded-bl-sm bg-[--color-sombra] text-[--color-nieve]'
-            : 'rounded-[--radius-xl] rounded-br-sm text-[--color-noche] font-medium',
+            ? 'rounded-xl rounded-bl-sm bg-[--color-sombra] text-[--color-nieve]'
+            : 'rounded-xl rounded-br-sm text-[--color-noche] font-medium',
         )}
         style={isAgent ? undefined : { backgroundColor: 'var(--color-bosque-lt)' }}
       >
@@ -614,7 +614,7 @@ function TypingBubble() {
   return (
     <div className="flex items-end gap-2 justify-start">
       <AgentAvatar small />
-      <div className="rounded-[--radius-xl] rounded-bl-sm bg-[--color-sombra] px-4 py-3 flex items-center gap-1">
+      <div className="rounded-xl rounded-bl-sm bg-[--color-sombra] px-4 py-3 flex items-center gap-1">
         {[0, 1, 2].map(i => (
           <span
             key={i}
@@ -652,7 +652,7 @@ function QuickReply({ onClick, children }: QuickReplyProps) {
     <button
       type="button"
       onClick={onClick}
-      className="px-5 py-3 rounded-[--radius-full] border border-[--color-bosque-lt]/40 bg-[--color-sombra] text-sm font-semibold text-[--color-nieve] text-left transition-all active:scale-[0.98] hover:bg-[--color-bosque-lt]/10"
+      className="px-5 py-3 rounded-full border border-[--color-bosque-lt]/40 bg-[--color-sombra] text-sm font-semibold text-[--color-nieve] text-left transition-all active:scale-[0.98] hover:bg-[--color-bosque-lt]/10"
     >
       {children}
     </button>
@@ -672,7 +672,7 @@ function Summary({ draft, ciudad, rubro, hasPhoto }: SummaryProps) {
     ['Foto',     hasPhoto ? 'sí' : 'después'],
   ]
   return (
-    <div className="rounded-[--radius-lg] border border-[--color-line] bg-[--color-sombra] p-4 flex flex-col gap-1.5">
+    <div className="rounded-lg border border-[--color-line] bg-[--color-sombra] p-4 flex flex-col gap-1.5">
       {rows.map(([k, v]) => (
         <div key={k} className="flex items-center justify-between gap-3 text-sm">
           <span className="text-xs font-bold tracking-[0.1em] uppercase text-[--color-muted]">{k}</span>

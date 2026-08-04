@@ -111,9 +111,9 @@ function DashboardLoading() {
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-noche)' }}>
       <div className="w-full max-w-xl px-5 space-y-3 animate-pulse">
-        <div className="h-24 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
-        <div className="h-40 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
-        <div className="h-40 rounded-2xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="h-24 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="h-40 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="h-40 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
       </div>
     </div>
   )
@@ -153,10 +153,10 @@ function ElegiTuCamino({ onExit }: ElegiTuCaminoProps) {
           <button
             onClick={() => elegir('cliente')}
             disabled={saving !== null}
-            className="w-full flex items-center gap-4 p-4 rounded-xl border text-left active:scale-[0.98] transition-all disabled:opacity-50"
+            className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all disabled:opacity-50"
             style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
           >
-            <span className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)' }}>
+            <span className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)' }}>
               🏠
             </span>
             <div className="flex-1 min-w-0">
@@ -170,10 +170,10 @@ function ElegiTuCamino({ onExit }: ElegiTuCaminoProps) {
           <button
             onClick={() => elegir('prestador')}
             disabled={saving !== null}
-            className="w-full flex items-center gap-4 p-4 rounded-xl border text-left active:scale-[0.98] transition-all disabled:opacity-50"
+            className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all disabled:opacity-50"
             style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-bosque-lt)' }}
           >
-            <span className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)' }}>
+            <span className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)' }}>
               🔧
             </span>
             <div className="flex-1 min-w-0">
@@ -211,7 +211,7 @@ function ProviderSelector({ onSelect }: ProviderSelectorProps) {
         className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
-        <button onClick={() => navigate(-1)} className="w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition-all" style={{ backgroundColor: 'var(--color-noche)' }}>
+        <button onClick={() => navigate(-1)} className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all" style={{ backgroundColor: 'var(--color-noche)' }}>
           <IconBack />
         </button>
         <div>
@@ -226,10 +226,10 @@ function ProviderSelector({ onSelect }: ProviderSelectorProps) {
             <button
               key={p.id}
               onClick={() => onSelect(p.id)}
-              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border text-left active:scale-[0.99] transition-all"
+              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-lg border text-left active:scale-[0.99] transition-all"
               style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
             >
-              <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border" style={{ borderColor: 'var(--color-line)' }}>
+              <div className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border" style={{ borderColor: 'var(--color-line)' }}>
                 <img src={p.photos?.[0] ?? FALLBACK_PHOTO} alt={p.name} className="w-full h-full object-cover object-top" onError={e => { (e.target as HTMLImageElement).src = FALLBACK_PHOTO }} />
               </div>
               <div className="flex-1 min-w-0">
@@ -323,7 +323,7 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
 
         {/* ── Tu suscripción (solo con el módulo prendido) ──────────────────────── */}
         {subsEnabled && (
-          <section className="mx-5 mt-5 rounded-[--radius-xl] p-5 border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+          <section className="mx-5 mt-5 rounded-xl p-5 border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
             <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>Tu suscripción</h3>
             {subStatus && subStatus.status === 'authorized' ? (
               <>
@@ -334,7 +334,7 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
                 <button
                   onClick={() => cancelSub().catch(() => alert('No pudimos cancelar. Probá de nuevo en un momento.'))}
                   disabled={subLoading}
-                  className="mt-3 px-4 py-2 rounded-[--radius-lg] text-xs font-semibold border active:scale-95 disabled:opacity-60"
+                  className="mt-3 px-4 py-2 rounded-lg text-xs font-semibold border active:scale-95 disabled:opacity-60"
                   style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
                 >
                   Cancelar suscripción
@@ -455,7 +455,7 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
         ].map(s => (
           <div
             key={s.label}
-            className="flex flex-col items-center py-4 rounded-xl border"
+            className="flex flex-col items-center py-4 rounded-lg border"
             style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
           >
             <span className="text-xl mb-1">{s.icon}</span>
@@ -474,7 +474,7 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
 
       {/* Plan */}
       <div
-        className="flex items-center justify-between p-4 rounded-xl border"
+        className="flex items-center justify-between p-4 rounded-lg border"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
         <div>
@@ -504,7 +504,7 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
 
       {/* Modo guardia */}
       <div
-        className="flex items-center justify-between p-4 rounded-xl border"
+        className="flex items-center justify-between p-4 rounded-lg border"
         style={{
           backgroundColor: 'var(--color-sombra)',
           borderColor: isOnGuardia ? 'var(--color-emergency)' : 'var(--color-line)',
@@ -540,7 +540,7 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
       {/* Ver perfil público */}
       <Link
         to={`/prestador/${provider.id}`}
-        className="flex items-center justify-between p-4 rounded-xl border active:scale-[0.99] transition-all"
+        className="flex items-center justify-between p-4 rounded-lg border active:scale-[0.99] transition-all"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
         <div className="flex items-center gap-3">
@@ -558,7 +558,7 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
       {/* Score hint */}
       {score < 20 && (
         <div
-          className="flex items-start gap-3 p-4 rounded-xl border"
+          className="flex items-start gap-3 p-4 rounded-lg border"
           style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
         >
           <span className="text-xl shrink-0">💡</span>
@@ -580,7 +580,7 @@ function ProviderOpportunities({ provider, onNavigate }: { provider: Provider; o
   const latest = jobs.filter(job => job.status === 'open').slice(0, 3)
 
   return (
-    <section className="rounded-xl border overflow-hidden" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+    <section className="rounded-lg border overflow-hidden" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
       <div className="flex items-start justify-between gap-3 px-4 pt-4 pb-3">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--color-muted)' }}>Oportunidades</p>
@@ -596,8 +596,8 @@ function ProviderOpportunities({ provider, onNavigate }: { provider: Provider; o
 
       {loading ? (
         <div className="px-4 pb-4 space-y-2 animate-pulse">
-          <div className="h-10 rounded-lg" style={{ backgroundColor: 'var(--color-noche)' }} />
-          <div className="h-10 rounded-lg" style={{ backgroundColor: 'var(--color-noche)' }} />
+          <div className="h-10 rounded-md" style={{ backgroundColor: 'var(--color-noche)' }} />
+          <div className="h-10 rounded-md" style={{ backgroundColor: 'var(--color-noche)' }} />
         </div>
       ) : latest.length > 0 ? (
         <div className="border-t" style={{ borderColor: 'var(--color-line)' }}>
@@ -653,7 +653,7 @@ function CertificacionesTab({ certifications, onAdd, onRemove }: Certificaciones
 
       {/* Score summary */}
       <div
-        className="flex items-center justify-between p-4 rounded-xl border"
+        className="flex items-center justify-between p-4 rounded-lg border"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
         <div>
@@ -666,7 +666,7 @@ function CertificacionesTab({ certifications, onAdd, onRemove }: Certificaciones
           {TRUST_BADGES.slice(1).map(b => (
             <div
               key={b.minScore}
-              className="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold"
+              className="flex items-center gap-1 px-2 py-1 rounded-full-full text-[10px] font-bold"
               style={{
                 backgroundColor: totalScore >= b.minScore ? b.bgColor : 'rgba(0,0,0,0.04)',
                 color: totalScore >= b.minScore ? b.color : 'var(--color-muted)',
@@ -688,7 +688,7 @@ function CertificacionesTab({ certifications, onAdd, onRemove }: Certificaciones
           return (
             <div
               key={config.type}
-              className="rounded-xl border overflow-hidden"
+              className="rounded-lg border overflow-hidden"
               style={{
                 backgroundColor: 'var(--color-sombra)',
                 borderColor: isVerified ? 'var(--color-bosque-lt)' : 'var(--color-line)',
@@ -696,7 +696,7 @@ function CertificacionesTab({ certifications, onAdd, onRemove }: Certificaciones
             >
               <div className="flex items-center gap-3 p-4">
                 <span
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-xl shrink-0"
                   style={{ backgroundColor: isVerified ? 'var(--color-brand-tint)' : 'rgba(0,0,0,0.04)' }}
                 >
                   {config.icon}
@@ -802,7 +802,7 @@ function ResenasTab({ reviews, providerId }: ResenasTabProps) {
 
       {/* Summary */}
       <div
-        className="flex items-center gap-4 p-4 rounded-xl border"
+        className="flex items-center gap-4 p-4 rounded-lg border"
         style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
       >
         <div className="text-center">
@@ -848,7 +848,7 @@ function ResenasTab({ reviews, providerId }: ResenasTabProps) {
 function ReviewCard({ review }: { review: Review }) {
   return (
     <div
-      className="p-4 rounded-xl border"
+      className="p-4 rounded-lg border"
       style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
     >
       <div className="flex items-start justify-between gap-2 mb-2">

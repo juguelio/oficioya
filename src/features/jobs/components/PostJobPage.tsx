@@ -77,7 +77,7 @@ export function PostJobPage() {
         <p className="text-sm mb-3" style={{ color: 'var(--color-muted)' }}>
           Los prestadores ya pueden verlo y enviarte presupuestos.
         </p>
-        <p className="text-xs mb-8 px-4 py-3 rounded-xl" style={{ color: 'var(--color-nieve)', backgroundColor: 'var(--color-sombra)', border: '1px solid var(--color-line)' }}>
+        <p className="text-xs mb-8 px-4 py-3 rounded-lg" style={{ color: 'var(--color-nieve)', backgroundColor: 'var(--color-sombra)', border: '1px solid var(--color-line)' }}>
           📌 Guardá este link privado para ver y comparar los presupuestos. Es tu acceso, no lo compartas.
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
@@ -121,7 +121,7 @@ export function PostJobPage() {
       >
         <button
           onClick={() => navigate(-1)}
-          className="w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition-all"
+          className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all"
           style={{ backgroundColor: 'var(--color-noche)' }}
         >
           <IconBack />
@@ -146,7 +146,7 @@ export function PostJobPage() {
                   type="button"
                   onClick={() => setValue('rubro', r.id, { shouldValidate: true })}
                   className={cn(
-                    'flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border text-center active:scale-[0.97] transition-all text-xs font-semibold',
+                    'flex flex-col items-center gap-1.5 py-3 px-2 rounded-lg border text-center active:scale-[0.97] transition-all text-xs font-semibold',
                   )}
                   style={
                     selectedRubro === r.id
@@ -173,7 +173,7 @@ export function PostJobPage() {
                   key={c.id}
                   type="button"
                   onClick={() => setValue('ciudad', c.id, { shouldValidate: true })}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-bold border active:scale-95 transition-all"
+                  className="flex-1 py-2.5 rounded-lg text-sm font-bold border active:scale-95 transition-all"
                   style={
                     selectedCiudad === c.id
                       ? { backgroundColor: 'var(--color-bosque-lt)', borderColor: 'var(--color-bosque-lt)', color: '#fff' }
@@ -195,7 +195,7 @@ export function PostJobPage() {
             <input
               {...register('title')}
               placeholder="Ej: Reparar pérdida de agua en cocina"
-              className="w-full h-12 px-4 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
+              className="w-full h-12 px-4 rounded-lg text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
               style={{
                 backgroundColor: 'var(--color-sombra)',
                 border: `1px solid ${errors.title ? '#ffb4ab' : 'var(--color-line)'}`,
@@ -214,7 +214,7 @@ export function PostJobPage() {
               {...register('description')}
               rows={4}
               placeholder="Describí el trabajo con el mayor detalle posible: qué hay que hacer, dónde, si tenés materiales, urgencia, etc."
-              className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none resize-none placeholder:text-[var(--color-muted)]"
+              className="w-full px-4 py-3 rounded-lg text-sm focus:outline-none resize-none placeholder:text-[var(--color-muted)]"
               style={{
                 backgroundColor: 'var(--color-sombra)',
                 border: `1px solid ${errors.description ? '#ffb4ab' : 'var(--color-line)'}`,
@@ -240,7 +240,7 @@ export function PostJobPage() {
                 {...register('budgetMax')}
                 type="number"
                 placeholder="50000"
-                className="w-full h-12 pl-8 pr-4 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
+                className="w-full h-12 pl-8 pr-4 rounded-lg text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
                 style={{
                   backgroundColor: 'var(--color-sombra)',
                   border: '1px solid var(--color-line)',
@@ -259,7 +259,7 @@ export function PostJobPage() {
             <input
               {...register('authorName')}
               placeholder="Ej: Marcela R."
-              className="w-full h-12 px-4 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
+              className="w-full h-12 px-4 rounded-lg text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
               style={{
                 backgroundColor: 'var(--color-sombra)',
                 border: `1px solid ${errors.authorName ? '#ffb4ab' : 'var(--color-line)'}`,
@@ -278,7 +278,7 @@ export function PostJobPage() {
               {...register('authorPhone')}
               type="tel"
               placeholder="+5492972..."
-              className="w-full h-12 px-4 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
+              className="w-full h-12 px-4 rounded-lg text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
               style={{
                 backgroundColor: 'var(--color-sombra)',
                 border: `1px solid ${errors.authorPhone ? '#ffb4ab' : 'var(--color-line)'}`,

@@ -58,7 +58,7 @@ export function EmergencyCheckoutPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-noche)' }}>
       <header className="flex items-center gap-3 px-5 h-14 border-b" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-        <button onClick={() => navigate(-1)} className="p-2 rounded-xl active:scale-95" style={{ color: 'var(--color-bosque-lt)' }} aria-label="Volver">
+        <button onClick={() => navigate(-1)} className="p-2 rounded-lg active:scale-95" style={{ color: 'var(--color-bosque-lt)' }} aria-label="Volver">
           <IconArrowLeft />
         </button>
         <div className="flex items-center gap-2">
@@ -68,7 +68,7 @@ export function EmergencyCheckoutPage() {
       </header>
 
       <main className="flex-1 px-5 pt-6 pb-10 max-w-xl mx-auto w-full">
-        <div className="rounded-[--radius-xl] p-5 border mb-5" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+        <div className="rounded-xl p-5 border mb-5" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-guardia)' }} />
             <h2 className="font-bold text-lg" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>{provider.name}</h2>
@@ -78,7 +78,7 @@ export function EmergencyCheckoutPage() {
           </p>
         </div>
 
-        <div className="rounded-[--radius-xl] p-5 border mb-5" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+        <div className="rounded-xl p-5 border mb-5" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
           <div className="flex items-baseline justify-between mb-3">
             <span className="text-sm font-semibold" style={{ color: 'var(--color-nieve)' }}>Contacto de urgencia</span>
             <span className="text-2xl font-black" style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)' }}>{formatARS(20000)}</span>
@@ -103,7 +103,7 @@ export function EmergencyCheckoutPage() {
         <button
           onClick={handlePay}
           disabled={paying}
-          className="w-full py-4 rounded-[--radius-full] font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-60"
+          className="w-full py-4 rounded-full font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-60"
           style={{ backgroundColor: 'var(--color-emergency)' }}
         >
           {paying ? 'Abriendo el pago…' : `Pagar ${formatARS(20000)} y ver contacto`}
@@ -121,7 +121,7 @@ function Center({ text, onBack }: { text: string; onBack?: () => void }) {
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
       <p className="text-sm" style={{ color: 'var(--color-muted)' }}>{text}</p>
       {onBack && (
-        <button onClick={onBack} className="px-5 py-2.5 rounded-[--radius-lg] text-sm font-semibold border active:scale-95" style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}>
+        <button onClick={onBack} className="px-5 py-2.5 rounded-lg text-sm font-semibold border active:scale-95" style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}>
           ← Volver
         </button>
       )}

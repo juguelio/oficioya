@@ -3,10 +3,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate, Link } from 'react-router-dom'
-import { cn } from '@/shared/utils/cn'
 import { useAuth } from '@/hooks/useAuth'
 import { signUpErrorMessage } from '@/lib/auth-signup'
-import { Logo } from '@/shared/components'
+import { Field, FormError, PageHeader, inputClasses } from '@/shared/components'
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
@@ -73,7 +72,7 @@ export function ClientSignup() {
         </p>
         <button
           onClick={() => navigate('/')}
-          className="px-5 py-3 rounded-[--radius-full] font-bold text-sm text-white active:scale-[0.98] transition-all"
+          className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
           style={{ backgroundColor: 'var(--color-bosque-lt)' }}
         >
           Volver al inicio
@@ -85,23 +84,7 @@ export function ClientSignup() {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-noche)' }}>
 
-      <header
-        className="fixed top-0 w-full z-50 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
-      >
-        <div className="px-5 h-full flex items-center gap-2">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 -ml-2 rounded-xl text-[--color-bosque-lt] active:scale-95 transition-all"
-            aria-label="Volver"
-          >
-            <IconArrowLeft />
-          </button>
-          <button onClick={() => navigate('/')} className="active:scale-95 transition-transform" aria-label="Inicio">
-            <Logo size={26} withWordmark />
-          </button>
-        </div>
-      </header>
+      <PageHeader />
 
       <main className="flex-1 flex flex-col justify-center pt-14 pb-16 px-6 max-w-xl mx-auto w-full">
 
@@ -115,7 +98,7 @@ export function ClientSignup() {
         </div>
 
         <div
-          className="mb-6 px-4 py-3 rounded-[--radius-lg] border text-xs leading-relaxed"
+          className="mb-6 px-4 py-3 rounded-lg border text-xs leading-relaxed"
           style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)', color: 'var(--color-bosque-lt)' }}
         >
           No es obligatorio: podés <Link to="/trabajos/nuevo" className="font-bold underline">publicar un trabajo sin cuenta</Link> y seguirlo con un link privado.
@@ -127,7 +110,7 @@ export function ClientSignup() {
             type="button"
             onClick={handleGoogle}
             disabled={googleLoading || isSubmitting}
-            className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-3 border transition-all active:scale-[0.98] disabled:opacity-50"
+            className="w-full h-14 rounded-full font-bold text-base flex items-center justify-center gap-3 border transition-all active:scale-[0.98] disabled:opacity-50"
             style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-nieve)', borderColor: 'var(--color-line)' }}
           >
             <GoogleIcon />
@@ -141,31 +124,24 @@ export function ClientSignup() {
           </div>
 
           <Field label="Tu nombre" error={errors.name?.message}>
-            <input {...register('name')} type="text" placeholder="Ej: Marcela R." className={inputCls(!!errors.name)} autoComplete="name" />
+            <input {...register('name')} type="text" placeholder="Ej: Marcela R." className={inputClasses(!!errors.name)} autoComplete="name" />
           </Field>
 
           <Field label="Email" error={errors.email?.message}>
-            <input {...register('email')} type="email" placeholder="tu@email.com" className={inputCls(!!errors.email)} autoComplete="email" />
+            <input {...register('email')} type="email" placeholder="tu@email.com" className={inputClasses(!!errors.email)} autoComplete="email" />
           </Field>
 
           <Field label="Contraseña" error={errors.password?.message}>
-            <input {...register('password')} type="password" placeholder="Mínimo 8 caracteres" className={inputCls(!!errors.password)} autoComplete="new-password" />
+            <input {...register('password')} type="password" placeholder="Mínimo 8 caracteres" className={inputClasses(!!errors.password)} autoComplete="new-password" />
           </Field>
 
-          {authError && (
-            <div
-              className="px-4 py-3 rounded-[--radius-lg] text-sm font-semibold"
-              style={{ backgroundColor: '#ffb4ab18', color: '#ffb4ab', border: '1px solid #ffb4ab30' }}
-            >
-              {authError}
-            </div>
-          )}
+          {authError && <FormError>{authError}</FormError>}
 
           <div className="pt-2">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-14 rounded-[--radius-full] font-bold text-base text-white transition-all active:scale-[0.98] disabled:opacity-50"
+              className="w-full h-14 rounded-full font-bold text-base text-white transition-all active:scale-[0.98] disabled:opacity-50"
               style={{ backgroundColor: 'var(--color-bosque-lt)' }}
             >
               {isSubmitting ? 'Creando cuenta…' : 'Crear cuenta'}
@@ -186,39 +162,8 @@ export function ClientSignup() {
   )
 }
 
-// ─── Field wrapper ─────────────────────────────────────────────────────────────
-
-type FieldProps = { label: string; error?: string; children: React.ReactNode }
-
-function Field({ label, error, children }: FieldProps) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-bold tracking-[0.12em] uppercase text-[--color-muted]">{label}</label>
-      {children}
-      {error && <p className="text-xs font-semibold" style={{ color: '#ffb4ab' }}>{error}</p>}
-    </div>
-  )
-}
-
-function inputCls(hasError: boolean) {
-  return cn(
-    'w-full h-14 px-4 rounded-xl text-[--color-nieve]',
-    'bg-[--color-sombra] border border-[--color-line]',
-    'placeholder:text-[--color-muted]/60 transition-shadow',
-    'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40',
-    hasError ? 'ring-1 ring-[#ffb4ab]/60 border-[#ffb4ab]/40' : '',
-  )
-}
 
 // ─── Icons ─────────────────────────────────────────────────────────────────────
-
-function IconArrowLeft() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 5l-7 7 7 7" />
-    </svg>
-  )
-}
 
 function GoogleIcon() {
   return (

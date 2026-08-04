@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/shared/utils/cn'
+import { Badge, PageHeader } from '@/shared/components'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -100,29 +101,12 @@ export function VerificationPage() {
   return (
     <div className="min-h-screen pb-32 text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
 
-      {/* ── TopAppBar ─────────────────────────────────────────────────────────── */}
-      <nav
-        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 border-b border-[--color-line]"
-        style={{ backgroundColor: 'var(--color-noche)' }}
-      >
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="active:scale-95 transition-transform text-[--color-bosque-lt]"
-            aria-label="Volver"
-          >
-            <IconArrowLeft />
-          </button>
-          <h1 className="font-bold text-lg tracking-tight text-[--color-bosque-lt]">
-            Verificá tu perfil
-          </h1>
-        </div>
-        <span className="text-sm font-bold text-[--color-nieve] opacity-80">
-          Paso 2 de 2
-        </span>
-      </nav>
+      <PageHeader
+        title="Verificá tu perfil"
+        right={<span className="text-xs font-semibold" style={{ color: 'var(--color-muted)' }}>Paso 2 de 2</span>}
+      />
 
-      <main className="pt-24 px-6 max-w-md mx-auto">
+      <main className="pt-20 px-6 max-w-md mx-auto">
 
         {/* ── Celebration header ────────────────────────────────────────────────── */}
         <section className="flex flex-col items-center text-center mb-10">
@@ -144,7 +128,7 @@ export function VerificationPage() {
 
           {/* Badge preview */}
           <div
-            className="px-5 py-3 rounded-xl flex items-center gap-3 border border-[--color-line]"
+            className="px-5 py-3 rounded-lg flex items-center gap-3 border border-[--color-line]"
             style={{ backgroundColor: 'var(--color-sombra)' }}
           >
             <div
@@ -165,7 +149,7 @@ export function VerificationPage() {
         {/* ── Aviso sin sesión ──────────────────────────────────────────────────── */}
         {sinSesion && (
           <section
-            className="mb-6 px-5 py-4 rounded-2xl border text-left"
+            className="mb-6 px-5 py-4 rounded-xl border text-left"
             style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
           >
             <p className="text-sm font-semibold leading-relaxed" style={{ color: 'var(--color-bosque-lt)' }}>
@@ -200,7 +184,7 @@ export function VerificationPage() {
         <div className="space-y-4 text-center">
           {uploadError && (
             <div
-              className="px-4 py-3 rounded-xl text-sm font-semibold text-left"
+              className="px-4 py-3 rounded-lg text-sm font-semibold text-left"
               style={{ backgroundColor: '#ffb4ab18', color: '#ffb4ab', border: '1px solid #ffb4ab30' }}
             >
               {uploadError}
@@ -265,13 +249,13 @@ function UploadCard({ card, status, disabled, onUpload }: UploadCardProps) {
 
   return (
     <div
-      className="p-5 rounded-2xl transition-colors group border border-[--color-line]"
+      className="p-5 rounded-xl transition-colors group border border-[--color-line]"
       style={{ backgroundColor: 'var(--color-sombra)' }}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-4">
           <div
-            className="p-3 rounded-xl transition-colors border border-[--color-line]"
+            className="p-3 rounded-lg transition-colors border border-[--color-line]"
             style={{
               backgroundColor: 'var(--color-noche)',
               color: uploaded ? 'var(--color-bosque-lt)' : 'var(--color-nieve)',
@@ -289,26 +273,11 @@ function UploadCard({ card, status, disabled, onUpload }: UploadCardProps) {
 
         {/* Status badge */}
         {uploaded ? (
-          <span
-            className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded"
-            style={{ color: '#fff', backgroundColor: 'var(--color-bosque-lt)' }}
-          >
-            Subido ✓
-          </span>
+          <Badge size="xs" variant="verified">Subido ✓</Badge>
         ) : card.required ? (
-          <span
-            className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded"
-            style={{ color: 'var(--color-muted)', backgroundColor: 'var(--color-noche)' }}
-          >
-            Pendiente
-          </span>
+          <Badge size="xs" variant="neutral">Pendiente</Badge>
         ) : (
-          <span
-            className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded"
-            style={{ color: '#fff', backgroundColor: 'var(--color-bosque-lt)' }}
-          >
-            Opcional
-          </span>
+          <Badge size="xs" variant="tint">Opcional</Badge>
         )}
       </div>
 
@@ -328,7 +297,7 @@ function UploadCard({ card, status, disabled, onUpload }: UploadCardProps) {
         onClick={() => inputRef.current?.click()}
         disabled={disabled}
         className={cn(
-          'w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 border',
+          'w-full py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 border',
           'active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed',
           uploaded ? 'border-[--color-bosque-lt]/40' : 'border-[--color-line]',
         )}
@@ -345,14 +314,6 @@ function UploadCard({ card, status, disabled, onUpload }: UploadCardProps) {
 }
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
-
-function IconArrowLeft() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 5l-7 7 7 7" />
-    </svg>
-  )
-}
 
 function IconCheckCircle() {
   return (

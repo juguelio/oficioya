@@ -50,7 +50,7 @@ export function RootBoundary() {
       </div>
       {detail && (
         <pre
-          className="mt-2 max-w-xs overflow-auto rounded-[--radius-md] p-3 text-left text-[11px]"
+          className="mt-2 max-w-xs overflow-auto rounded-md p-3 text-left text-[11px]"
           style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-muted)' }}
         >
           {detail}

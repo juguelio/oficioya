@@ -95,7 +95,7 @@ export function EmergencyPage() {
       >
         <button
           onClick={() => navigate(-1)}
-          className="p-2 rounded-xl hover:bg-black/5 transition-colors active:scale-95"
+          className="p-2 rounded-lg hover:bg-black/5 transition-colors active:scale-95"
           style={{ color: 'var(--color-bosque-lt)' }}
           aria-label="Volver"
         >
@@ -170,15 +170,15 @@ export function EmergencyPage() {
           {loading ? (
             <div className="space-y-3">
               {[0, 1].map(i => (
-                <div key={i} className="h-24 rounded-[--radius-xl] animate-pulse border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }} />
+                <div key={i} className="h-24 rounded-xl animate-pulse border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }} />
               ))}
             </div>
           ) : error ? (
-            <div className="rounded-[--radius-xl] p-5 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <div className="rounded-xl p-5 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
               <p className="text-sm" style={{ color: 'var(--color-muted)' }}>No pudimos cargar los prestadores. Probá de nuevo.</p>
             </div>
           ) : shown.length === 0 ? (
-            <div className="rounded-[--radius-xl] p-6 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <div className="rounded-xl p-6 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
               <span className="text-3xl">🌙</span>
               <p className="text-sm font-bold mt-2" style={{ color: 'var(--color-nieve)' }}>
                 No hay prestadores en guardia ahora en {cityCenter.label}
@@ -213,7 +213,7 @@ export function EmergencyPage() {
               { n: '2', text: 'Ves quién está de guardia ahora' },
               { n: '3', text: 'Pagás el contacto y te llega en minutos' },
             ].map(step => (
-              <div key={step.n} className="rounded-[--radius-lg] p-3 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+              <div key={step.n} className="rounded-lg p-3 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black mx-auto mb-2 text-white" style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
                   {step.n}
                 </div>
@@ -226,7 +226,7 @@ export function EmergencyPage() {
         {/* ── Panel prestador ──────────────────────────────────────────────────── */}
         <section className="px-4 mt-6">
           <div
-            className="rounded-[--radius-xl] p-5 border"
+            className="rounded-xl p-5 border"
             style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)', borderLeft: '3px solid var(--color-bosque-lt)' }}
           >
             <h2 className="font-bold text-base mb-1" style={{ color: 'var(--color-nieve)' }}>¿Sos prestador?</h2>
@@ -237,7 +237,7 @@ export function EmergencyPage() {
             {user && providerId ? (
               <>
                 <div
-                  className="flex items-center justify-between p-3 rounded-[--radius-lg] border mb-2"
+                  className="flex items-center justify-between p-3 rounded-lg border mb-2"
                   style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-line)' }}
                 >
                   <div>
@@ -262,7 +262,7 @@ export function EmergencyPage() {
                 <button
                   type="button"
                   onClick={() => navigate('/dashboard')}
-                  className="w-full py-3 rounded-[--radius-lg] font-bold text-xs text-center border transition-all active:scale-95"
+                  className="w-full py-3 rounded-lg font-bold text-xs text-center border transition-all active:scale-95"
                   style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
                 >
                   Ir a mi panel
@@ -270,10 +270,10 @@ export function EmergencyPage() {
               </>
             ) : (
               <div className="grid grid-cols-2 gap-2">
-                <Link to="/login" className="py-3 rounded-[--radius-lg] font-bold text-xs text-center text-white active:scale-95 transition-transform" style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
+                <Link to="/login" className="py-3 rounded-lg font-bold text-xs text-center text-white active:scale-95 transition-transform" style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
                   Iniciar sesión
                 </Link>
-                <Link to="/registro/prestador" className="py-3 border rounded-[--radius-lg] font-bold text-xs text-center active:scale-95 transition-transform" style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}>
+                <Link to="/registro/prestador" className="py-3 border rounded-lg font-bold text-xs text-center active:scale-95 transition-transform" style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}>
                   Registrarme
                 </Link>
               </div>
@@ -316,7 +316,7 @@ function EmergencyCard({ provider, highlighted, onFocus, onContact }: EmergencyC
   return (
     <div
       onClick={onFocus}
-      className="rounded-[--radius-xl] p-4 border flex items-center justify-between gap-3 cursor-pointer transition-all"
+      className="rounded-xl p-4 border flex items-center justify-between gap-3 cursor-pointer transition-all"
       style={{
         backgroundColor: 'var(--color-sombra)',
         borderColor: highlighted ? 'var(--color-emergency)' : 'var(--color-line)',
@@ -341,7 +341,7 @@ function EmergencyCard({ provider, highlighted, onFocus, onContact }: EmergencyC
       </div>
       <button
         onClick={e => { e.stopPropagation(); onContact() }}
-        className="flex flex-col items-center justify-center px-4 py-3 rounded-[--radius-lg] active:scale-95 transition-transform flex-shrink-0"
+        className="flex flex-col items-center justify-center px-4 py-3 rounded-lg active:scale-95 transition-transform flex-shrink-0"
         style={{ backgroundColor: 'var(--color-emergency)', color: '#fff' }}
       >
         <IconBolt />
@@ -359,7 +359,7 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1 px-3 py-1 rounded-[--radius-lg] transition-all active:scale-90"
+      className="flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition-all active:scale-90"
       style={{ color: active ? 'var(--color-emergency)' : 'var(--color-muted)' }}
     >
       {icon}

@@ -155,7 +155,7 @@ export function ProviderSignup() {
         <button
           type="button"
           onClick={() => step > 1 ? setStep(s => (s - 1) as typeof s) : navigate(-1)}
-          className="p-2 rounded-xl text-[--color-bosque-lt] hover:bg-black/5 transition-all active:scale-95"
+          className="p-2 rounded-lg text-[--color-bosque-lt] hover:bg-black/5 transition-all active:scale-95"
           aria-label="Volver"
         >
           <IconArrowLeft />
@@ -214,7 +214,7 @@ export function ProviderSignup() {
                   {/* El +54 9 va fijo afuera del input: no se puede borrar ni escribir mal. */}
                   <div className="flex items-stretch gap-2">
                     <span
-                      className="flex items-center px-3 rounded-xl border text-sm font-mono shrink-0"
+                      className="flex items-center px-3 rounded-lg border text-sm font-mono shrink-0"
                       style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)', backgroundColor: 'var(--color-noche)' }}
                     >
                       +54 9
@@ -261,7 +261,7 @@ export function ProviderSignup() {
                       type="button"
                       onClick={() => setValue('ciudad_id', c.id, { shouldValidate: true })}
                       className={cn(
-                        'flex items-center justify-between px-5 py-4 rounded-[--radius-xl] border text-left transition-all active:scale-[0.98]',
+                        'flex items-center justify-between px-5 py-4 rounded-xl border text-left transition-all active:scale-[0.98]',
                         ciudadId === c.id
                           ? 'border-[--color-bosque-lt] bg-[--color-bosque-lt]/10 text-[--color-nieve]'
                           : 'border-[--color-line] bg-[--color-sombra] text-[--color-muted] hover:border-[--color-bosque-lt]/40',
@@ -285,7 +285,7 @@ export function ProviderSignup() {
                       type="button"
                       onClick={() => setValue('rubro_id', r.id, { shouldValidate: true })}
                       className={cn(
-                        'flex items-center gap-2.5 px-4 py-3 rounded-[--radius-lg] border text-left transition-all active:scale-[0.98]',
+                        'flex items-center gap-2.5 px-4 py-3 rounded-lg border text-left transition-all active:scale-[0.98]',
                         rubroId === r.id
                           ? 'border-[--color-bosque-lt] bg-[--color-bosque-lt]/10'
                           : 'border-[--color-line] bg-[--color-sombra] hover:border-[--color-bosque-lt]/40',
@@ -329,7 +329,7 @@ export function ProviderSignup() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className={cn(
-                  'w-full aspect-square max-h-72 rounded-[--radius-xl] border-2 border-dashed flex flex-col items-center justify-center gap-3 transition-all active:scale-[0.98]',
+                  'w-full aspect-square max-h-72 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 transition-all active:scale-[0.98]',
                   photoPreview ? 'border-[--color-bosque-lt]/40 p-0 overflow-hidden' : 'border-[--color-line] hover:border-[--color-bosque-lt]/40',
                 )}
                 style={{ backgroundColor: 'var(--color-noche)' }}
@@ -386,7 +386,7 @@ export function ProviderSignup() {
                       type="button"
                       onClick={() => setValue('subscription_tier_id', plan.id, { shouldValidate: true })}
                       className={cn(
-                        'w-full text-left rounded-[--radius-xl] border p-5 transition-all active:scale-[0.98]',
+                        'w-full text-left rounded-xl border p-5 transition-all active:scale-[0.98]',
                         selected
                           ? 'border-[--color-bosque-lt] bg-[--color-bosque-lt]/10'
                           : 'border-[--color-line] bg-[--color-sombra] hover:border-[--color-bosque-lt]/30',
@@ -443,7 +443,7 @@ export function ProviderSignup() {
 
               {submitError && (
                 <div
-                  className="px-4 py-3 rounded-[--radius-lg] text-sm font-semibold"
+                  className="px-4 py-3 rounded-lg text-sm font-semibold"
                   style={{ backgroundColor: '#ffb4ab18', color: '#ffb4ab', border: '1px solid #ffb4ab30' }}
                 >
                   {submitError}
@@ -464,7 +464,7 @@ export function ProviderSignup() {
               <button
                 type="button"
                 onClick={goNext}
-                className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                className="w-full h-14 rounded-full font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                 style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
               >
                 {step === 3 && !photoFile ? 'Saltar por ahora' : 'Siguiente'}
@@ -474,7 +474,7 @@ export function ProviderSignup() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-14 rounded-[--radius-full] font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
+                className="w-full h-14 rounded-full font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
                 style={{ backgroundColor: 'var(--color-bosque-lt)', color: '#fff' }}
               >
                 {isSubmitting ? 'Creando tu perfil…' : 'Crear mi perfil'}
@@ -517,7 +517,7 @@ function Field({ label, error, children }: FieldProps) {
 
 function inputCls(hasError: boolean) {
   return cn(
-    'w-full h-14 px-4 rounded-xl text-[--color-nieve]',
+    'w-full h-14 px-4 rounded-lg text-[--color-nieve]',
     'bg-[--color-sombra] border border-[--color-line]',
     'placeholder:text-[--color-muted]/60 transition-shadow',
     'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40',

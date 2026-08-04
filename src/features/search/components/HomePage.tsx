@@ -194,7 +194,7 @@ export function HomePage() {
 
           {/* Search bar grande */}
           <div className="relative">
-            <div className="w-full flex items-center gap-3 bg-white rounded-xl px-4 py-3.5">
+            <div className="w-full flex items-center gap-3 bg-white rounded-lg px-4 py-3.5">
               <IconSearch />
               <input
                 type="text"
@@ -233,7 +233,7 @@ export function HomePage() {
             {/* Dropdown resultados */}
             {isRubroSearching && (
               <div
-                className="absolute left-0 right-0 top-full mt-1.5 rounded-xl overflow-hidden z-20 shadow-xl"
+                className="absolute left-0 right-0 top-full mt-1.5 rounded-lg overflow-hidden z-20 shadow-xl"
                 style={{ backgroundColor: '#fff', border: '1px solid rgba(0,0,0,0.08)' }}
               >
                 {filteredSearchRubros.length > 0
@@ -307,7 +307,7 @@ export function HomePage() {
               <button
                 key={c.id}
                 onClick={() => setCiudad(c.id as CiudadId)}
-                className="px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all shrink-0 border active:scale-95"
+                className="px-4 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap transition-all shrink-0 border active:scale-95"
                 style={
                   ciudadId === c.id
                     ? { backgroundColor: 'var(--color-bosque-lt)', borderColor: 'var(--color-bosque-lt)', color: '#fff' }
@@ -320,14 +320,14 @@ export function HomePage() {
             {ciudadId && (
               <button
                 onClick={clearCiudad}
-                className="px-3 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap border active:scale-95"
+                className="px-3 py-2.5 rounded-lg text-xs font-semibold whitespace-nowrap border active:scale-95"
                 style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
               >
                 ×
               </button>
             )}
             <span
-              className="px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap border shrink-0"
+              className="px-4 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap border shrink-0"
               style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-line)', color: 'var(--color-bosque-dk)' }}
             >
               Junín de los Andes · sumando prestadores
@@ -370,7 +370,7 @@ export function HomePage() {
                 value={emergencySearch}
                 onChange={e => setEmergencySearch(e.target.value)}
                 placeholder="Ej: no hay luz, se rompió un caño..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl text-sm focus:outline-none"
+                className="w-full pl-10 pr-4 py-3 rounded-lg text-sm focus:outline-none"
                 style={{
                   backgroundColor: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.15)',
@@ -427,7 +427,7 @@ export function HomePage() {
                 <button
                   key={r.id}
                   onClick={() => handleRubro(r.id as RubroId)}
-                  className="snap-start shrink-0 w-[104px] sm:w-full relative flex flex-col rounded-2xl border overflow-hidden text-left active:scale-[0.97] transition-all"
+                  className="snap-start shrink-0 w-[104px] sm:w-full relative flex flex-col rounded-xl border overflow-hidden text-left active:scale-[0.97] transition-all"
                   style={{
                     backgroundColor: 'var(--color-sombra)',
                     borderColor: 'var(--color-line)',
@@ -478,7 +478,7 @@ export function HomePage() {
                 value={rubroSearch}
                 onChange={e => setRubroSearch(e.target.value)}
                 placeholder="Ej: caño roto, sin luz, mudanza..."
-                className="w-full pl-11 pr-10 py-3.5 rounded-xl text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
+                className="w-full pl-11 pr-10 py-3.5 rounded-lg text-sm focus:outline-none placeholder:text-[var(--color-muted)]"
                 style={{
                   backgroundColor: 'var(--color-sombra)',
                   border: '1px solid var(--color-line)',
@@ -507,7 +507,7 @@ export function HomePage() {
                         <button
                           key={r.id}
                           onClick={() => { handleRubro(r.id as RubroId); setRubroSearch('') }}
-                          className="flex items-center gap-3 px-4 py-3.5 rounded-xl border w-full text-left active:scale-[0.98] transition-all"
+                          className="flex items-center gap-3 px-4 py-3.5 rounded-lg border w-full text-left active:scale-[0.98] transition-all"
                           style={{
                             backgroundColor: 'var(--color-sombra)',
                             borderColor: 'var(--color-line)',
@@ -555,7 +555,7 @@ export function HomePage() {
         <section className="pt-8">
           <div className="px-5 sm:px-10 lg:px-16">
             <div
-              className="rounded-2xl border p-5 sm:flex sm:items-center sm:justify-between sm:gap-6"
+              className="rounded-xl border p-5 sm:flex sm:items-center sm:justify-between sm:gap-6"
               style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
             >
               <div className="mb-4 sm:mb-0">
@@ -569,7 +569,7 @@ export function HomePage() {
               <div className="flex items-center gap-4 shrink-0">
                 <button
                   onClick={() => navigate('/trabajos/nuevo')}
-                  className="px-5 py-3 rounded-[--radius-full] font-bold text-sm text-white active:scale-[0.98] transition-all"
+                  className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
                   style={{ backgroundColor: 'var(--color-bosque-lt)' }}
                 >
                   Publicar un trabajo
@@ -630,11 +630,11 @@ export function HomePage() {
             ].map(({ icon, title, body }) => (
               <div
                 key={title}
-                className="flex gap-4 p-4 rounded-xl border"
+                className="flex gap-4 p-4 rounded-lg border"
                 style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
               >
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-base shrink-0 font-bold"
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-base shrink-0 font-bold"
                   style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
                 >
                   {icon}
@@ -653,7 +653,7 @@ export function HomePage() {
         <section>
           <div className="px-5 pt-8">
           <div
-            className="rounded-2xl p-6"
+            className="rounded-xl p-6"
             style={{ backgroundColor: 'var(--color-bosque-lt)' }}
           >
             <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.6)' }}>
@@ -669,14 +669,14 @@ export function HomePage() {
             <div className="flex gap-2">
               <Link
                 to="/registro/prestador"
-                className="flex-1 text-center py-3 rounded-xl font-bold text-sm active:scale-95 transition-all"
+                className="flex-1 text-center py-3 rounded-lg font-bold text-sm active:scale-95 transition-all"
                 style={{ backgroundColor: 'var(--color-guardia)', color: 'var(--color-guardia-bg)' }}
               >
                 Registrate gratis
               </Link>
               <Link
                 to="/planes"
-                className="px-4 py-3 rounded-xl font-bold text-sm border active:scale-95 transition-all"
+                className="px-4 py-3 rounded-lg font-bold text-sm border active:scale-95 transition-all"
                 style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.85)' }}
               >
                 Ver planes
@@ -722,11 +722,11 @@ export function HomePage() {
                   opcional y sirve para conservar trabajos y presupuestos. */}
               <button
                 onClick={() => { navigate('/registro/cliente'); setShowLoginSheet(false) }}
-                className="w-full flex items-center gap-4 p-4 rounded-xl border text-left active:scale-[0.98] transition-all"
+                className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all"
                 style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-line)' }}
               >
                 <span
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
+                  className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0"
                   style={{ backgroundColor: 'var(--color-brand-tint)' }}
                 >
                   🏠
@@ -747,11 +747,11 @@ export function HomePage() {
                   (antes iba a /onboarding, la pantalla de presentación). */}
               <button
                 onClick={() => { navigate('/login'); setShowLoginSheet(false) }}
-                className="w-full flex items-center gap-4 p-4 rounded-xl border text-left active:scale-[0.98] transition-all"
+                className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all"
                 style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-bosque-lt)' }}
               >
                 <span
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
+                  className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0"
                   style={{ backgroundColor: 'var(--color-brand-tint)' }}
                 >
                   🔧
@@ -836,7 +836,7 @@ function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
       className="snap-start shrink-0 w-36 sm:w-full text-left active:scale-[0.98] transition-transform"
     >
       <div
-        className="relative aspect-square w-36 sm:w-full rounded-xl overflow-hidden border"
+        className="relative aspect-square w-36 sm:w-full rounded-lg overflow-hidden border"
         style={{ borderColor: 'var(--color-line)' }}
       >
         {ownPhoto ? (
@@ -920,12 +920,12 @@ function ProviderMiniCardSkeleton() {
   return (
     <div className="snap-start shrink-0 w-36">
       <div
-        className="aspect-square w-36 rounded-xl animate-pulse"
+        className="aspect-square w-36 rounded-lg animate-pulse"
         style={{ backgroundColor: 'var(--color-sombra)' }}
       />
       <div className="mt-2 space-y-1.5">
-        <div className="h-3.5 w-28 rounded animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
-        <div className="h-3 w-20 rounded animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="h-3.5 w-28 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="h-3 w-20 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
       </div>
     </div>
   )
@@ -939,7 +939,7 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all active:scale-90"
+      className="flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition-all active:scale-90"
       style={{ color: active ? 'var(--color-bosque-lt)' : 'var(--color-muted)' }}
     >
       {icon}

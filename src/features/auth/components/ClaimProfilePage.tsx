@@ -29,7 +29,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 const INPUT_CLASS =
-  'w-full h-14 px-4 rounded-xl text-[--color-nieve] placeholder:text-[--color-muted] border ' +
+  'w-full h-14 px-4 rounded-lg text-[--color-nieve] placeholder:text-[--color-muted] border ' +
   'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40'
 
 function Center({ children }: { children: React.ReactNode }) {
@@ -182,7 +182,7 @@ export function ClaimProfilePage() {
         </div>
 
         {/* Tarjeta del perfil pre-armado */}
-        <div className="rounded-[--radius-xl] p-5 mb-7 border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+        <div className="rounded-xl p-5 mb-7 border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
           <p className="text-lg font-bold text-[--color-nieve]">{profile.name}</p>
           <p className="text-sm text-[--color-bosque-lt] font-semibold mt-0.5">
             {rubroData?.icon} {rubroData?.label} · <span className="text-[--color-muted] font-normal">{ciudadData?.label}</span>

@@ -43,7 +43,7 @@ export function OnboardingPage() {
             iconBg="var(--color-noche)"
             iconColor="var(--color-nieve)"
             title="Necesito un profesional"
-            description="Encontrá electricistas, plomeros y más cerca tuyo. Publicá sin cuenta; si querés, después guardá tus presupuestos en un solo lugar."
+            description="Encontrá electricistas, plomeros y más cerca tuyo. Sin cuenta ni registro: contactás directo por WhatsApp."
             cardBg="var(--color-sombra)"
             borderColor="var(--color-line)"
             cta={
@@ -60,7 +60,7 @@ export function OnboardingPage() {
                   className="w-full py-2 text-xs font-semibold transition-colors"
                   style={{ color: 'var(--color-bosque-lt)' }}
                 >
-                  Crear cuenta para seguir mis trabajos
+                  Crear cuenta para publicar trabajos
                 </button>
               </div>
             }
@@ -127,7 +127,7 @@ type RoleCardProps = {
 function RoleCard({ icon, iconBg, iconColor, title, description, cardBg, borderColor, glow, cta }: RoleCardProps) {
   return (
     <div
-      className="relative overflow-hidden rounded-2xl p-6 transition-all duration-300 active:scale-[0.98]"
+      className="relative overflow-hidden rounded-xl p-6 transition-all duration-300 active:scale-[0.98]"
       style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}` }}
     >
       {/* Glow accent for prestador card */}
@@ -141,7 +141,7 @@ function RoleCard({ icon, iconBg, iconColor, title, description, cardBg, borderC
       <div className="relative z-10">
         {/* Icon */}
         <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+          className="w-12 h-12 rounded-lg flex items-center justify-center mb-4"
           style={{ backgroundColor: iconBg, color: iconColor }}
         >
           {icon}

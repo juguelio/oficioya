@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { ciudades, rubros } from '@/design-system/tokens'
 import { useMyJobs } from '@/features/jobs/hooks'
 import { useAuth } from '@/hooks/useAuth'
-import { Logo, Footer } from '@/shared/components'
+import { Badge, Footer, PageHeader } from '@/shared/components'
 import type { JobStatus } from '@/features/jobs/types'
 
 const STATUS_LABEL: Record<JobStatus, string> = {
@@ -37,14 +37,9 @@ export function MyJobsPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
 
-      <header
-        className="fixed top-0 w-full z-50 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
-      >
-        <div className="px-5 h-full flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="active:scale-95 transition-transform" aria-label="Inicio">
-            <Logo size={26} withWordmark />
-          </button>
+      <PageHeader
+        back={false}
+        right={
           <button
             onClick={handleSignOut}
             className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
@@ -52,8 +47,8 @@ export function MyJobsPage() {
           >
             Salir
           </button>
-        </div>
-      </header>
+        }
+      />
 
       <main className="pt-14 pb-16 max-w-xl mx-auto">
         <div className="px-5 pt-6">
@@ -66,12 +61,12 @@ export function MyJobsPage() {
 
           {loading ? (
             <div className="space-y-3 animate-pulse">
-              <div className="h-24 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
-              <div className="h-24 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+              <div className="h-24 rounded-lg" style={{ backgroundColor: 'var(--color-sombra)' }} />
+              <div className="h-24 rounded-lg" style={{ backgroundColor: 'var(--color-sombra)' }} />
             </div>
           ) : jobs.length === 0 ? (
             <div
-              className="flex flex-col items-center py-12 rounded-xl border text-center"
+              className="flex flex-col items-center py-12 rounded-lg border text-center"
               style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
             >
               <span className="text-4xl mb-3">📋</span>
@@ -83,7 +78,7 @@ export function MyJobsPage() {
               </p>
               <Link
                 to="/trabajos/nuevo"
-                className="px-5 py-3 rounded-[--radius-full] font-bold text-sm text-white active:scale-[0.98] transition-all"
+                className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
                 style={{ backgroundColor: 'var(--color-bosque-lt)' }}
               >
                 Publicar un trabajo
@@ -99,7 +94,7 @@ export function MyJobsPage() {
                     <button
                       key={job.id}
                       onClick={() => navigate(`/trabajos/${job.id}#t=${job.clientToken}`)}
-                      className="w-full text-left p-4 rounded-xl border active:scale-[0.99] transition-all"
+                      className="w-full text-left p-4 rounded-lg border active:scale-[0.99] transition-all"
                       style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
                     >
                       <div className="flex items-start justify-between gap-3 mb-1.5">
@@ -107,27 +102,16 @@ export function MyJobsPage() {
                           {job.title}
                         </p>
                         {job.quoteCount > 0 && (
-                          <span
-                            className="text-xs font-black px-2 py-0.5 rounded-full shrink-0 text-white"
-                            style={{ backgroundColor: 'var(--color-bosque-lt)', fontFamily: 'var(--font-mono)' }}
-                          >
-                            {job.quoteCount}
-                          </span>
+                          <Badge variant="verified" className="shrink-0" >{job.quoteCount}</Badge>
                         )}
                       </div>
                       <p className="text-xs mb-2" style={{ color: 'var(--color-muted)' }}>
                         {rubroData?.icon} {rubroData?.label} · {ciudadData?.label}
                       </p>
                       <div className="flex items-center justify-between">
-                        <span
-                          className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded"
-                          style={{
-                            backgroundColor: job.status === 'open' ? 'var(--color-brand-tint)' : 'rgba(0,0,0,0.04)',
-                            color: job.status === 'open' ? 'var(--color-bosque-lt)' : 'var(--color-muted)',
-                          }}
-                        >
+                        <Badge size="xs" variant={job.status === 'open' ? 'tint' : 'neutral'}>
                           {STATUS_LABEL[job.status]}
-                        </span>
+                        </Badge>
                         <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>
                           {new Date(job.createdAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
                         </span>
@@ -139,7 +123,7 @@ export function MyJobsPage() {
 
               <Link
                 to="/trabajos/nuevo"
-                className="mt-5 flex items-center justify-center w-full py-3.5 rounded-[--radius-full] font-bold text-sm text-white active:scale-[0.98] transition-all"
+                className="mt-5 flex items-center justify-center w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
                 style={{ backgroundColor: 'var(--color-bosque-lt)' }}
               >
                 Publicar otro trabajo

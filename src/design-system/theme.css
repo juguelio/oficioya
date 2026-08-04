@@ -1,6 +1,24 @@
 @import "tailwindcss";
 
-:root {
+/* ⚠️ FUENTE ÚNICA DEL SISTEMA VISUAL.
+ *
+ * Va en @theme (no en :root) a propósito: así Tailwind genera sus utilidades
+ * DESDE estos valores y deja de haber dos escalas paralelas. Antes convivían
+ * `rounded-xl` (12px, escala default de Tailwind) y `rounded-[--radius-xl]`
+ * (16px, token nuestro): mismo nombre, distinto tamaño, y dos cosas que se
+ * escribían distinto se veían iguales. Ese choque es el que hacía que la app
+ * pareciera dos apps.
+ *
+ * Tailwind v4 igual emite estas variables en :root, así que `var(--color-x)`
+ * en estilos inline y `rounded-[--radius-lg]` siguen funcionando.
+ *
+ * Radios — UNA escala, tres tamaños reales:
+ *   md (8px)  chips, inputs chicos
+ *   lg (12px) CARD ESTÁNDAR — el default de la app
+ *   xl (16px) paneles, sheets, hero cards
+ *   full      pills y botones
+ */
+@theme {
   /* ── Superficies (light mode) ───────────────────────────────────────────── */
   --color-noche:     #F7F6F2;   /* fondo de página — crema cálido */
   --color-sombra:    #FFFFFF;   /* cards, panels — blanco puro */
@@ -32,11 +50,11 @@
   --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
 
   /* ── Radios ─────────────────────────────────────────────────────────────── */
-  --radius-sm:   4px;
-  --radius-md:   8px;
-  --radius-lg:   12px;
-  --radius-xl:   16px;
-  --radius-full: 9999px;
+  --radius-sm:   6px;    /* casi sin uso: preferí md o full */
+  --radius-md:   8px;    /* chips, inputs chicos */
+  --radius-lg:   12px;   /* CARD ESTÁNDAR */
+  --radius-xl:   16px;   /* paneles, sheets, hero */
+  --radius-full: 9999px; /* pills y botones */
 }
 
 * {
