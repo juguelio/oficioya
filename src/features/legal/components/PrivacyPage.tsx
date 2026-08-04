@@ -20,20 +20,20 @@ export function PrivacyPage() {
       </Section>
 
       <Section title="Qué datos recolectamos">
-        <p><strong style={{ color: 'var(--color-nieve)' }}>Si sos prestador y creás una cuenta:</strong> nombre, email,
+        <p><strong className="text-nieve">Si sos prestador y creás una cuenta:</strong> nombre, email,
           teléfono de WhatsApp, ciudad, barrio o zona, oficio, descripción de tu trabajo y, si la
           subís, una foto de perfil. Si iniciás sesión con Google, recibimos tu email y nombre
           de esa cuenta, no tu contraseña.</p>
 
-        <p><strong style={{ color: 'var(--color-nieve)' }}>Si pedís la verificación:</strong> imágenes de DNI o
+        <p><strong className="text-nieve">Si pedís la verificación:</strong> imágenes de DNI o
           matrícula profesional. Estos archivos se guardan en almacenamiento privado, separados
           del perfil público, y solo son accesibles por vos y por nosotros.</p>
 
-        <p><strong style={{ color: 'var(--color-nieve)' }}>Si sos cliente:</strong> no necesitás cuenta para buscar
+        <p><strong className="text-nieve">Si sos cliente:</strong> no necesitás cuenta para buscar
           ni para contactar. Si publicás un trabajo, guardamos tu nombre y teléfono para que los
           prestadores puedan responderte.</p>
 
-        <p><strong style={{ color: 'var(--color-nieve)' }}>De todos los visitantes:</strong> datos de uso anónimos
+        <p><strong className="text-nieve">De todos los visitantes:</strong> datos de uso anónimos
           (páginas vistas, clics en el botón de WhatsApp) para entender qué funciona. No usamos
           esa información para identificarte.</p>
       </Section>
@@ -41,7 +41,7 @@ export function PrivacyPage() {
       <Section title="Perfiles que armamos nosotros">
         <p>
           Para que la plataforma sea útil desde el primer día, armamos perfiles preliminares de
-          prestadores de la zona con información <strong style={{ color: 'var(--color-nieve)' }}>publicada
+          prestadores de la zona con información <strong className="text-nieve">publicada
           públicamente</strong> por ellos mismos — principalmente nombre comercial, rubro y teléfono
           de contacto que figuran en directorios y perfiles de negocio.
         </p>
@@ -55,15 +55,15 @@ export function PrivacyPage() {
       <Section title="Con quién compartimos datos">
         <p>Solo con los servicios necesarios para que la plataforma funcione:</p>
         <ul className="list-disc pl-5 space-y-1.5">
-          <li><strong style={{ color: 'var(--color-nieve)' }}>Supabase</strong> — base de datos, cuentas y
+          <li><strong className="text-nieve">Supabase</strong> — base de datos, cuentas y
             almacenamiento de archivos.</li>
-          <li><strong style={{ color: 'var(--color-nieve)' }}>Vercel</strong> — hosting del sitio.</li>
-          <li><strong style={{ color: 'var(--color-nieve)' }}>Google</strong> — solo si elegís iniciar sesión
+          <li><strong className="text-nieve">Vercel</strong> — hosting del sitio.</li>
+          <li><strong className="text-nieve">Google</strong> — solo si elegís iniciar sesión
             con tu cuenta de Google.</li>
-          <li><strong style={{ color: 'var(--color-nieve)' }}>MercadoPago</strong> — cobro de suscripciones y de
+          <li><strong className="text-nieve">MercadoPago</strong> — cobro de suscripciones y de
             contactos de urgencia. Los datos de tu tarjeta los maneja MercadoPago; nosotros nunca
             los vemos ni los guardamos.</li>
-          <li><strong style={{ color: 'var(--color-nieve)' }}>PostHog</strong> — métricas de uso agregadas.</li>
+          <li><strong className="text-nieve">PostHog</strong> — métricas de uso agregadas.</li>
         </ul>
         <p>No vendemos datos personales ni los cedemos a anunciantes.</p>
       </Section>

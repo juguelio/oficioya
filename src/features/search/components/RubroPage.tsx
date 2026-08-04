@@ -61,32 +61,31 @@ export function RubroPage() {
   if (!ciudadId || !ciudadData) return <Navigate to="/" replace />
 
   return (
-    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen text-nieve bg-noche">
 
       {/* ── TopAppBar ──────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-[--color-line]"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-line bg-noche"
       >
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="text-[--color-bosque-lt] hover:bg-black/5 transition-colors active:scale-95 p-2 rounded-lg"
+            className="text-bosque-lt hover:bg-black/5 transition-colors active:scale-95 p-2 rounded-lg"
             aria-label="Volver"
           >
             <IconArrowLeft />
           </button>
           <div className="min-w-0">
             <h1
-              className="font-bold text-base text-[--color-nieve] leading-tight truncate flex items-center gap-2"
+              className="font-bold text-base text-nieve leading-tight truncate flex items-center gap-2"
               style={{ letterSpacing: '-0.02em' }}
             >
-              {rubro && <RubroIcon rubro={rubro as RubroId} size={20} style={{ color: 'var(--color-bosque-lt)' }} />}
+              {rubro && <RubroIcon rubro={rubro as RubroId} size={20} className="text-bosque-lt" />}
               {rubroData?.label}
             </h1>
             <button
               onClick={clearCiudad}
-              className="text-xs text-[--color-muted] hover:text-[--color-bosque-lt] transition-colors truncate"
+              className="text-xs text-muted hover:text-bosque-lt transition-colors truncate"
             >
               {ciudadData?.label} ×
             </button>
@@ -94,7 +93,7 @@ export function RubroPage() {
         </div>
         <Link
           to="/planes"
-          className="text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors shrink-0"
+          className="text-xs font-semibold text-muted hover:text-nieve transition-colors shrink-0"
         >
           Soy prestador →
         </Link>
@@ -107,13 +106,12 @@ export function RubroPage() {
           <div className="flex flex-col gap-4">
             {/* Search input */}
             <div className="relative">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-[--color-muted]">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-muted">
                 <IconSearch />
               </div>
               <input
                 readOnly
-                className="w-full rounded-lg py-4 pl-12 pr-4 text-[--color-nieve] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40 transition-all border border-[--color-line]"
-                style={{ backgroundColor: 'var(--color-sombra)' }}
+                className="w-full rounded-lg py-4 pl-12 pr-4 text-nieve placeholder:text-muted/60 focus:outline-none focus:ring-1 focus:ring-bosque-lt/40 transition-all border border-line bg-sombra"
                 placeholder={`Buscar ${rubroData?.label?.toLowerCase() ?? 'profesionales'} en ${ciudadData?.label}…`}
               />
             </div>
@@ -127,8 +125,8 @@ export function RubroPage() {
                   className={cn(
                     'px-4 py-2 rounded-md text-sm font-semibold whitespace-nowrap transition-all shrink-0 border flex items-center gap-1.5',
                     r.id === rubro
-                      ? 'bg-[--color-bosque-lt] text-white border-transparent'
-                      : 'bg-[--color-sombra] text-[--color-muted] border-[--color-line] hover:text-[--color-nieve]',
+                      ? 'bg-bosque-lt text-white border-transparent'
+                      : 'bg-sombra text-muted border-line hover:text-nieve',
                   )}
                 >
                   <RubroIcon rubro={r.id as RubroId} size={16} />
@@ -141,10 +139,9 @@ export function RubroPage() {
           {/* Count */}
           {!loading && !publicIsEmpty && (
             <p
-              className="text-xs text-[--color-muted] mt-5 uppercase tracking-[0.18em] font-semibold"
-              style={{ fontFamily: 'var(--font-body)' }}
+              className="text-xs text-muted mt-5 uppercase tracking-[0.18em] font-semibold font-body"
             >
-              <span className="text-[--color-bosque-lt]" style={{ fontFamily: 'var(--font-mono)' }}>{publicTotal}</span>
+              <span className="text-bosque-lt font-mono">{publicTotal}</span>
               {' '}{publicTotal === 1 ? 'profesional' : 'profesionales'} en {ciudadData?.label}
             </p>
           )}
@@ -154,12 +151,12 @@ export function RubroPage() {
         {loading ? (
           <div className="grid gap-5">
             {[1, 2, 3].map(n => (
-              <div key={n} className="rounded-lg overflow-hidden animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }}>
-                <div className="h-48 w-full" style={{ backgroundColor: 'var(--color-noche)' }} />
+              <div key={n} className="rounded-lg overflow-hidden animate-pulse bg-sombra">
+                <div className="h-48 w-full bg-noche" />
                 <div className="p-5 flex flex-col gap-3">
-                  <div className="h-5 w-2/3 rounded-md" style={{ backgroundColor: 'var(--color-noche)' }} />
-                  <div className="h-3 w-1/2 rounded-md" style={{ backgroundColor: 'var(--color-noche)' }} />
-                  <div className="h-12 w-full rounded-full mt-2" style={{ backgroundColor: 'var(--color-noche)' }} />
+                  <div className="h-5 w-2/3 rounded-md bg-noche" />
+                  <div className="h-3 w-1/2 rounded-md bg-noche" />
+                  <div className="h-12 w-full rounded-full mt-2 bg-noche" />
                 </div>
               </div>
             ))}
@@ -186,15 +183,14 @@ export function RubroPage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-[--color-line] sm:hidden"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-line sm:hidden bg-noche"
       >
         <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />
         <NavTab icon={<IconSearch />}  label="Buscar" active />
         <NavTab icon={<IconHandyman />} label="Reservas" />
         <Link
           to="/planes"
-          className="flex flex-col items-center justify-center text-[--color-muted] px-4 py-2 hover:text-[--color-bosque-lt] transition-all active:scale-90 duration-150"
+          className="flex flex-col items-center justify-center text-muted px-4 py-2 hover:text-bosque-lt transition-all active:scale-90 duration-150"
         >
           <IconPerson />
           <span className="text-[10px] font-semibold uppercase tracking-widest mt-1">Prestador</span>
@@ -231,8 +227,7 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
 
   return (
     <article
-      className="rounded-lg overflow-hidden transition-all duration-300 group border border-[--color-line] sm:flex sm:flex-row"
-      style={{ backgroundColor: 'var(--color-sombra)' }}
+      className="rounded-lg overflow-hidden transition-all duration-300 group border border-line sm:flex sm:flex-row bg-sombra"
     >
       {/* Photo — mobile: full width banner / desktop: fixed left column */}
       <button
@@ -245,8 +240,7 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
       >
         {useInitials ? (
           <div
-            className="w-full h-full flex flex-col items-center justify-center gap-1.5"
-            style={{ backgroundColor: 'var(--color-brand-tint)' }}
+            className="w-full h-full flex flex-col items-center justify-center gap-1.5 bg-brand-tint"
           >
             <span
               className="leading-none select-none"
@@ -279,30 +273,30 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
             Nunca mostramos "★ 0.0" de un perfil sin reclamar como si fuera real. */}
         {provider.claimed && provider.rating > 0 ? (
           <div
-            className="absolute top-3 right-3 px-2.5 py-1 rounded-full flex items-center gap-1 border border-[--color-line]"
+            className="absolute top-3 right-3 px-2.5 py-1 rounded-full flex items-center gap-1 border border-line"
             style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
           >
-            <span className="text-[--color-bosque-lt] text-xs leading-none">★</span>
-            <span className="text-[--color-nieve] text-xs font-bold" style={{ fontFamily: 'var(--font-mono)' }}>
+            <span className="text-bosque-lt text-xs leading-none">★</span>
+            <span className="text-nieve text-xs font-bold font-mono">
               {provider.rating.toFixed(1)}
             </span>
           </div>
         ) : provider.externalRating ? (
           <div
-            className="absolute top-3 right-3 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-[--color-line]"
+            className="absolute top-3 right-3 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-line"
             style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
           >
-            <span className="text-[--color-amber] text-xs leading-none">★</span>
-            <span className="text-[--color-nieve] text-xs font-bold" style={{ fontFamily: 'var(--font-mono)' }}>
+            <span className="text-amber text-xs leading-none">★</span>
+            <span className="text-nieve text-xs font-bold font-mono">
               {provider.externalRating.toFixed(1)}
             </span>
-            <span className="text-[--color-muted] text-[9px] font-semibold">Google</span>
+            <span className="text-muted text-[9px] font-semibold">Google</span>
           </div>
         ) : null}
         {/* Verified badge */}
         {provider.isVerified && (
           <div
-            className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-bold text-[--color-bosque-lt] border border-[--color-bosque-lt]/40"
+            className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-bold text-bosque-lt border border-bosque-lt/40"
             style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}
           >
             ✓ Verificado
@@ -317,10 +311,10 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
         <div>
           <div className="flex justify-between items-start mb-1.5">
             <button
-              className="text-left hover:text-[--color-bosque-lt] transition-colors min-w-0"
+              className="text-left hover:text-bosque-lt transition-colors min-w-0"
               onClick={() => navigate(`/prestador/${provider.id}`)}
             >
-              <h2 className="text-lg font-bold text-[--color-nieve] truncate">
+              <h2 className="text-lg font-bold text-nieve truncate">
                 {provider.name}
               </h2>
             </button>
@@ -332,13 +326,13 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
             )}
           </div>
 
-          <div className="flex items-center gap-1.5 mb-3 text-[--color-muted]">
+          <div className="flex items-center gap-1.5 mb-3 text-muted">
             <IconLocation />
             <span className="text-xs font-semibold truncate">{provider.barrio ?? ciudadLabel}</span>
             {claimed ? (
               <>
                 <span className="text-xs shrink-0">·</span>
-                <span className="text-xs shrink-0" style={{ fontFamily: 'var(--font-mono)' }}>
+                <span className="text-xs shrink-0 font-mono">
                   {provider.totalJobs} trabajos
                 </span>
               </>
@@ -348,7 +342,7 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
           </div>
 
           {provider.bio && (
-            <p className="text-sm text-[--color-muted] leading-relaxed line-clamp-2 sm:line-clamp-3">
+            <p className="text-sm text-muted leading-relaxed line-clamp-2 sm:line-clamp-3">
               {provider.bio}
             </p>
           )}
@@ -364,15 +358,14 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
                   track('emergency_contact_click', { providerId: provider.id, ciudad: provider.ciudad, rubro: provider.rubro, source: 'rubro_list' })
                   navigate(`/emergencias/contratar/${provider.id}`)
                 }}
-                className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
-                style={{ backgroundColor: 'var(--color-emergency)' }}
+                className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform bg-emergency"
               >
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-guardia)' }} />
+                <span className="w-2 h-2 rounded-full animate-pulse bg-guardia" />
                 En guardia — Contactar urgencia
               </button>
               <button
                 onClick={() => navigate(`/prestador/${provider.id}`)}
-                className="w-full mt-1.5 py-2 text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors text-center active:scale-[0.98]"
+                className="w-full mt-1.5 py-2 text-xs font-semibold text-muted hover:text-nieve transition-colors text-center active:scale-[0.98]"
               >
                 Ver perfil completo →
               </button>
@@ -392,7 +385,7 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
               </a>
               <button
                 onClick={() => navigate(`/prestador/${provider.id}`)}
-                className="w-full mt-1.5 py-2 text-xs font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors text-center active:scale-[0.98]"
+                className="w-full mt-1.5 py-2 text-xs font-semibold text-muted hover:text-nieve transition-colors text-center active:scale-[0.98]"
               >
                 Ver perfil completo →
               </button>
@@ -400,8 +393,7 @@ function ProviderListCard({ provider, fallbackImg }: ProviderListCardProps) {
           ) : (
             <button
               onClick={() => navigate(`/prestador/${provider.id}`)}
-              className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform"
-              style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+              className="w-full py-3 rounded-full flex items-center justify-center gap-2 font-bold text-sm text-white active:scale-[0.98] transition-transform bg-bosque-lt"
             >
               Ver perfil →
             </button>
@@ -419,16 +411,15 @@ function EmptyState({ rubro, ciudad, onBack }: { rubro?: string; ciudad?: string
   return (
     <div className="flex flex-col items-center text-center py-16 gap-5 max-w-xs mx-auto">
       <div
-        className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl border border-[--color-line]"
-        style={{ backgroundColor: 'var(--color-sombra)' }}
+        className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl border border-line bg-sombra"
       >
         🔍
       </div>
       <div>
-        <h3 className="text-lg font-bold text-[--color-nieve] mb-2">
+        <h3 className="text-lg font-bold text-nieve mb-2">
           Sin resultados todavía
         </h3>
-        <p className="text-sm text-[--color-muted] leading-relaxed">
+        <p className="text-sm text-muted leading-relaxed">
           No hay {rubro ? rubro.toLowerCase() : 'prestadores'} en{' '}
           {ciudad ?? 'esta ciudad'} aún.
           <br />
@@ -437,8 +428,7 @@ function EmptyState({ rubro, ciudad, onBack }: { rubro?: string; ciudad?: string
       </div>
       <button
         onClick={onBack}
-        className="px-6 py-3 rounded-lg text-sm font-semibold text-[--color-nieve] border border-[--color-bosque-lt]/40 hover:border-[--color-bosque-lt] transition-all"
-        style={{ backgroundColor: 'var(--color-sombra)' }}
+        className="px-6 py-3 rounded-lg text-sm font-semibold text-nieve border border-bosque-lt/40 hover:border-bosque-lt transition-all bg-sombra"
       >
         ← Ver otros rubros
       </button>
@@ -456,7 +446,7 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
       onClick={onClick}
       className={cn(
         'flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-all active:scale-90 duration-150',
-        active ? 'text-[--color-bosque-lt]' : 'text-[--color-muted] hover:text-[--color-bosque-lt]',
+        active ? 'text-bosque-lt' : 'text-muted hover:text-bosque-lt',
       )}
     >
       {icon}

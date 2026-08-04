@@ -313,10 +313,9 @@ export function ConversationalOnboarding() {
   if (authLoading) {
     return (
       <div
-        className="flex h-[100dvh] items-center justify-center"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="flex h-[100dvh] items-center justify-center bg-noche"
       >
-        <div className="w-48 h-4 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="w-48 h-4 rounded-full animate-pulse bg-sombra" />
       </div>
     )
   }
@@ -326,25 +325,25 @@ export function ConversationalOnboarding() {
   }
 
   return (
-    <div className="flex flex-col h-[100dvh] text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="flex flex-col h-[100dvh] text-nieve bg-noche">
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <header
-        className="shrink-0 flex items-center gap-3 px-5 h-16 border-b border-[--color-line] backdrop-blur-xl"
+        className="shrink-0 flex items-center gap-3 px-5 h-16 border-b border-line backdrop-blur-xl"
         style={{ backgroundColor: 'rgba(255,255,255,0.85)' }}
       >
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="p-2 -ml-2 rounded-lg text-[--color-bosque-lt] hover:bg-white/5 transition-all active:scale-95"
+          className="p-2 -ml-2 rounded-lg text-bosque-lt hover:bg-white/5 transition-all active:scale-95"
           aria-label="Volver"
         >
           <IconArrowLeft />
         </button>
         <AgentAvatar />
         <div className="leading-tight">
-          <p className="text-sm font-bold text-[--color-nieve]">Asistente de Oficio</p>
-          <p className="text-xs text-[--color-bosque-lt]">en línea</p>
+          <p className="text-sm font-bold text-nieve">Asistente de Oficio</p>
+          <p className="text-xs text-bosque-lt">en línea</p>
         </div>
       </header>
 
@@ -357,7 +356,7 @@ export function ConversationalOnboarding() {
       </div>
 
       {/* ── Zona de entrada ─────────────────────────────────────────────────── */}
-      <div className="shrink-0 border-t border-[--color-line] px-4 py-3" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <div className="shrink-0 border-t border-line px-4 py-3 bg-noche">
         <div className="max-w-xl mx-auto">
           {renderInput()}
         </div>
@@ -387,10 +386,10 @@ export function ConversationalOnboarding() {
               key={r.id}
               type="button"
               onClick={() => advance('rubro_id', r.id, r.label)}
-              className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-[--color-line] bg-[--color-sombra] text-left transition-all active:scale-[0.98] hover:border-[--color-bosque-lt]/40"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-line bg-sombra text-left transition-all active:scale-[0.98] hover:border-bosque-lt/40"
             >
               <span className="text-lg leading-none">{r.icon}</span>
-              <span className="text-sm font-semibold text-[--color-muted]">{r.label}</span>
+              <span className="text-sm font-semibold text-muted">{r.label}</span>
             </button>
           ))}
         </div>
@@ -409,7 +408,7 @@ export function ConversationalOnboarding() {
           >
             <IconCamera /> Subir foto
           </button>
-          <button type="button" onClick={skipOptional} className="px-4 h-12 text-sm font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors">
+          <button type="button" onClick={skipOptional} className="px-4 h-12 text-sm font-semibold text-muted hover:text-nieve transition-colors">
             Saltar
           </button>
         </div>
@@ -424,14 +423,14 @@ export function ConversationalOnboarding() {
               key={p.id}
               type="button"
               onClick={() => advance('subscription_tier_id', p.id, `Plan ${p.label}`)}
-              className="flex items-center justify-between px-4 py-3 rounded-lg border border-[--color-line] bg-[--color-sombra] text-left transition-all active:scale-[0.98] hover:border-[--color-bosque-lt]/40"
+              className="flex items-center justify-between px-4 py-3 rounded-lg border border-line bg-sombra text-left transition-all active:scale-[0.98] hover:border-bosque-lt/40"
             >
               <span className="flex flex-col">
                 <span className="text-sm font-bold" style={{ color: p.accent }}>{p.label}</span>
-                <span className="text-xs text-[--color-muted]">{p.contacts}</span>
+                <span className="text-xs text-muted">{p.contacts}</span>
               </span>
-              <span className="text-sm font-bold text-[--color-nieve]" style={{ fontFamily: 'var(--font-mono)' }}>
-                {formatARS(p.priceARS)}<span className="text-xs text-[--color-muted]">/mes</span>
+              <span className="text-sm font-bold text-nieve font-mono">
+                {formatARS(p.priceARS)}<span className="text-xs text-muted">/mes</span>
               </span>
             </button>
           ))}
@@ -476,10 +475,10 @@ export function ConversationalOnboarding() {
           autoComplete={isPassword ? 'new-password' : phase === 'email' ? 'email' : 'off'}
           placeholder={placeholderFor(phase)}
           autoFocus
-          className="flex-1 h-12 px-4 rounded-full text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+          className="flex-1 h-12 px-4 rounded-full text-nieve bg-sombra border border-line placeholder:text-muted/60 focus:outline-none focus:ring-1 focus:ring-bosque-lt/40"
         />
         {isOptional && (
-          <button type="button" onClick={skipOptional} className="px-3 h-12 text-sm font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors">
+          <button type="button" onClick={skipOptional} className="px-3 h-12 text-sm font-semibold text-muted hover:text-nieve transition-colors">
             Saltar
           </button>
         )}
@@ -521,11 +520,11 @@ function ReferralStep({ referrer, ciudad, onDone }: { referrer: string; ciudad: 
   }
 
   return (
-    <div className="flex flex-col min-h-[100dvh] px-6 pt-16 pb-10 text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="flex flex-col min-h-[100dvh] px-6 pt-16 pb-10 text-nieve bg-noche">
       <div className="max-w-xl mx-auto w-full">
         <span className="text-5xl">🙌</span>
         <h1 className="text-2xl font-bold mt-4 mb-2" style={{ letterSpacing: '-0.02em' }}>¡Listo, ya estás dentro!</h1>
-        <p className="text-sm text-[--color-muted] mb-6">
+        <p className="text-sm text-muted mb-6">
           Una última y nos ayudás un montón: ¿conocés 1 o 2 colegas de confianza que también podrían sumarse?
           Les llega la invitación de tu parte.
         </p>
@@ -537,7 +536,7 @@ function ReferralStep({ referrer, ciudad, onDone }: { referrer: string; ciudad: 
                 value={r.name}
                 onChange={e => update(i, 'name', e.target.value)}
                 placeholder="Nombre del colega"
-                className="flex-1 h-12 px-4 rounded-full text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+                className="flex-1 h-12 px-4 rounded-full text-nieve bg-sombra border border-line placeholder:text-muted/60 focus:outline-none focus:ring-1 focus:ring-bosque-lt/40"
               />
               <input
                 value={r.phone}
@@ -545,7 +544,7 @@ function ReferralStep({ referrer, ciudad, onDone }: { referrer: string; ciudad: 
                 type="tel"
                 inputMode="tel"
                 placeholder="+5492972..."
-                className="w-40 h-12 px-3 rounded-full text-[--color-nieve] bg-[--color-sombra] border border-[--color-line] placeholder:text-[--color-muted]/60 focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+                className="w-40 h-12 px-3 rounded-full text-nieve bg-sombra border border-line placeholder:text-muted/60 focus:outline-none focus:ring-1 focus:ring-bosque-lt/40"
               />
             </div>
           ))}
@@ -564,7 +563,7 @@ function ReferralStep({ referrer, ciudad, onDone }: { referrer: string; ciudad: 
           <button
             type="button"
             onClick={onDone}
-            className="w-full py-2 text-sm font-semibold text-[--color-muted] hover:text-[--color-nieve] transition-colors"
+            className="w-full py-2 text-sm font-semibold text-muted hover:text-nieve transition-colors"
           >
             Saltar
           </button>
@@ -599,8 +598,8 @@ function Bubble({ role, text }: BubbleProps) {
         className={cn(
           'max-w-[80%] px-4 py-2.5 text-sm leading-relaxed',
           isAgent
-            ? 'rounded-xl rounded-bl-sm bg-[--color-sombra] text-[--color-nieve]'
-            : 'rounded-xl rounded-br-sm text-[--color-noche] font-medium',
+            ? 'rounded-xl rounded-bl-sm bg-sombra text-nieve'
+            : 'rounded-xl rounded-br-sm text-noche font-medium',
         )}
         style={isAgent ? undefined : { backgroundColor: 'var(--color-bosque-lt)' }}
       >
@@ -614,11 +613,11 @@ function TypingBubble() {
   return (
     <div className="flex items-end gap-2 justify-start">
       <AgentAvatar small />
-      <div className="rounded-xl rounded-bl-sm bg-[--color-sombra] px-4 py-3 flex items-center gap-1">
+      <div className="rounded-xl rounded-bl-sm bg-sombra px-4 py-3 flex items-center gap-1">
         {[0, 1, 2].map(i => (
           <span
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-[--color-muted] animate-pulse"
+            className="w-1.5 h-1.5 rounded-full bg-muted animate-pulse"
             style={{ animationDelay: `${i * 0.15}s` }}
           />
         ))}
@@ -642,7 +641,7 @@ function AgentAvatar({ small }: { small?: boolean }) {
 }
 
 function InputHint({ text }: { text: string }) {
-  return <p className="text-center text-sm text-[--color-muted] py-3">{text}</p>
+  return <p className="text-center text-sm text-muted py-3">{text}</p>
 }
 
 type QuickReplyProps = { onClick: () => void; children: React.ReactNode }
@@ -652,7 +651,7 @@ function QuickReply({ onClick, children }: QuickReplyProps) {
     <button
       type="button"
       onClick={onClick}
-      className="px-5 py-3 rounded-full border border-[--color-bosque-lt]/40 bg-[--color-sombra] text-sm font-semibold text-[--color-nieve] text-left transition-all active:scale-[0.98] hover:bg-[--color-bosque-lt]/10"
+      className="px-5 py-3 rounded-full border border-bosque-lt/40 bg-sombra text-sm font-semibold text-nieve text-left transition-all active:scale-[0.98] hover:bg-bosque-lt/10"
     >
       {children}
     </button>
@@ -672,11 +671,11 @@ function Summary({ draft, ciudad, rubro, hasPhoto }: SummaryProps) {
     ['Foto',     hasPhoto ? 'sí' : 'después'],
   ]
   return (
-    <div className="rounded-lg border border-[--color-line] bg-[--color-sombra] p-4 flex flex-col gap-1.5">
+    <div className="rounded-lg border border-line bg-sombra p-4 flex flex-col gap-1.5">
       {rows.map(([k, v]) => (
         <div key={k} className="flex items-center justify-between gap-3 text-sm">
-          <span className="text-xs font-bold tracking-[0.1em] uppercase text-[--color-muted]">{k}</span>
-          <span className="text-[--color-nieve] font-medium text-right truncate">{v}</span>
+          <span className="text-xs font-bold tracking-[0.1em] uppercase text-muted">{k}</span>
+          <span className="text-nieve font-medium text-right truncate">{v}</span>
         </div>
       ))}
     </div>

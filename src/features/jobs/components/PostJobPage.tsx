@@ -69,12 +69,12 @@ export function PostJobPage() {
     // token en el fragment (#t=), no en la query — no se filtra por Referer/logs/analytics
     const trackUrl = `/trabajos/${result.id}#t=${result.token}`
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center px-8 text-center bg-noche">
         <span className="text-6xl mb-5">🎉</span>
         <h2 className="font-black text-2xl mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
           ¡Trabajo publicado!
         </h2>
-        <p className="text-sm mb-3" style={{ color: 'var(--color-muted)' }}>
+        <p className="text-sm mb-3 text-muted">
           Los prestadores ya pueden verlo y enviarte presupuestos.
         </p>
         <p className="text-xs mb-8 px-4 py-3 rounded-lg" style={{ color: 'var(--color-nieve)', backgroundColor: 'var(--color-sombra)', border: '1px solid var(--color-line)' }}>
@@ -83,8 +83,7 @@ export function PostJobPage() {
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <button
             onClick={() => navigate(trackUrl)}
-            className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
-            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+            className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-95 transition-all bg-bosque-lt"
           >
             Ver mis presupuestos
           </button>
@@ -93,16 +92,14 @@ export function PostJobPage() {
           {!user && (
             <button
               onClick={() => navigate('/registro/cliente')}
-              className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
-              style={{ borderColor: 'var(--color-bosque-lt)', color: 'var(--color-bosque-lt)' }}
+              className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all border-bosque-lt text-bosque-lt"
             >
               Crear cuenta y no perder el link
             </button>
           )}
           <button
             onClick={() => navigate(user ? '/mis-trabajos' : '/trabajos')}
-            className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
-            style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+            className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all border-line text-muted"
           >
             {user ? 'Ver todos mis trabajos' : 'Ver todos los trabajos'}
           </button>
@@ -112,17 +109,15 @@ export function PostJobPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
 
       {/* ── Header ─────────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b bg-sombra border-line"
       >
         <button
           onClick={() => navigate(-1)}
-          className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all"
-          style={{ backgroundColor: 'var(--color-noche)' }}
+          className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all bg-noche"
         >
           <IconBack />
         </button>
@@ -136,7 +131,7 @@ export function PostJobPage() {
 
           {/* Rubro */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-2 text-muted">
               ¿Qué necesitás?
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -164,7 +159,7 @@ export function PostJobPage() {
 
           {/* Ciudad */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-2 text-muted">
               ¿En qué ciudad?
             </label>
             <div className="flex gap-2">
@@ -189,7 +184,7 @@ export function PostJobPage() {
 
           {/* Título */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-2 text-muted">
               Título del trabajo
             </label>
             <input
@@ -207,7 +202,7 @@ export function PostJobPage() {
 
           {/* Descripción */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-2 text-muted">
               Descripción
             </label>
             <textarea
@@ -226,13 +221,12 @@ export function PostJobPage() {
 
           {/* Presupuesto estimado (opcional) */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-2 text-muted">
               Presupuesto máximo <span className="normal-case font-normal">(opcional)</span>
             </label>
             <div className="relative">
               <span
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold pointer-events-none"
-                style={{ color: 'var(--color-muted)' }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold pointer-events-none text-muted"
               >
                 $
               </span>
@@ -253,7 +247,7 @@ export function PostJobPage() {
 
           {/* Tu nombre */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-2 text-muted">
               Tu nombre
             </label>
             <input
@@ -271,7 +265,7 @@ export function PostJobPage() {
 
           {/* Tu WhatsApp */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-2 text-muted">
               Tu WhatsApp
             </label>
             <input
@@ -286,7 +280,7 @@ export function PostJobPage() {
               }}
             />
             {errors.authorPhone && <p className="text-xs mt-1" style={{ color: '#ffb4ab' }}>{errors.authorPhone.message}</p>}
-            <p className="text-xs mt-1.5" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-xs mt-1.5 text-muted">
               Privado: nunca se muestra a los prestadores. Sólo lo usamos para tu link de seguimiento.
             </p>
           </div>
@@ -296,15 +290,13 @@ export function PostJobPage() {
 
       {/* ── CTA fijo ───────────────────────────────────────────────────────────── */}
       <div
-        className="fixed bottom-0 left-0 w-full px-5 py-4 border-t"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed bottom-0 left-0 w-full px-5 py-4 border-t bg-sombra border-line"
       >
         {error && <p className="text-xs mb-2 text-center" style={{ color: '#ffb4ab' }}>{error}</p>}
         <button
           onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting}
-          className="w-full py-4 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all disabled:opacity-60"
-          style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+          className="w-full py-4 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all disabled:opacity-60 bg-bosque-lt"
         >
           {isSubmitting ? 'Publicando...' : 'Publicar trabajo'}
         </button>
@@ -318,7 +310,7 @@ export function PostJobPage() {
 
 function IconBack() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-nieve)' }}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-nieve">
       <path d="M19 12H5M12 5l-7 7 7 7" />
     </svg>
   )

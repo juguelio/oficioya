@@ -145,17 +145,16 @@ export function ProviderSignup() {
   }
 
   return (
-    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen text-nieve bg-noche">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center justify-between px-5 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-5 h-14 border-b bg-sombra border-line"
       >
         <button
           type="button"
           onClick={() => step > 1 ? setStep(s => (s - 1) as typeof s) : navigate(-1)}
-          className="p-2 rounded-lg text-[--color-bosque-lt] hover:bg-black/5 transition-all active:scale-95"
+          className="p-2 rounded-lg text-bosque-lt hover:bg-black/5 transition-all active:scale-95"
           aria-label="Volver"
         >
           <IconArrowLeft />
@@ -167,15 +166,15 @@ export function ProviderSignup() {
               key={s}
               className={cn(
                 'h-1 rounded-full transition-all duration-300',
-                s === step  ? 'w-8 bg-[--color-bosque-lt]'      :
-                s < step    ? 'w-4 bg-[--color-bosque-lt]/50'    :
-                              'w-4 bg-[--color-line]',
+                s === step  ? 'w-8 bg-bosque-lt'      :
+                s < step    ? 'w-4 bg-bosque-lt/50'    :
+                              'w-4 bg-line',
               )}
             />
           ))}
         </div>
 
-        <span className="text-xs font-bold tracking-widest text-[--color-muted] uppercase">
+        <span className="text-xs font-bold tracking-widest text-muted uppercase">
           {step}/4
         </span>
       </header>
@@ -187,14 +186,14 @@ export function ProviderSignup() {
           {step === 1 && (
             <div className="space-y-6">
               <div>
-                <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-1">Paso 1 de 4</p>
+                <p className="text-xs font-bold tracking-[0.15em] text-bosque-lt uppercase mb-1">Paso 1 de 4</p>
                 <h1
-                  className="text-3xl font-bold text-[--color-nieve] mb-2"
+                  className="text-3xl font-bold text-nieve mb-2"
                   style={{ letterSpacing: '-0.02em' }}
                 >
                   Tus datos personales
                 </h1>
-                <p className="text-sm text-[--color-muted]">Los clientes van a ver tu nombre y foto.</p>
+                <p className="text-sm text-muted">Los clientes van a ver tu nombre y foto.</p>
               </div>
 
               <div className="space-y-4">
@@ -214,8 +213,7 @@ export function ProviderSignup() {
                   {/* El +54 9 va fijo afuera del input: no se puede borrar ni escribir mal. */}
                   <div className="flex items-stretch gap-2">
                     <span
-                      className="flex items-center px-3 rounded-lg border text-sm font-mono shrink-0"
-                      style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)', backgroundColor: 'var(--color-noche)' }}
+                      className="flex items-center px-3 rounded-lg border text-sm font-mono shrink-0 border-line text-muted bg-noche"
                     >
                       +54 9
                     </span>
@@ -227,7 +225,7 @@ export function ProviderSignup() {
                       className={inputCls(!!errors.whatsapp_number)}
                     />
                   </div>
-                  <p className="text-xs text-[--color-muted] mt-1">Código de área sin 0 y número sin 15. Este número recibe los mensajes de los clientes.</p>
+                  <p className="text-xs text-muted mt-1">Código de área sin 0 y número sin 15. Este número recibe los mensajes de los clientes.</p>
                 </Field>
 
                 <Field label="Barrio / Zona" error={errors.barrio?.message}>
@@ -241,19 +239,19 @@ export function ProviderSignup() {
           {step === 2 && (
             <div className="space-y-8">
               <div>
-                <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-1">Paso 2 de 4</p>
+                <p className="text-xs font-bold tracking-[0.15em] text-bosque-lt uppercase mb-1">Paso 2 de 4</p>
                 <h1
-                  className="text-3xl font-bold text-[--color-nieve] mb-2"
+                  className="text-3xl font-bold text-nieve mb-2"
                   style={{ letterSpacing: '-0.02em' }}
                 >
                   Tu especialidad
                 </h1>
-                <p className="text-sm text-[--color-muted]">Elegí dónde trabajás y qué hacés.</p>
+                <p className="text-sm text-muted">Elegí dónde trabajás y qué hacés.</p>
               </div>
 
               {/* Ciudad */}
               <div>
-                <p className="text-xs font-bold tracking-[0.15em] text-[--color-muted] uppercase mb-3">¿En qué ciudad?</p>
+                <p className="text-xs font-bold tracking-[0.15em] text-muted uppercase mb-3">¿En qué ciudad?</p>
                 <div className="flex flex-col gap-2">
                   {ciudades.map(c => (
                     <button
@@ -263,8 +261,8 @@ export function ProviderSignup() {
                       className={cn(
                         'flex items-center justify-between px-5 py-4 rounded-xl border text-left transition-all active:scale-[0.98]',
                         ciudadId === c.id
-                          ? 'border-[--color-bosque-lt] bg-[--color-bosque-lt]/10 text-[--color-nieve]'
-                          : 'border-[--color-line] bg-[--color-sombra] text-[--color-muted] hover:border-[--color-bosque-lt]/40',
+                          ? 'border-bosque-lt bg-bosque-lt/10 text-nieve'
+                          : 'border-line bg-sombra text-muted hover:border-bosque-lt/40',
                       )}
                     >
                       <span className="font-semibold text-sm">{c.label}</span>
@@ -277,7 +275,7 @@ export function ProviderSignup() {
 
               {/* Rubro */}
               <div>
-                <p className="text-xs font-bold tracking-[0.15em] text-[--color-muted] uppercase mb-3">¿Cuál es tu rubro?</p>
+                <p className="text-xs font-bold tracking-[0.15em] text-muted uppercase mb-3">¿Cuál es tu rubro?</p>
                 <div className="grid grid-cols-2 gap-2">
                   {rubros.map(r => (
                     <button
@@ -287,12 +285,12 @@ export function ProviderSignup() {
                       className={cn(
                         'flex items-center gap-2.5 px-4 py-3 rounded-lg border text-left transition-all active:scale-[0.98]',
                         rubroId === r.id
-                          ? 'border-[--color-bosque-lt] bg-[--color-bosque-lt]/10'
-                          : 'border-[--color-line] bg-[--color-sombra] hover:border-[--color-bosque-lt]/40',
+                          ? 'border-bosque-lt bg-bosque-lt/10'
+                          : 'border-line bg-sombra hover:border-bosque-lt/40',
                       )}
                     >
                       <span className="text-xl leading-none">{r.icon}</span>
-                      <span className={cn('text-sm font-semibold', rubroId === r.id ? 'text-[--color-nieve]' : 'text-[--color-muted]')}>
+                      <span className={cn('text-sm font-semibold', rubroId === r.id ? 'text-nieve' : 'text-muted')}>
                         {r.label}
                       </span>
                     </button>
@@ -307,14 +305,14 @@ export function ProviderSignup() {
           {step === 3 && (
             <div className="space-y-8">
               <div>
-                <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-1">Paso 3 de 4</p>
+                <p className="text-xs font-bold tracking-[0.15em] text-bosque-lt uppercase mb-1">Paso 3 de 4</p>
                 <h1
-                  className="text-3xl font-bold text-[--color-nieve] mb-2"
+                  className="text-3xl font-bold text-nieve mb-2"
                   style={{ letterSpacing: '-0.02em' }}
                 >
                   Tu foto de perfil
                 </h1>
-                <p className="text-sm text-[--color-muted]">Una buena foto genera más confianza y más contactos.</p>
+                <p className="text-sm text-muted">Una buena foto genera más confianza y más contactos.</p>
               </div>
 
               <input
@@ -329,10 +327,9 @@ export function ProviderSignup() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className={cn(
-                  'w-full aspect-square max-h-72 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 transition-all active:scale-[0.98]',
-                  photoPreview ? 'border-[--color-bosque-lt]/40 p-0 overflow-hidden' : 'border-[--color-line] hover:border-[--color-bosque-lt]/40',
+                  'w-full aspect-square max-h-72 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 transition-all active:scale-[0.98] bg-noche',
+                  photoPreview ? 'border-bosque-lt/40 p-0 overflow-hidden' : 'border-line hover:border-bosque-lt/40',
                 )}
-                style={{ backgroundColor: 'var(--color-noche)' }}
               >
                 {photoPreview ? (
                   <img src={photoPreview} alt="Vista previa" className="w-full h-full object-cover" />
@@ -340,8 +337,8 @@ export function ProviderSignup() {
                   <>
                     <IconCamera />
                     <div className="text-center">
-                      <p className="text-sm font-semibold text-[--color-nieve]">Tocá para subir una foto</p>
-                      <p className="text-xs text-[--color-muted] mt-1">JPG, PNG o WEBP · Máx. 5 MB</p>
+                      <p className="text-sm font-semibold text-nieve">Tocá para subir una foto</p>
+                      <p className="text-xs text-muted mt-1">JPG, PNG o WEBP · Máx. 5 MB</p>
                     </div>
                   </>
                 )}
@@ -351,13 +348,13 @@ export function ProviderSignup() {
                 <button
                   type="button"
                   onClick={() => { setPhotoFile(null); setPhotoPreview(null) }}
-                  className="w-full py-2 text-sm text-[--color-muted] hover:text-[#ffb4ab] transition-colors"
+                  className="w-full py-2 text-sm text-muted hover:text-[#ffb4ab] transition-colors"
                 >
                   Sacar foto
                 </button>
               )}
 
-              <p className="text-xs text-center text-[--color-muted]">
+              <p className="text-xs text-center text-muted">
                 Podés agregar o cambiar la foto después desde tu perfil.
               </p>
             </div>
@@ -367,14 +364,14 @@ export function ProviderSignup() {
           {step === 4 && (
             <div className="space-y-6">
               <div>
-                <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-1">Paso 4 de 4</p>
+                <p className="text-xs font-bold tracking-[0.15em] text-bosque-lt uppercase mb-1">Paso 4 de 4</p>
                 <h1
-                  className="text-3xl font-bold text-[--color-nieve] mb-2"
+                  className="text-3xl font-bold text-nieve mb-2"
                   style={{ letterSpacing: '-0.02em' }}
                 >
                   Elegí tu plan
                 </h1>
-                <p className="text-sm text-[--color-muted]">Confirmás el pago después de crear tu perfil.</p>
+                <p className="text-sm text-muted">Confirmás el pago después de crear tu perfil.</p>
               </div>
 
               <div className="space-y-3">
@@ -388,8 +385,8 @@ export function ProviderSignup() {
                       className={cn(
                         'w-full text-left rounded-xl border p-5 transition-all active:scale-[0.98]',
                         selected
-                          ? 'border-[--color-bosque-lt] bg-[--color-bosque-lt]/10'
-                          : 'border-[--color-line] bg-[--color-sombra] hover:border-[--color-bosque-lt]/30',
+                          ? 'border-bosque-lt bg-bosque-lt/10'
+                          : 'border-line bg-sombra hover:border-bosque-lt/30',
                       )}
                     >
                       <div className="flex items-start justify-between gap-3 mb-3">
@@ -405,21 +402,20 @@ export function ProviderSignup() {
                               {plan.label}
                             </span>
                           </div>
-                          <p className="text-xs text-[--color-muted]">{plan.contacts}</p>
+                          <p className="text-xs text-muted">{plan.contacts}</p>
                         </div>
                         <div className="text-right shrink-0">
                           <p
-                            className="text-xl font-bold text-[--color-nieve]"
-                            style={{ fontFamily: 'var(--font-mono)' }}
+                            className="text-xl font-bold text-nieve font-mono"
                           >
                             {formatARS(plan.priceARS)}
                           </p>
-                          <p className="text-xs text-[--color-muted]">/mes</p>
+                          <p className="text-xs text-muted">/mes</p>
                         </div>
                       </div>
                       <ul className="space-y-1">
                         {plan.features.map(f => (
-                          <li key={f} className="flex items-center gap-2 text-xs text-[--color-muted]">
+                          <li key={f} className="flex items-center gap-2 text-xs text-muted">
                             <span style={{ color: plan.accent }}>✓</span>
                             {f}
                           </li>
@@ -456,8 +452,7 @@ export function ProviderSignup() {
 
         {/* ── Bottom action bar ──────────────────────────────────────────────── */}
         <div
-          className="fixed bottom-0 left-0 w-full px-6 py-4 border-t border-[--color-line]"
-          style={{ backgroundColor: 'var(--color-noche)' }}
+          className="fixed bottom-0 left-0 w-full px-6 py-4 border-t border-line bg-noche"
         >
           <div className="max-w-xl mx-auto space-y-2">
             {step < 4 ? (
@@ -483,9 +478,9 @@ export function ProviderSignup() {
             )}
 
             {step === 1 && (
-              <p className="text-xs text-center text-[--color-muted]">
+              <p className="text-xs text-center text-muted">
                 ¿Ya tenés cuenta?{' '}
-                <Link to="/login" className="text-[--color-bosque-lt] font-semibold hover:underline">
+                <Link to="/login" className="text-bosque-lt font-semibold hover:underline">
                   Iniciá sesión
                 </Link>
               </p>
@@ -504,7 +499,7 @@ type FieldProps = { label: string; error?: string; children: React.ReactNode }
 function Field({ label, error, children }: FieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-bold tracking-[0.12em] uppercase text-[--color-muted]">
+      <label className="text-xs font-bold tracking-[0.12em] uppercase text-muted">
         {label}
       </label>
       {children}
@@ -517,10 +512,10 @@ function Field({ label, error, children }: FieldProps) {
 
 function inputCls(hasError: boolean) {
   return cn(
-    'w-full h-14 px-4 rounded-lg text-[--color-nieve]',
-    'bg-[--color-sombra] border border-[--color-line]',
-    'placeholder:text-[--color-muted]/60 transition-shadow',
-    'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40',
+    'w-full h-14 px-4 rounded-lg text-nieve',
+    'bg-sombra border border-line',
+    'placeholder:text-muted/60 transition-shadow',
+    'focus:outline-none focus:ring-1 focus:ring-bosque-lt/40',
     hasError ? 'ring-1 ring-[#ffb4ab]/60 border-[#ffb4ab]/40' : '',
   )
 }
@@ -553,7 +548,7 @@ function IconCheck({ size = 16 }: { size?: number }) {
 
 function IconCamera() {
   return (
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-bosque-lt)' }}>
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-bosque-lt">
       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
       <circle cx="12" cy="13" r="4" />
     </svg>

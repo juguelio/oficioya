@@ -29,12 +29,12 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 const INPUT_CLASS =
-  'w-full h-14 px-4 rounded-lg text-[--color-nieve] placeholder:text-[--color-muted] border ' +
-  'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40'
+  'w-full h-14 px-4 rounded-lg text-nieve placeholder:text-muted border ' +
+  'focus:outline-none focus:ring-1 focus:ring-bosque-lt/40'
 
 function Center({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-2 px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center gap-2 px-8 text-center bg-noche">
       {children}
     </div>
   )
@@ -43,7 +43,7 @@ function Center({ children }: { children: React.ReactNode }) {
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div className="mb-4">
-      <label className="block text-xs font-bold uppercase tracking-[0.15em] mb-2 text-[--color-muted]">{label}</label>
+      <label className="block text-xs font-bold uppercase tracking-[0.15em] mb-2 text-muted">{label}</label>
       {children}
       {error && <p className="text-xs mt-1.5" style={{ color: '#ffb4ab' }}>{error}</p>}
     </div>
@@ -101,13 +101,13 @@ export function ClaimProfilePage() {
     setDone(authData.session ? 'session' : 'confirm')
   }
 
-  if (profile === undefined) return <Center><p className="text-[--color-muted]">Cargando…</p></Center>
+  if (profile === undefined) return <Center><p className="text-muted">Cargando…</p></Center>
 
   if (!profile) return (
     <Center>
       <span className="text-5xl mb-3">🔗</span>
-      <p className="text-[--color-nieve] font-bold text-lg">Link inválido o vencido</p>
-      <p className="text-[--color-muted] text-sm">Revisá el enlace que te enviamos por WhatsApp.</p>
+      <p className="text-nieve font-bold text-lg">Link inválido o vencido</p>
+      <p className="text-muted text-sm">Revisá el enlace que te enviamos por WhatsApp.</p>
     </Center>
   )
 
@@ -115,10 +115,10 @@ export function ClaimProfilePage() {
   if (done) return (
     <Center>
       <span className="text-6xl mb-4">🎉</span>
-      <h1 className="font-black text-2xl text-[--color-nieve] mb-2" style={{ letterSpacing: '-0.02em' }}>
+      <h1 className="font-black text-2xl text-nieve mb-2" style={{ letterSpacing: '-0.02em' }}>
         ¡Tu perfil está activo!
       </h1>
-      <p className="text-sm text-[--color-muted] mb-7 max-w-xs">
+      <p className="text-sm text-muted mb-7 max-w-xs">
         {done === 'session'
           ? 'Ya podés recibir contactos de clientes. Desde tu panel editás tus datos y prendés el modo guardia.'
           : 'Te mandamos un mail para confirmar tu cuenta. Confirmalo y entrá a tu panel.'}
@@ -126,15 +126,13 @@ export function ClaimProfilePage() {
       <div className="flex flex-col gap-3 w-full max-w-xs">
         <button
           onClick={() => navigate(done === 'session' ? '/dashboard' : '/login')}
-          className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
-          style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+          className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-95 transition-all bg-bosque-lt"
         >
           {done === 'session' ? 'Ir a mi panel' : 'Ir a iniciar sesión'}
         </button>
         <button
           onClick={() => navigate(`/prestador/${profile.id}`)}
-          className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
-          style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+          className="w-full py-3 rounded-full font-bold text-sm border active:scale-95 transition-all border-line text-nieve"
         >
           Ver cómo me ven los clientes
         </button>
@@ -146,12 +144,11 @@ export function ClaimProfilePage() {
   if (profile.already_claimed) return (
     <Center>
       <span className="text-5xl mb-3">✅</span>
-      <p className="text-[--color-nieve] font-bold text-lg mb-1">Este perfil ya tiene cuenta</p>
-      <p className="text-[--color-muted] text-sm mb-7 max-w-xs">Si es tuyo, entrá con tu email y contraseña.</p>
+      <p className="text-nieve font-bold text-lg mb-1">Este perfil ya tiene cuenta</p>
+      <p className="text-muted text-sm mb-7 max-w-xs">Si es tuyo, entrá con tu email y contraseña.</p>
       <button
         onClick={() => navigate('/login')}
-        className="py-3.5 px-8 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
-        style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+        className="py-3.5 px-8 rounded-full font-bold text-sm text-white active:scale-95 transition-all bg-bosque-lt"
       >
         Iniciar sesión
       </button>
@@ -162,10 +159,9 @@ export function ClaimProfilePage() {
   const ciudadData = ciudades.find(c => c.id === profile.ciudad_id)
 
   return (
-    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen text-nieve bg-noche">
       <header
-        className="fixed top-0 w-full z-50 flex items-center px-6 h-16 border-b border-[--color-line]"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="fixed top-0 w-full z-50 flex items-center px-6 h-16 border-b border-line bg-noche"
       >
         <h1 className="font-black text-base" style={{ letterSpacing: '-0.02em' }}>Activá tu perfil</h1>
       </header>
@@ -176,19 +172,19 @@ export function ClaimProfilePage() {
           <h2 className="text-2xl font-black mb-2" style={{ letterSpacing: '-0.02em' }}>
             Te armamos tu perfil en Oficio
           </h2>
-          <p className="text-sm text-[--color-muted] mb-7 max-w-sm mx-auto">
-            Creá tu clave para administrarlo y empezá a recibir contactos de clientes de la zona — <strong className="text-[--color-nieve]">gratis</strong>.
+          <p className="text-sm text-muted mb-7 max-w-sm mx-auto">
+            Creá tu clave para administrarlo y empezá a recibir contactos de clientes de la zona — <strong className="text-nieve">gratis</strong>.
           </p>
         </div>
 
         {/* Tarjeta del perfil pre-armado */}
-        <div className="rounded-xl p-5 mb-7 border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-          <p className="text-lg font-bold text-[--color-nieve]">{profile.name}</p>
-          <p className="text-sm text-[--color-bosque-lt] font-semibold mt-0.5">
-            {rubroData?.icon} {rubroData?.label} · <span className="text-[--color-muted] font-normal">{ciudadData?.label}</span>
+        <div className="rounded-xl p-5 mb-7 border bg-sombra border-line">
+          <p className="text-lg font-bold text-nieve">{profile.name}</p>
+          <p className="text-sm text-bosque-lt font-semibold mt-0.5">
+            {rubroData?.icon} {rubroData?.label} · <span className="text-muted font-normal">{ciudadData?.label}</span>
           </p>
           {profile.external_rating != null && (
-            <p className="text-xs text-[--color-muted] mt-2">
+            <p className="text-xs text-muted mt-2">
               ★ {Number(profile.external_rating).toFixed(1)} en Google
               {profile.external_reviews ? ` (${profile.external_reviews} reseñas)` : ''}
             </p>
@@ -233,12 +229,11 @@ export function ClaimProfilePage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-4 rounded-full font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-60"
-            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+            className="w-full py-4 rounded-full font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-60 bg-bosque-lt"
           >
             {isSubmitting ? 'Activando…' : 'Sí, soy yo — activar mi perfil'}
           </button>
-          <p className="text-center text-xs text-[--color-muted] mt-4">
+          <p className="text-center text-xs text-muted mt-4">
             Al activar, confirmás que sos el titular y aceptás recibir contactos por WhatsApp.
           </p>
         </form>

@@ -21,8 +21,7 @@ export function PageHeader({ title, back = true, right, className }: PageHeaderP
 
   return (
     <header
-      className={cn('fixed top-0 w-full z-50 h-14 border-b', className)}
-      style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+      className={cn('fixed top-0 w-full z-50 h-14 border-b bg-sombra border-line', className)}
     >
       <div className="px-5 h-full flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
@@ -30,7 +29,7 @@ export function PageHeader({ title, back = true, right, className }: PageHeaderP
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="p-2 -ml-2 rounded-md text-[--color-bosque-lt] transition-all active:scale-95"
+              className="p-2 -ml-2 rounded-md text-bosque-lt transition-all active:scale-95"
               aria-label="Volver"
             >
               <IconArrowLeft />
@@ -38,7 +37,7 @@ export function PageHeader({ title, back = true, right, className }: PageHeaderP
           )}
           {title ? (
             <h1
-              className="font-bold text-base text-[--color-nieve] truncate"
+              className="font-bold text-base text-nieve truncate"
               style={{ letterSpacing: '-0.02em' }}
             >
               {title}

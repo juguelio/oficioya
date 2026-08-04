@@ -18,11 +18,10 @@ export function StarRating({ value, showValue = true, size = 'sm', className }: 
       {showValue && (
         <span
           className={cn(
-            'font-semibold tabular-nums',
+            'font-semibold tabular-nums font-mono',
             size === 'sm' ? 'text-sm' : 'text-base',
-            'text-[--color-nieve]'
+            'text-nieve'
           )}
-          style={{ fontFamily: 'var(--font-mono)' }}
         >
           {rounded.toFixed(1)}
         </span>

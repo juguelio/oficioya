@@ -75,20 +75,18 @@ export function JobsPage() {
   const ciudadData = ciudades.find(c => c.id === ciudadId)
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
 
       {/* ── Header ─────────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center justify-between px-5 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-5 h-14 border-b bg-sombra border-line"
       >
         <button onClick={() => navigate('/')} className="active:scale-95 transition-transform" aria-label="Inicio">
           <Logo size={26} withWordmark />
         </button>
         <Link
           to="/trabajos/nuevo"
-          className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full text-white active:scale-95 transition-all"
-          style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+          className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full text-white active:scale-95 transition-all bg-bosque-lt"
         >
           <span className="text-base leading-none font-black">+</span> Publicar
         </Link>
@@ -99,14 +97,14 @@ export function JobsPage() {
         {/* El tablero es público; para prestadores el siguiente paso queda claro:
             entrar/crear perfil, elegir una oportunidad y cotizar. */}
         <section className="px-5 pt-5">
-          <div className="rounded-xl p-4 border" style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}>
+          <div className="rounded-xl p-4 border bg-brand-tint border-bosque-lt">
             <div className="flex items-start gap-3">
               <span className="text-2xl" aria-hidden="true">🔧</span>
               <div className="flex-1 min-w-0">
-                <p className="font-black text-sm mb-1" style={{ color: 'var(--color-bosque-dk)' }}>
+                <p className="font-black text-sm mb-1 text-bosque-dk">
                   ¿Sos prestador? Estos son clientes que están buscando ayuda.
                 </p>
-                <p className="text-xs leading-relaxed" style={{ color: 'var(--color-bosque-dk)' }}>
+                <p className="text-xs leading-relaxed text-bosque-dk">
                   Elegí los trabajos de tu rubro y ciudad, enviá tu presupuesto y seguí la respuesta desde tu panel.
                 </p>
               </div>
@@ -115,16 +113,14 @@ export function JobsPage() {
               <button
                 onClick={() => navigate('/dashboard')}
                 disabled={authLoading}
-                className="flex-1 py-2.5 rounded-lg text-center font-bold text-xs text-white active:scale-95 transition-all disabled:opacity-60"
-                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                className="flex-1 py-2.5 rounded-lg text-center font-bold text-xs text-white active:scale-95 transition-all disabled:opacity-60 bg-bosque-lt"
               >
                 {user ? 'Ir a mi panel' : 'Ingresar para cotizar'}
               </button>
               {!user && (
                 <Link
                   to="/registro/prestador"
-                  className="flex-1 py-2.5 rounded-lg text-center font-bold text-xs border active:scale-95 transition-all"
-                  style={{ borderColor: 'var(--color-bosque-lt)', color: 'var(--color-bosque-dk)' }}
+                  className="flex-1 py-2.5 rounded-lg text-center font-bold text-xs border active:scale-95 transition-all border-bosque-lt text-bosque-dk"
                 >
                   Crear perfil gratis
                 </Link>
@@ -135,7 +131,7 @@ export function JobsPage() {
 
         {/* ── Ciudad selector ──────────────────────────────────────────────────── */}
         <section className="px-5 pt-5 pb-1">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3 text-muted">
             {ciudadId ? 'Trabajos en' : '¿En qué ciudad?'}
           </p>
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
@@ -200,7 +196,7 @@ export function JobsPage() {
                     : `Trabajos en ${ciudadData?.label}`
                   }
                 </h2>
-                <span className="text-xs font-black" style={{ color: 'var(--color-bosque-lt)', fontFamily: 'var(--font-mono)' }}>
+                <span className="text-xs font-black text-bosque-lt font-mono">
                   {jobs.length}
                 </span>
               </div>
@@ -219,16 +215,15 @@ export function JobsPage() {
               ) : (
                 <div className="flex flex-col items-center py-16 text-center">
                   <span className="text-5xl mb-4">📋</span>
-                  <p className="font-bold text-base mb-1" style={{ color: 'var(--color-nieve)' }}>
+                  <p className="font-bold text-base mb-1 text-nieve">
                     Sin trabajos publicados
                   </p>
-                  <p className="text-sm mb-6" style={{ color: 'var(--color-muted)' }}>
+                  <p className="text-sm mb-6 text-muted">
                     Sé el primero en publicar un trabajo en {ciudadData?.label}
                   </p>
                   <Link
                     to="/trabajos/nuevo"
-                    className="px-6 py-3 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
-                    style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                    className="px-6 py-3 rounded-full font-bold text-sm text-white active:scale-95 transition-all bg-bosque-lt"
                   >
                     Publicar trabajo
                   </Link>
@@ -238,10 +233,10 @@ export function JobsPage() {
           ) : (
             <div className="flex flex-col items-center py-16 text-center">
               <span className="text-5xl mb-4">🏔️</span>
-              <p className="font-bold text-base mb-1" style={{ color: 'var(--color-nieve)' }}>
+              <p className="font-bold text-base mb-1 text-nieve">
                 Elegí tu ciudad
               </p>
-              <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+              <p className="text-sm text-muted">
                 Para ver los trabajos disponibles y publicar el tuyo
               </p>
             </div>
@@ -252,8 +247,7 @@ export function JobsPage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t bg-sombra border-line"
       >
         <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />
         <button
@@ -271,8 +265,7 @@ export function JobsPage() {
         <NavTab icon={<IconBriefcase active />} label="Trabajos" active />
         <Link
           to="/dashboard"
-          className="flex flex-col items-center gap-1 active:scale-90 transition-all"
-          style={{ color: 'var(--color-muted)' }}
+          className="flex flex-col items-center gap-1 active:scale-90 transition-all text-muted"
         >
           <IconPerson />
           <span className="text-[10px] font-semibold uppercase tracking-widest">Mi panel</span>
@@ -293,14 +286,12 @@ function JobCard({ job, quotesCount, onPress }: JobCardProps) {
   return (
     <button
       onClick={onPress}
-      className={cn('w-full text-left rounded-lg border active:scale-[0.99] transition-all overflow-hidden')}
-      style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+      className={cn('w-full text-left rounded-lg border active:scale-[0.99] transition-all overflow-hidden bg-sombra border-line')}
     >
       <div className="p-4">
         <div className="flex items-center gap-2 mb-2 flex-wrap">
           <span
-            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
-            style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
+            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand-tint text-bosque-lt"
           >
             {rubro?.icon} {rubro?.label}
           </span>
@@ -310,14 +301,14 @@ function JobCard({ job, quotesCount, onPress }: JobCardProps) {
           >
             {STATUS_LABEL[job.status]}
           </span>
-          <span className="ml-auto text-[10px]" style={{ color: 'var(--color-muted)' }}>
+          <span className="ml-auto text-[10px] text-muted">
             {timeAgo(job.createdAt)}
           </span>
         </div>
-        <p className="font-bold text-sm leading-tight mb-1 line-clamp-1" style={{ color: 'var(--color-nieve)' }}>
+        <p className="font-bold text-sm leading-tight mb-1 line-clamp-1 text-nieve">
           {job.title}
         </p>
-        <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'var(--color-muted)' }}>
+        <p className="text-xs leading-relaxed line-clamp-2 text-muted">
           {job.description}
         </p>
       </div>
@@ -326,13 +317,13 @@ function JobCard({ job, quotesCount, onPress }: JobCardProps) {
         className="flex items-center gap-3 px-4 py-2.5 border-t"
         style={{ borderColor: 'var(--color-line)', backgroundColor: 'rgba(0,0,0,0.02)' }}
       >
-        <span className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-muted)' }}>
+        <span className="flex items-center gap-1 text-xs text-muted">
           <IconPin />
           {job.barrio ? `${job.barrio}, ` : ''}{ciudades.find(c => c.id === job.ciudad)?.label?.split(' ')[0]}
         </span>
 
         {(job.budgetMin || job.budgetMax) && (
-          <span className="text-xs font-bold" style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)' }}>
+          <span className="text-xs font-bold text-nieve font-mono">
             {job.budgetMin && job.budgetMax
               ? `${formatARS(job.budgetMin)} – ${formatARS(job.budgetMax)}`
               : job.budgetMax

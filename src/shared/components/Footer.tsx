@@ -40,8 +40,7 @@ export function Footer({ className }: FooterProps) {
 
   return (
     <footer
-      className={cn('w-full border-t mt-16', className)}
-      style={{ borderColor: 'var(--color-line)', backgroundColor: 'var(--color-sombra)' }}
+      className={cn('w-full border-t mt-16 border-line bg-sombra', className)}
     >
       <div className="max-w-5xl mx-auto px-6 py-10">
 
@@ -51,14 +50,14 @@ export function Footer({ className }: FooterProps) {
             <p className="font-black text-base mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
               Oficio
             </p>
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-sm leading-relaxed text-muted">
               Los oficios de San Martín y Junín de los Andes, en un solo lugar.
               Contacto directo por WhatsApp, sin intermediarios.
             </p>
           </div>
 
           <nav className="flex flex-col gap-2.5">
-            <p className="text-xs font-bold uppercase tracking-[0.15em] mb-1" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.15em] mb-1 text-muted">
               Plataforma
             </p>
             <FooterLink to="/emergencias">Urgencias 24/7</FooterLink>
@@ -68,15 +67,14 @@ export function Footer({ className }: FooterProps) {
           </nav>
 
           <nav className="flex flex-col gap-2.5">
-            <p className="text-xs font-bold uppercase tracking-[0.15em] mb-1" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.15em] mb-1 text-muted">
               Legales
             </p>
             <FooterLink to="/privacidad">Política de privacidad</FooterLink>
             <FooterLink to="/terminos">Términos y condiciones</FooterLink>
             <a
               href={`mailto:${CONTACTO_EMAIL}`}
-              className="text-sm transition-colors hover:underline"
-              style={{ color: 'var(--color-muted)' }}
+              className="text-sm transition-colors hover:underline text-muted"
             >
               {CONTACTO_EMAIL}
             </a>
@@ -92,8 +90,7 @@ export function Footer({ className }: FooterProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={r.label}
-                className="transition-colors"
-                style={{ color: 'var(--color-muted)' }}
+                className="transition-colors text-muted"
               >
                 <r.icon />
               </a>
@@ -101,7 +98,7 @@ export function Footer({ className }: FooterProps) {
           </div>
         )}
 
-        <p className="text-xs mt-8 pt-6 border-t" style={{ color: 'var(--color-muted)', borderColor: 'var(--color-line)' }}>
+        <p className="text-xs mt-8 pt-6 border-t text-muted border-line">
           © {new Date().getFullYear()} Oficio · San Martín de los Andes, Neuquén, Argentina
         </p>
       </div>
@@ -111,7 +108,7 @@ export function Footer({ className }: FooterProps) {
 
 function FooterLink({ to, children }: { to: string; children: React.ReactNode }) {
   return (
-    <Link to={to} className="text-sm transition-colors hover:underline" style={{ color: 'var(--color-muted)' }}>
+    <Link to={to} className="text-sm transition-colors hover:underline text-muted">
       {children}
     </Link>
   )

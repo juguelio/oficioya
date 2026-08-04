@@ -17,7 +17,7 @@ export function SectionTitle({ children, eyebrow, right, className }: SectionTit
     <div className={cn('flex items-end justify-between gap-3 mb-4', className)}>
       <div className="min-w-0">
         {eyebrow && (
-          <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-0.5 text-muted">
             {eyebrow}
           </p>
         )}

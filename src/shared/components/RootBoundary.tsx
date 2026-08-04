@@ -24,15 +24,14 @@ export function RootBoundary() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center gap-5 px-8 text-center"
-      style={{ backgroundColor: 'var(--color-noche)' }}
+      className="min-h-screen flex flex-col items-center justify-center gap-5 px-8 text-center bg-noche"
     >
       <span className="text-5xl">{is404 ? '🧭' : '⚠️'}</span>
       <div className="space-y-2">
         <h1 className="font-black text-2xl" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.03em' }}>
           {title}
         </h1>
-        <p className="text-sm max-w-xs mx-auto leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+        <p className="text-sm max-w-xs mx-auto leading-relaxed text-muted">
           {body}
         </p>
       </div>
@@ -50,8 +49,7 @@ export function RootBoundary() {
       </div>
       {detail && (
         <pre
-          className="mt-2 max-w-xs overflow-auto rounded-md p-3 text-left text-[11px]"
-          style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-muted)' }}
+          className="mt-2 max-w-xs overflow-auto rounded-md p-3 text-left text-[11px] bg-sombra text-muted"
         >
           {detail}
         </pre>

@@ -8,8 +8,7 @@ export function OnboardingPage() {
 
   return (
     <div
-      className="relative min-h-screen flex flex-col text-[--color-nieve]"
-      style={{ backgroundColor: 'var(--color-noche)' }}
+      className="relative min-h-screen flex flex-col text-nieve bg-noche"
     >
 
       {/* ── Logo ─────────────────────────────────────────────────────────────── */}
@@ -23,13 +22,13 @@ export function OnboardingPage() {
         {/* Hero copy */}
         <div className="mb-10">
           <h2
-            className="text-3xl font-bold leading-tight text-[--color-nieve] mb-3"
+            className="text-3xl font-bold leading-tight text-nieve mb-3"
             style={{ letterSpacing: '-0.025em' }}
           >
             Tu nexo con el <br />
-            <span style={{ color: 'var(--color-bosque-lt)' }}>talento local.</span>
+            <span className="text-bosque-lt">talento local.</span>
           </h2>
-          <p className="text-base text-[--color-muted] leading-relaxed">
+          <p className="text-base text-muted leading-relaxed">
             Elegí cómo querés empezar a potenciar tu zona.
           </p>
         </div>
@@ -50,15 +49,13 @@ export function OnboardingPage() {
               <div className="space-y-2">
                 <button
                   onClick={() => navigate('/')}
-                  className="w-full py-3 px-6 rounded-full border font-bold text-sm tracking-wide text-[--color-nieve] transition-colors active:scale-[0.98]"
-                  style={{ borderColor: 'var(--color-line)' }}
+                  className="w-full py-3 px-6 rounded-full border font-bold text-sm tracking-wide text-nieve transition-colors active:scale-[0.98] border-line"
                 >
                   Buscar ahora
                 </button>
                 <button
                   onClick={() => navigate('/registro/cliente')}
-                  className="w-full py-2 text-xs font-semibold transition-colors"
-                  style={{ color: 'var(--color-bosque-lt)' }}
+                  className="w-full py-2 text-xs font-semibold transition-colors text-bosque-lt"
                 >
                   Crear cuenta para publicar trabajos
                 </button>
@@ -96,10 +93,10 @@ export function OnboardingPage() {
         <footer className="mt-auto text-center space-y-8">
           <button
             onClick={() => navigate('/login')}
-            className="text-sm text-[--color-muted] hover:text-[--color-nieve] transition-colors"
+            className="text-sm text-muted hover:text-nieve transition-colors"
           >
             ¿Ya tenés cuenta?{' '}
-            <span className="font-bold ml-1" style={{ color: 'var(--color-bosque-lt)' }}>
+            <span className="font-bold ml-1 text-bosque-lt">
               Ingresá
             </span>
           </button>
@@ -148,12 +145,12 @@ function RoleCard({ icon, iconBg, iconColor, title, description, cardBg, borderC
         </div>
 
         {/* Title */}
-        <h3 className="text-xl font-bold text-[--color-nieve] mb-2">
+        <h3 className="text-xl font-bold text-nieve mb-2">
           {title}
         </h3>
 
         {/* Description */}
-        <p className="text-sm text-[--color-muted] mb-6 leading-relaxed">
+        <p className="text-sm text-muted mb-6 leading-relaxed">
           {description}
         </p>
 

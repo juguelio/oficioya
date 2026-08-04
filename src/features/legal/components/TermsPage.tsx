@@ -14,7 +14,7 @@ export function TermsPage() {
       <Section title="Qué es Oficio y qué no es">
         <p>
           Oficio es un lugar donde vecinos encuentran trabajadores de oficios de la zona y los
-          contactan directamente por WhatsApp. <strong style={{ color: 'var(--color-nieve)' }}>No somos
+          contactan directamente por WhatsApp. <strong className="text-nieve">No somos
           parte del trabajo que se contrata.</strong> No empleamos a los prestadores, no fijamos sus
           precios, no supervisamos sus tareas y no garantizamos resultados.
         </p>

@@ -5,15 +5,15 @@ import { cn } from '@/shared/utils/cn'
 // rectangulares al lado de cajas redondeadas".
 const variants = {
   /** Estado neutro sobre card: "Pendiente", fecha, contador. */
-  neutral:   'bg-[--color-noche] text-[--color-muted]',
+  neutral:   'bg-noche text-muted',
   /** Estado activo en el color de marca: "Recibiendo presupuestos". */
-  tint:      'bg-[--color-brand-tint] text-[--color-bosque-lt]',
+  tint:      'bg-brand-tint text-bosque-lt',
   /** Confirmación fuerte: "Subido ✓", "Verificado". */
-  verified:  'bg-[--color-bosque-lt] text-white',
+  verified:  'bg-bosque-lt text-white',
   /** Plan destacado — único uso del ámbar fuera de las estrellas. */
-  destacado: 'bg-[--color-amber] text-white',
+  destacado: 'bg-amber text-white',
   /** Etiqueta con borde, sobre fondo claro. */
-  outline:   'bg-[--color-sombra] text-[--color-muted] border border-[--color-line]',
+  outline:   'bg-sombra text-muted border border-line',
 } as const
 
 type Variant = keyof typeof variants

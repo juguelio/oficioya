@@ -35,15 +35,14 @@ export function MyJobsPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
 
       <PageHeader
         back={false}
         right={
           <button
             onClick={handleSignOut}
-            className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
-            style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+            className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all border-line text-muted"
           >
             Salir
           </button>
@@ -55,31 +54,29 @@ export function MyJobsPage() {
           <h1 className="font-black text-2xl mb-1" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.03em' }}>
             Mis trabajos
           </h1>
-          <p className="text-sm mb-6" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-sm mb-6 text-muted">
             Seguí los presupuestos que te mandan los prestadores de la zona.
           </p>
 
           {loading ? (
             <div className="space-y-3 animate-pulse">
-              <div className="h-24 rounded-lg" style={{ backgroundColor: 'var(--color-sombra)' }} />
-              <div className="h-24 rounded-lg" style={{ backgroundColor: 'var(--color-sombra)' }} />
+              <div className="h-24 rounded-lg bg-sombra" />
+              <div className="h-24 rounded-lg bg-sombra" />
             </div>
           ) : jobs.length === 0 ? (
             <div
-              className="flex flex-col items-center py-12 rounded-lg border text-center"
-              style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+              className="flex flex-col items-center py-12 rounded-lg border text-center bg-sombra border-line"
             >
               <span className="text-4xl mb-3">📋</span>
-              <p className="font-bold text-base mb-1" style={{ color: 'var(--color-nieve)' }}>
+              <p className="font-bold text-base mb-1 text-nieve">
                 Todavía no publicaste ningún trabajo
               </p>
-              <p className="text-sm mb-5 px-6" style={{ color: 'var(--color-muted)' }}>
+              <p className="text-sm mb-5 px-6 text-muted">
                 Contá qué necesitás y recibí presupuestos de prestadores de tu zona.
               </p>
               <Link
                 to="/trabajos/nuevo"
-                className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
-                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all bg-bosque-lt"
               >
                 Publicar un trabajo
               </Link>
@@ -94,25 +91,24 @@ export function MyJobsPage() {
                     <button
                       key={job.id}
                       onClick={() => navigate(`/trabajos/${job.id}#t=${job.clientToken}`)}
-                      className="w-full text-left p-4 rounded-lg border active:scale-[0.99] transition-all"
-                      style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+                      className="w-full text-left p-4 rounded-lg border active:scale-[0.99] transition-all bg-sombra border-line"
                     >
                       <div className="flex items-start justify-between gap-3 mb-1.5">
-                        <p className="font-bold text-sm flex-1" style={{ color: 'var(--color-nieve)' }}>
+                        <p className="font-bold text-sm flex-1 text-nieve">
                           {job.title}
                         </p>
                         {job.quoteCount > 0 && (
                           <Badge variant="verified" className="shrink-0" >{job.quoteCount}</Badge>
                         )}
                       </div>
-                      <p className="text-xs mb-2" style={{ color: 'var(--color-muted)' }}>
+                      <p className="text-xs mb-2 text-muted">
                         {rubroData?.icon} {rubroData?.label} · {ciudadData?.label}
                       </p>
                       <div className="flex items-center justify-between">
                         <Badge size="xs" variant={job.status === 'open' ? 'tint' : 'neutral'}>
                           {STATUS_LABEL[job.status]}
                         </Badge>
-                        <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>
+                        <span className="text-[10px] text-muted">
                           {new Date(job.createdAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
                         </span>
                       </div>
@@ -123,8 +119,7 @@ export function MyJobsPage() {
 
               <Link
                 to="/trabajos/nuevo"
-                className="mt-5 flex items-center justify-center w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
-                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                className="mt-5 flex items-center justify-center w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all bg-bosque-lt"
               >
                 Publicar otro trabajo
               </Link>

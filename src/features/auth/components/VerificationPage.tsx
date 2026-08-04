@@ -99,11 +99,11 @@ export function VerificationPage() {
   }
 
   return (
-    <div className="min-h-screen pb-32 text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen pb-32 text-nieve bg-noche">
 
       <PageHeader
         title="Verificá tu perfil"
-        right={<span className="text-xs font-semibold" style={{ color: 'var(--color-muted)' }}>Paso 2 de 2</span>}
+        right={<span className="text-xs font-semibold text-muted">Paso 2 de 2</span>}
       />
 
       <main className="pt-20 px-6 max-w-md mx-auto">
@@ -112,34 +112,30 @@ export function VerificationPage() {
         <section className="flex flex-col items-center text-center mb-10">
           <div className="relative mb-6">
             <div
-              className="relative p-6 rounded-full border border-[--color-line]"
-              style={{ backgroundColor: 'var(--color-sombra)' }}
+              className="relative p-6 rounded-full border border-line bg-sombra"
             >
               <IconCheckCircle />
             </div>
           </div>
 
-          <h2 className="text-3xl font-bold mb-2 tracking-tight text-[--color-nieve]">
+          <h2 className="text-3xl font-bold mb-2 tracking-tight text-nieve">
             ¡Tu perfil está listo!
           </h2>
-          <p className="text-sm text-[--color-muted] mb-8 leading-relaxed px-4">
+          <p className="text-sm text-muted mb-8 leading-relaxed px-4">
             Subí tu documentación para obtener el badge verificado.
           </p>
 
           {/* Badge preview */}
           <div
-            className="px-5 py-3 rounded-lg flex items-center gap-3 border border-[--color-line]"
-            style={{ backgroundColor: 'var(--color-sombra)' }}
+            className="px-5 py-3 rounded-lg flex items-center gap-3 border border-line bg-sombra"
           >
             <div
-              className="p-1.5 rounded-full"
-              style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+              className="p-1.5 rounded-full bg-bosque-lt"
             >
               <IconVerified />
             </div>
             <span
-              className="font-bold text-sm tracking-wide"
-              style={{ color: 'var(--color-bosque-lt)' }}
+              className="font-bold text-sm tracking-wide text-bosque-lt"
             >
               ✓ Verificado
             </span>
@@ -149,18 +145,16 @@ export function VerificationPage() {
         {/* ── Aviso sin sesión ──────────────────────────────────────────────────── */}
         {sinSesion && (
           <section
-            className="mb-6 px-5 py-4 rounded-xl border text-left"
-            style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
+            className="mb-6 px-5 py-4 rounded-xl border text-left bg-brand-tint border-bosque-lt"
           >
-            <p className="text-sm font-semibold leading-relaxed" style={{ color: 'var(--color-bosque-lt)' }}>
+            <p className="text-sm font-semibold leading-relaxed text-bosque-lt">
               Te mandamos un mail para confirmar tu cuenta. Confirmalo, iniciá sesión
               y volvé acá (o al panel) para subir tu documentación.
             </p>
             <button
               type="button"
               onClick={() => navigate('/login')}
-              className="mt-3 px-4 py-2 rounded-full text-sm font-bold text-white active:scale-95 transition-all"
-              style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+              className="mt-3 px-4 py-2 rounded-full text-sm font-bold text-white active:scale-95 transition-all bg-bosque-lt"
             >
               Ya confirmé — iniciar sesión
             </button>
@@ -215,15 +209,14 @@ export function VerificationPage() {
 
           <button
             onClick={() => navigate('/')}
-            className="block w-full text-sm font-bold hover:underline transition-colors"
-            style={{ color: 'var(--color-bosque-lt)' }}
+            className="block w-full text-sm font-bold hover:underline transition-colors text-bosque-lt"
           >
             Hacerlo más tarde
           </button>
 
           <div className="flex items-center justify-center gap-2 pt-4 opacity-60">
             <IconClock />
-            <p className="text-[10px] tracking-wide uppercase text-[--color-muted]">
+            <p className="text-[10px] tracking-wide uppercase text-muted">
               La revisión tarda 24-48hs. Te avisamos por WhatsApp.
             </p>
           </div>
@@ -249,13 +242,12 @@ function UploadCard({ card, status, disabled, onUpload }: UploadCardProps) {
 
   return (
     <div
-      className="p-5 rounded-xl transition-colors group border border-[--color-line]"
-      style={{ backgroundColor: 'var(--color-sombra)' }}
+      className="p-5 rounded-xl transition-colors group border border-line bg-sombra"
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-4">
           <div
-            className="p-3 rounded-lg transition-colors border border-[--color-line]"
+            className="p-3 rounded-lg transition-colors border border-line"
             style={{
               backgroundColor: 'var(--color-noche)',
               color: uploaded ? 'var(--color-bosque-lt)' : 'var(--color-nieve)',
@@ -264,10 +256,10 @@ function UploadCard({ card, status, disabled, onUpload }: UploadCardProps) {
             {card.icon}
           </div>
           <div>
-            <h3 className="font-bold text-[--color-nieve]">
+            <h3 className="font-bold text-nieve">
               {card.title}
             </h3>
-            <p className="text-xs text-[--color-muted]">{card.subtitle}</p>
+            <p className="text-xs text-muted">{card.subtitle}</p>
           </div>
         </div>
 
@@ -299,7 +291,7 @@ function UploadCard({ card, status, disabled, onUpload }: UploadCardProps) {
         className={cn(
           'w-full py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 border',
           'active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed',
-          uploaded ? 'border-[--color-bosque-lt]/40' : 'border-[--color-line]',
+          uploaded ? 'border-bosque-lt/40' : 'border-line',
         )}
         style={{
           backgroundColor: 'var(--color-noche)',
@@ -317,7 +309,7 @@ function UploadCard({ card, status, disabled, onUpload }: UploadCardProps) {
 
 function IconCheckCircle() {
   return (
-    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ color: 'var(--color-bosque-lt)' }}>
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-bosque-lt">
       <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2" />
       <path d="M9 12l2 2 4-4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="12" cy="12" r="10" strokeWidth="2" />

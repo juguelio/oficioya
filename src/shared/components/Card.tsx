@@ -22,9 +22,9 @@ export function Card({ children, variant = 'default', highlight = false, hoverab
         'border p-4 transition-all duration-200',
         variant === 'panel' ? 'rounded-xl p-5' : 'rounded-lg',
         highlight
-          ? 'border-[--color-bosque-lt] bg-[--color-brand-tint]'
-          : 'border-[--color-line] bg-[--color-sombra]',
-        hoverable && 'hover:-translate-y-1 hover:border-[--color-bosque-lt]',
+          ? 'border-bosque-lt bg-brand-tint'
+          : 'border-line bg-sombra',
+        hoverable && 'hover:-translate-y-1 hover:border-bosque-lt',
         (hoverable || onClick) && 'cursor-pointer',
         className,
       )}

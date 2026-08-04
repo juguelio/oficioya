@@ -15,14 +15,14 @@ type FieldProps = {
 export function Field({ label, error, hint, children, className }: FieldProps) {
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
-      <label className="text-xs font-bold tracking-[0.12em] uppercase text-[--color-muted]">
+      <label className="text-xs font-bold tracking-[0.12em] uppercase text-muted">
         {label}
       </label>
       {children}
       {error
         ? <p className="text-xs font-semibold" style={{ color: ERROR_COLOR }}>{error}</p>
         : hint
-          ? <p className="text-xs" style={{ color: 'var(--color-muted)' }}>{hint}</p>
+          ? <p className="text-xs text-muted">{hint}</p>
           : null}
     </div>
   )
@@ -32,10 +32,10 @@ export function Field({ label, error, hint, children, className }: FieldProps) {
 // extras (por ejemplo `pr-12` cuando hay un ojito de mostrar contraseña).
 export function inputClasses(hasError = false, className?: string) {
   return cn(
-    'w-full h-14 px-4 rounded-lg text-[--color-nieve]',
-    'bg-[--color-sombra] border border-[--color-line]',
-    'placeholder:text-[--color-muted]/60 transition-shadow',
-    'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40',
+    'w-full h-14 px-4 rounded-lg text-nieve',
+    'bg-sombra border border-line',
+    'placeholder:text-muted/60 transition-shadow',
+    'focus:outline-none focus:ring-1 focus:ring-bosque-lt/40',
     hasError && 'ring-1 ring-[#ffb4ab]/60 border-[#ffb4ab]/40',
     className,
   )

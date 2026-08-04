@@ -20,8 +20,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 const INPUT_CLASS =
-  'w-full h-14 px-4 rounded-lg text-[--color-nieve] placeholder:text-[--color-muted] border ' +
-  'focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40'
+  'w-full h-14 px-4 rounded-lg text-nieve placeholder:text-muted border ' +
+  'focus:outline-none focus:ring-1 focus:ring-bosque-lt/40'
 
 function IconBack() {
   return (
@@ -34,9 +34,9 @@ function IconBack() {
 function Field({ label, error, hint, children }: { label: string; error?: string; hint?: string; children: React.ReactNode }) {
   return (
     <div className="mb-5">
-      <label className="block text-xs font-bold uppercase tracking-[0.15em] mb-2" style={{ color: 'var(--color-muted)' }}>{label}</label>
+      <label className="block text-xs font-bold uppercase tracking-[0.15em] mb-2 text-muted">{label}</label>
       {children}
-      {hint && !error && <p className="text-xs mt-1.5" style={{ color: 'var(--color-muted)' }}>{hint}</p>}
+      {hint && !error && <p className="text-xs mt-1.5 text-muted">{hint}</p>}
       {error && <p className="text-xs mt-1.5" style={{ color: '#ffb4ab' }}>{error}</p>}
     </div>
   )
@@ -128,10 +128,10 @@ export function ProviderProfileEdit() {
 
   if (state === 'loading') {
     return (
-      <div className="min-h-screen pt-24 px-6 max-w-xl mx-auto" style={{ backgroundColor: 'var(--color-noche)' }}>
-        <div className="h-8 w-40 rounded-md animate-pulse mb-6" style={{ backgroundColor: 'var(--color-line)' }} />
+      <div className="min-h-screen pt-24 px-6 max-w-xl mx-auto bg-noche">
+        <div className="h-8 w-40 rounded-md animate-pulse mb-6 bg-line" />
         {[0, 1, 2, 3].map(i => (
-          <div key={i} className="h-14 rounded-lg animate-pulse mb-5" style={{ backgroundColor: 'var(--color-line)' }} />
+          <div key={i} className="h-14 rounded-lg animate-pulse mb-5 bg-line" />
         ))}
       </div>
     )
@@ -139,23 +139,21 @@ export function ProviderProfileEdit() {
 
   if (state === 'none') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-3 px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
-        <p className="font-bold text-lg" style={{ color: 'var(--color-nieve)' }}>Todavía no tenés perfil</p>
-        <p className="text-sm" style={{ color: 'var(--color-muted)' }}>Tu cuenta no está asociada a ningún prestador.</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3 px-8 text-center bg-noche">
+        <p className="font-bold text-lg text-nieve">Todavía no tenés perfil</p>
+        <p className="text-sm text-muted">Tu cuenta no está asociada a ningún prestador.</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
       <header
-        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b bg-sombra border-line"
       >
         <button
           onClick={() => navigate(-1)}
-          className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all"
-          style={{ backgroundColor: 'var(--color-noche)', color: 'var(--color-nieve)' }}
+          className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all bg-noche text-nieve"
         >
           <IconBack />
         </button>
@@ -166,7 +164,7 @@ export function ProviderProfileEdit() {
 
         {/* Foto */}
         <div className="flex items-center gap-4 py-6">
-          <div className="w-20 h-20 rounded-xl overflow-hidden border shrink-0" style={{ borderColor: 'var(--color-line)' }}>
+          <div className="w-20 h-20 rounded-xl overflow-hidden border shrink-0 border-line">
             <img
               src={photo ?? FALLBACK_PHOTO}
               alt="Tu foto"
@@ -176,8 +174,7 @@ export function ProviderProfileEdit() {
           </div>
           <div>
             <label
-              className="inline-block text-xs font-bold px-4 py-2.5 rounded-full border cursor-pointer active:scale-95 transition-all"
-              style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+              className="inline-block text-xs font-bold px-4 py-2.5 rounded-full border cursor-pointer active:scale-95 transition-all border-line text-nieve"
             >
               {uploading ? 'Subiendo…' : 'Cambiar foto'}
               <input
@@ -188,7 +185,7 @@ export function ProviderProfileEdit() {
                 onChange={e => { const f = e.target.files?.[0]; if (f) handlePhoto(f) }}
               />
             </label>
-            <p className="text-xs mt-2" style={{ color: 'var(--color-muted)' }}>Se guarda al instante</p>
+            <p className="text-xs mt-2 text-muted">Se guarda al instante</p>
           </div>
         </div>
 
@@ -245,14 +242,14 @@ export function ProviderProfileEdit() {
               {...register('bio')}
               rows={4}
               placeholder="Reparo heladeras y lavarropas a domicilio, todas las marcas…"
-              className="w-full px-4 py-3 rounded-lg text-[--color-nieve] placeholder:text-[--color-muted] border focus:outline-none focus:ring-1 focus:ring-[--color-bosque-lt]/40"
+              className="w-full px-4 py-3 rounded-lg text-nieve placeholder:text-muted border focus:outline-none focus:ring-1 focus:ring-bosque-lt/40"
               style={{ backgroundColor: 'var(--color-sombra)', borderColor: errors.bio ? '#ffb4ab' : 'var(--color-line)' }}
             />
           </Field>
 
           {saveError && <p className="text-sm text-center mb-3" style={{ color: '#ffb4ab' }}>{saveError}</p>}
           {saved && !isDirty && (
-            <p className="text-sm text-center mb-3 font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>Cambios guardados ✓</p>
+            <p className="text-sm text-center mb-3 font-semibold text-bosque-lt">Cambios guardados ✓</p>
           )}
         </form>
       </main>
@@ -266,8 +263,7 @@ export function ProviderProfileEdit() {
           <button
             onClick={handleSubmit(onSubmit)}
             disabled={isSubmitting || !isDirty}
-            className="w-full py-4 rounded-full font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-40"
-            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+            className="w-full py-4 rounded-full font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-40 bg-bosque-lt"
           >
             {isSubmitting ? 'Guardando…' : 'Guardar cambios'}
           </button>

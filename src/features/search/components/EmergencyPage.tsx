@@ -86,28 +86,26 @@ export function EmergencyPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
 
       {/* ── Header ─────────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b bg-sombra border-line"
       >
         <button
           onClick={() => navigate(-1)}
-          className="p-2 rounded-lg hover:bg-black/5 transition-colors active:scale-95"
-          style={{ color: 'var(--color-bosque-lt)' }}
+          className="p-2 rounded-lg hover:bg-black/5 transition-colors active:scale-95 text-bosque-lt"
           aria-label="Volver"
         >
           <IconArrowLeft />
         </button>
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-emergency)' }} />
+          <span className="w-2 h-2 rounded-full animate-pulse bg-emergency" />
           <h1 className="font-bold text-base" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
             Urgencias 24/7
           </h1>
         </div>
-        <span className="ml-auto text-xs font-semibold" style={{ color: 'var(--color-muted)' }}>
+        <span className="ml-auto text-xs font-semibold text-muted">
           {cityCenter.label}
         </span>
       </header>
@@ -157,11 +155,11 @@ export function EmergencyPage() {
         {/* ── Lista en vivo ────────────────────────────────────────────────────── */}
         <section className="px-4 -mt-4 relative z-10">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-xs font-bold uppercase tracking-widest text-muted">
               En guardia ahora
             </p>
             {!loading && (
-              <span className="text-xs font-bold" style={{ color: 'var(--color-guardia)', fontFamily: 'var(--font-mono)' }}>
+              <span className="text-xs font-bold text-guardia font-mono">
                 {shown.length}
               </span>
             )}
@@ -170,20 +168,20 @@ export function EmergencyPage() {
           {loading ? (
             <div className="space-y-3">
               {[0, 1].map(i => (
-                <div key={i} className="h-24 rounded-xl animate-pulse border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }} />
+                <div key={i} className="h-24 rounded-xl animate-pulse border bg-sombra border-line" />
               ))}
             </div>
           ) : error ? (
-            <div className="rounded-xl p-5 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-              <p className="text-sm" style={{ color: 'var(--color-muted)' }}>No pudimos cargar los prestadores. Probá de nuevo.</p>
+            <div className="rounded-xl p-5 border text-center bg-sombra border-line">
+              <p className="text-sm text-muted">No pudimos cargar los prestadores. Probá de nuevo.</p>
             </div>
           ) : shown.length === 0 ? (
-            <div className="rounded-xl p-6 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <div className="rounded-xl p-6 border text-center bg-sombra border-line">
               <span className="text-3xl">🌙</span>
-              <p className="text-sm font-bold mt-2" style={{ color: 'var(--color-nieve)' }}>
+              <p className="text-sm font-bold mt-2 text-nieve">
                 No hay prestadores en guardia ahora en {cityCenter.label}
               </p>
-              <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>
+              <p className="text-xs mt-1 text-muted">
                 Probá con otra categoría o volvé a chequear en un rato.
               </p>
             </div>
@@ -204,7 +202,7 @@ export function EmergencyPage() {
 
         {/* ── Cómo funciona ────────────────────────────────────────────────────── */}
         <section className="px-4 mt-7">
-          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-4 text-muted">
             Cómo funciona
           </p>
           <div className="grid grid-cols-3 gap-3">
@@ -213,11 +211,11 @@ export function EmergencyPage() {
               { n: '2', text: 'Ves quién está de guardia ahora' },
               { n: '3', text: 'Pagás el contacto y te llega en minutos' },
             ].map(step => (
-              <div key={step.n} className="rounded-lg p-3 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black mx-auto mb-2 text-white" style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
+              <div key={step.n} className="rounded-lg p-3 border text-center bg-sombra border-line">
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black mx-auto mb-2 text-white bg-bosque-lt">
                   {step.n}
                 </div>
-                <p className="text-xs leading-tight" style={{ color: 'var(--color-muted)' }}>{step.text}</p>
+                <p className="text-xs leading-tight text-muted">{step.text}</p>
               </div>
             ))}
           </div>
@@ -229,19 +227,18 @@ export function EmergencyPage() {
             className="rounded-xl p-5 border"
             style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)', borderLeft: '3px solid var(--color-bosque-lt)' }}
           >
-            <h2 className="font-bold text-base mb-1" style={{ color: 'var(--color-nieve)' }}>¿Sos prestador?</h2>
-            <p className="text-xs mb-4" style={{ color: 'var(--color-muted)' }}>
+            <h2 className="font-bold text-base mb-1 text-nieve">¿Sos prestador?</h2>
+            <p className="text-xs mb-4 text-muted">
               Activá el modo guardia y recibí contactos de urgencia en tu zona.
             </p>
 
             {user && providerId ? (
               <>
                 <div
-                  className="flex items-center justify-between p-3 rounded-lg border mb-2"
-                  style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-line)' }}
+                  className="flex items-center justify-between p-3 rounded-lg border mb-2 bg-noche border-line"
                 >
                   <div>
-                    <p className="text-sm font-bold" style={{ color: 'var(--color-nieve)' }}>Modo guardia</p>
+                    <p className="text-sm font-bold text-nieve">Modo guardia</p>
                     <p className="text-xs" style={{ color: guardiaOn ? 'var(--color-guardia)' : 'var(--color-muted)' }}>
                       {guardiaOn ? 'Activo — recibís contactos ahora' : 'Inactivo'}
                     </p>
@@ -262,18 +259,17 @@ export function EmergencyPage() {
                 <button
                   type="button"
                   onClick={() => navigate('/dashboard')}
-                  className="w-full py-3 rounded-lg font-bold text-xs text-center border transition-all active:scale-95"
-                  style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+                  className="w-full py-3 rounded-lg font-bold text-xs text-center border transition-all active:scale-95 border-line text-nieve"
                 >
                   Ir a mi panel
                 </button>
               </>
             ) : (
               <div className="grid grid-cols-2 gap-2">
-                <Link to="/login" className="py-3 rounded-lg font-bold text-xs text-center text-white active:scale-95 transition-transform" style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
+                <Link to="/login" className="py-3 rounded-lg font-bold text-xs text-center text-white active:scale-95 transition-transform bg-bosque-lt">
                   Iniciar sesión
                 </Link>
-                <Link to="/registro/prestador" className="py-3 border rounded-lg font-bold text-xs text-center active:scale-95 transition-transform" style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}>
+                <Link to="/registro/prestador" className="py-3 border rounded-lg font-bold text-xs text-center active:scale-95 transition-transform border-line text-nieve">
                   Registrarme
                 </Link>
               </div>
@@ -285,8 +281,7 @@ export function EmergencyPage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t sm:hidden"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t sm:hidden bg-sombra border-line"
       >
         <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />
         <NavTab icon={<IconEmergency />} label="Urgencias" active />
@@ -324,17 +319,17 @@ function EmergencyCard({ provider, highlighted, onFocus, onContact }: EmergencyC
     >
       <div className="min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          <span className="w-2 h-2 rounded-full animate-pulse flex-shrink-0" style={{ backgroundColor: 'var(--color-guardia)' }} />
-          <h3 className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{provider.name}</h3>
+          <span className="w-2 h-2 rounded-full animate-pulse flex-shrink-0 bg-guardia" />
+          <h3 className="font-bold text-sm truncate text-nieve">{provider.name}</h3>
         </div>
-        <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+        <p className="text-xs text-muted">
           {rubro?.icon} {rubro?.label}
           {provider.distanceKm != null && (
-            <span style={{ color: 'var(--color-bosque-lt)' }}> · a {formatDistance(provider.distanceKm)}</span>
+            <span className="text-bosque-lt"> · a {formatDistance(provider.distanceKm)}</span>
           )}
         </p>
         {provider.rating > 0 && (
-          <p className="text-xs font-bold mt-0.5" style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)' }}>
+          <p className="text-xs font-bold mt-0.5 text-nieve font-mono">
             ★ {provider.rating.toFixed(1)}
           </p>
         )}

@@ -40,7 +40,7 @@ export function Logo({ size = 32, withWordmark = false, className }: LogoProps) 
 
       {withWordmark && (
         <span
-          className="font-black tracking-tighter text-[--color-nieve]"
+          className="font-black tracking-tighter text-nieve"
           style={{
             fontSize:      wordmarkPx,
             letterSpacing: '-0.04em',

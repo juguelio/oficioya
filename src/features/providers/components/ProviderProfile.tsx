@@ -66,11 +66,11 @@ export function ProviderProfile() {
   if (provider === undefined) {
     // Skeleton, no spinner (§18): misma silueta que la página cargada.
     return (
-      <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <div className="min-h-screen bg-noche">
         <div className="max-w-xl mx-auto pt-20 px-6 space-y-4 animate-pulse">
-          <div className="h-64 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
-          <div className="h-8 w-2/3 rounded-full" style={{ backgroundColor: 'var(--color-sombra)' }} />
-          <div className="h-24 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+          <div className="h-64 rounded-xl bg-sombra" />
+          <div className="h-8 w-2/3 rounded-full bg-sombra" />
+          <div className="h-24 rounded-xl bg-sombra" />
         </div>
       </div>
     )
@@ -78,12 +78,11 @@ export function ProviderProfile() {
 
   if (!provider) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
-        <p className="text-[--color-muted]">Prestador no encontrado.</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-nieve bg-noche">
+        <p className="text-muted">Prestador no encontrado.</p>
         <button
           onClick={() => navigate(-1)}
-          className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-[--color-bosque-lt]/40 hover:border-[--color-bosque-lt] transition-all active:scale-95"
-          style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-nieve)' }}
+          className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-bosque-lt/40 hover:border-bosque-lt transition-all active:scale-95 bg-sombra text-nieve"
         >
           ← Volver
         </button>
@@ -106,18 +105,17 @@ export function ProviderProfile() {
   }
 
   return (
-    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen text-nieve bg-noche">
 
       {/* ── Header — mismo patrón que HomePage: barra sombra + logo + acciones ── */}
       <header
-        className="fixed top-0 w-full z-50 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed top-0 w-full z-50 h-14 border-b bg-sombra border-line"
       >
         <div className="px-5 h-full flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
             <button
               onClick={() => navigate(-1)}
-              className="text-[--color-bosque-lt] transition-colors active:scale-95 p-2 -ml-2 rounded-lg shrink-0"
+              className="text-bosque-lt transition-colors active:scale-95 p-2 -ml-2 rounded-lg shrink-0"
               aria-label="Volver"
             >
               <IconArrowLeft />
@@ -138,7 +136,7 @@ export function ProviderProfile() {
 
         {/* ── Hero photo — card redondeada como el resto del sistema, no full-bleed ── */}
         <div className="px-5 pt-4">
-        <div className="relative h-72 w-full rounded-xl overflow-hidden border" style={{ borderColor: 'var(--color-line)' }}>
+        <div className="relative h-72 w-full rounded-xl overflow-hidden border border-line">
           <img
             src={img}
             alt={provider.name}
@@ -151,25 +149,25 @@ export function ProviderProfile() {
           {/* Rating badge — Oficio si reclamado; si no, señal externa (Google) etiquetada. Nunca
               mostramos el rating de Oficio (0) de un perfil sin reclamar como si fuera real. */}
           {provider.claimed && provider.rating > 0 ? (
-            <div className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 border border-[--color-line]" style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}>
-              <span className="text-[--color-bosque-lt] text-sm leading-none">★</span>
-              <span className="text-[--color-nieve] text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>{provider.rating.toFixed(1)}</span>
+            <div className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 border border-line" style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}>
+              <span className="text-bosque-lt text-sm leading-none">★</span>
+              <span className="text-nieve text-sm font-bold font-mono">{provider.rating.toFixed(1)}</span>
             </div>
           ) : provider.externalRating ? (
-            <div className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1.5 border border-[--color-line]" style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}>
+            <div className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1.5 border border-line" style={{ backgroundColor: 'rgba(14,21,16,0.75)' }}>
               <span className="text-[#E8A020] text-sm leading-none">★</span>
-              <span className="text-[--color-nieve] text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>{provider.externalRating.toFixed(1)}</span>
-              <span className="text-[--color-muted] text-[10px] font-semibold">Google</span>
+              <span className="text-nieve text-sm font-bold font-mono">{provider.externalRating.toFixed(1)}</span>
+              <span className="text-muted text-[10px] font-semibold">Google</span>
             </div>
           ) : null}
 
           {/* Badge: verificado (verde) si lo está; "Sin confirmar" (muted) si es un perfil sin reclamar */}
           {provider.isVerified ? (
-            <div className="absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-bold border border-[--color-line]" style={{ backgroundColor: 'rgba(14,21,16,0.75)', color: 'var(--color-bosque-lt)' }}>
+            <div className="absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-bold border border-line" style={{ backgroundColor: 'rgba(14,21,16,0.75)', color: 'var(--color-bosque-lt)' }}>
               ✓ Verificado
             </div>
           ) : !provider.claimed ? (
-            <div className="absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-bold border border-[--color-line]" style={{ backgroundColor: 'rgba(14,21,16,0.75)', color: 'var(--color-muted)' }}>
+            <div className="absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-bold border border-line" style={{ backgroundColor: 'rgba(14,21,16,0.75)', color: 'var(--color-muted)' }}>
               Sin confirmar
             </div>
           ) : null}
@@ -182,53 +180,53 @@ export function ProviderProfile() {
           {/* Name + rubro — misma voz tipográfica que los títulos de la home */}
           <div className="mb-4">
             <h2
-              className="text-2xl font-black text-[--color-nieve] mb-1 leading-tight"
+              className="text-2xl font-black text-nieve mb-1 leading-tight"
               style={{ letterSpacing: '-0.03em' }}
             >
               {provider.name}
             </h2>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-semibold text-[--color-bosque-lt]">
+              <span className="text-sm font-semibold text-bosque-lt">
                 {rubroData?.icon} {rubroData?.label}
               </span>
-              <span className="text-[--color-muted] text-sm">·</span>
-              <span className="text-sm text-[--color-muted]">
+              <span className="text-muted text-sm">·</span>
+              <span className="text-sm text-muted">
                 {provider.barrio ? `${provider.barrio}, ` : ''}{ciudadData?.label}
               </span>
             </div>
           </div>
 
           {/* Stats — mismas cards con borde que usan la home y el panel */}
-          <div className="grid grid-cols-3 gap-3 mb-6" style={{ fontFamily: 'var(--font-mono)' }}>
-            <div className="flex flex-col items-center py-3.5 rounded-lg border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-              <p className="text-xl font-bold text-[--color-nieve]" style={{ fontVariantNumeric: 'tabular-nums' }}>{provider.totalJobs}</p>
-              <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">Trabajos</p>
+          <div className="grid grid-cols-3 gap-3 mb-6 font-mono">
+            <div className="flex flex-col items-center py-3.5 rounded-lg border bg-sombra border-line">
+              <p className="text-xl font-bold text-nieve" style={{ fontVariantNumeric: 'tabular-nums' }}>{provider.totalJobs}</p>
+              <p className="text-[10px] text-muted uppercase tracking-widest">Trabajos</p>
             </div>
-            <div className="flex flex-col items-center py-3.5 rounded-lg border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <div className="flex flex-col items-center py-3.5 rounded-lg border bg-sombra border-line">
               {provider.claimed && provider.rating > 0 ? (
                 <>
-                  <p className="text-xl font-bold text-[--color-nieve]" style={{ fontVariantNumeric: 'tabular-nums' }}>{provider.rating.toFixed(1)}</p>
-                  <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">Calificación</p>
+                  <p className="text-xl font-bold text-nieve" style={{ fontVariantNumeric: 'tabular-nums' }}>{provider.rating.toFixed(1)}</p>
+                  <p className="text-[10px] text-muted uppercase tracking-widest">Calificación</p>
                 </>
               ) : provider.externalRating ? (
                 <>
-                  <p className="text-xl font-bold text-[--color-nieve]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  <p className="text-xl font-bold text-nieve" style={{ fontVariantNumeric: 'tabular-nums' }}>
                     <span style={{ color: '#E8A020' }}>★</span> {provider.externalRating.toFixed(1)}
                   </p>
-                  <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">en Google{provider.externalReviews ? ` · ${provider.externalReviews}` : ''}</p>
+                  <p className="text-[10px] text-muted uppercase tracking-widest">en Google{provider.externalReviews ? ` · ${provider.externalReviews}` : ''}</p>
                 </>
               ) : (
                 <>
-                  <p className="text-xl font-bold text-[--color-muted]">—</p>
-                  <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">Calificación</p>
+                  <p className="text-xl font-bold text-muted">—</p>
+                  <p className="text-[10px] text-muted uppercase tracking-widest">Calificación</p>
                 </>
               )}
             </div>
-            <div className="flex flex-col items-center py-3.5 rounded-lg border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+            <div className="flex flex-col items-center py-3.5 rounded-lg border bg-sombra border-line">
               <p className="text-xl font-bold" style={{ color: provider.isVerified ? 'var(--color-bosque-lt)' : 'var(--color-muted)' }}>
                 {provider.isVerified ? '✓' : '—'}
               </p>
-              <p className="text-[10px] text-[--color-muted] uppercase tracking-widest">Verificado</p>
+              <p className="text-[10px] text-muted uppercase tracking-widest">Verificado</p>
             </div>
           </div>
 
@@ -238,7 +236,7 @@ export function ProviderProfile() {
               <h3 className="font-black text-lg mb-1.5" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
                 Sobre mí
               </h3>
-              <p className="text-sm text-[--color-nieve]/80 leading-relaxed">
+              <p className="text-sm text-nieve/80 leading-relaxed">
                 {provider.bio}
               </p>
             </div>
@@ -255,16 +253,15 @@ export function ProviderProfile() {
                   navigate(`/emergencias/contratar/${provider.id}`)
                 }}
                 className={cn(
-                  'flex w-full items-center justify-center gap-2 rounded-full',
+                  'flex w-full items-center justify-center gap-2 rounded-full bg-emergency',
                   'py-4 font-bold text-white text-base',
                   'active:scale-[0.98] transition-transform shadow-lg',
                 )}
-                style={{ backgroundColor: 'var(--color-emergency)' }}
               >
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-guardia)' }} />
+                <span className="w-2 h-2 rounded-full animate-pulse bg-guardia" />
                 En guardia ahora — Contactar urgencia
               </button>
-              <p className="text-center text-xs text-[--color-muted] mt-3 mb-8">
+              <p className="text-center text-xs text-muted mt-3 mb-8">
                 Está atendiendo urgencias 24/7. El contacto se habilita al confirmar el servicio.
               </p>
             </>
@@ -285,16 +282,16 @@ export function ProviderProfile() {
                 <IconWhatsApp />
                 Contactar por WhatsApp
               </a>
-              <p className="text-center text-xs text-[--color-muted] mt-3 mb-8" style={{ fontFamily: 'var(--font-mono)' }}>
+              <p className="text-center text-xs text-muted mt-3 mb-8 font-mono">
                 {provider.phone.replace(/(\+54)(9)(\d{4})(\d{3})(\d{4})/, '$1 $2 $3 $4-$5')}
               </p>
             </>
           ) : (
-            <div className="rounded-xl px-5 py-5 mb-8 text-center border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-              <p className="text-sm font-bold text-[--color-nieve] mb-1">
+            <div className="rounded-xl px-5 py-5 mb-8 text-center border bg-sombra border-line">
+              <p className="text-sm font-bold text-nieve mb-1">
                 Este profesional todavía no activó su perfil en Oficio.
               </p>
-              <p className="text-xs text-[--color-muted] leading-relaxed">
+              <p className="text-xs text-muted leading-relaxed">
                 Lo encontramos en directorios locales. Cuando confirme su perfil vas a poder contactarlo directo por acá.
               </p>
             </div>
@@ -312,15 +309,14 @@ export function ProviderProfile() {
               {avgRating > 0 && (
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span style={{ color: '#E8A020' }}>★</span>
-                  <span className="text-sm font-bold" style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)' }}>{avgRating.toFixed(1)}</span>
-                  <span className="text-sm" style={{ color: 'var(--color-muted)' }}>({myReviews.length})</span>
+                  <span className="text-sm font-bold text-nieve font-mono">{avgRating.toFixed(1)}</span>
+                  <span className="text-sm text-muted">({myReviews.length})</span>
                 </div>
               )}
             </div>
             <button
               onClick={() => { setShowReviewSheet(true); setReviewSent(false) }}
-              className="text-xs font-bold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
-              style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)', backgroundColor: 'var(--color-sombra)' }}
+              className="text-xs font-bold px-3 py-1.5 rounded-full border active:scale-95 transition-all border-line text-nieve bg-sombra"
             >
               + Dejar reseña
             </button>
@@ -328,41 +324,37 @@ export function ProviderProfile() {
 
           {reviewSent && (
             <div
-              className="flex items-center gap-2 px-4 py-3 rounded-lg mb-4 border"
-              style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
+              className="flex items-center gap-2 px-4 py-3 rounded-lg mb-4 border bg-brand-tint border-bosque-lt"
             >
               <span>✅</span>
-              <p className="text-sm font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>¡Reseña publicada! Gracias.</p>
+              <p className="text-sm font-semibold text-bosque-lt">¡Reseña publicada! Gracias.</p>
             </div>
           )}
 
           {myReviews.length === 0 ? (
             <div
-              className="flex flex-col items-center py-10 rounded-lg border text-center"
-              style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+              className="flex flex-col items-center py-10 rounded-lg border text-center bg-sombra border-line"
             >
               <span className="text-4xl mb-2">💬</span>
-              <p className="text-sm font-bold mb-1" style={{ color: 'var(--color-nieve)' }}>Sin reseñas todavía</p>
-              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Sé el primero en compartir tu experiencia</p>
+              <p className="text-sm font-bold mb-1 text-nieve">Sin reseñas todavía</p>
+              <p className="text-xs text-muted">Sé el primero en compartir tu experiencia</p>
             </div>
           ) : (
             <div className="space-y-3">
               {myReviews.map(r => (
                 <div
                   key={r.id}
-                  className="p-4 rounded-lg border"
-                  style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+                  className="p-4 rounded-lg border bg-sombra border-line"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2.5">
                       <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black shrink-0"
-                        style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black shrink-0 bg-brand-tint text-bosque-lt"
                       >
                         {r.authorName.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>{r.authorName}</p>
+                        <p className="font-bold text-sm text-nieve">{r.authorName}</p>
                         <div className="flex items-center gap-0.5">
                           {[1,2,3,4,5].map(i => (
                             <svg key={i} width="11" height="11" viewBox="0 0 24 24" fill={i <= r.rating ? '#E8A020' : 'var(--color-line)'}>
@@ -372,11 +364,11 @@ export function ProviderProfile() {
                         </div>
                       </div>
                     </div>
-                    <span className="text-[10px] shrink-0 mt-1" style={{ color: 'var(--color-muted)' }}>
+                    <span className="text-[10px] shrink-0 mt-1 text-muted">
                       {new Date(r.createdAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
                     </span>
                   </div>
-                  <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>{r.comment}</p>
+                  <p className="text-xs leading-relaxed text-muted">{r.comment}</p>
                 </div>
               ))}
             </div>
@@ -396,22 +388,21 @@ export function ProviderProfile() {
           onClick={() => setShowReviewSheet(false)}
         >
           <div
-            className="rounded-t-2xl px-5 pt-4 pb-10"
-            style={{ backgroundColor: 'var(--color-sombra)' }}
+            className="rounded-t-2xl px-5 pt-4 pb-10 bg-sombra"
             onClick={e => e.stopPropagation()}
           >
-            <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ backgroundColor: 'var(--color-line)' }} />
+            <div className="w-10 h-1 rounded-full mx-auto mb-5 bg-line" />
             <h3 className="font-black text-lg mb-1" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
               Dejar reseña
             </h3>
-            <p className="text-sm mb-5" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-sm mb-5 text-muted">
               Tu opinión ayuda a otros clientes a elegir.
             </p>
             <form onSubmit={handleSubmit(onSubmitReview)} className="space-y-4">
 
               {/* Estrellas */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--color-muted)' }}>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-2 text-muted">
                   Calificación
                 </label>
                 <div className="flex items-center gap-2">
@@ -435,7 +426,7 @@ export function ProviderProfile() {
 
               {/* Nombre */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Tu nombre</label>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-muted">Tu nombre</label>
                 <input
                   {...register('authorName')}
                   placeholder="Ej: Marcela R."
@@ -447,7 +438,7 @@ export function ProviderProfile() {
 
               {/* Comentario */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Tu experiencia</label>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-muted">Tu experiencia</label>
                 <textarea
                   {...register('comment')}
                   rows={3}
@@ -465,8 +456,7 @@ export function ProviderProfile() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all disabled:opacity-60"
-                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all disabled:opacity-60 bg-bosque-lt"
               >
                 {isSubmitting ? 'Publicando…' : 'Publicar reseña'}
               </button>

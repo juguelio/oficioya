@@ -15,10 +15,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (loading) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="min-h-screen flex items-center justify-center bg-noche"
       >
-        <div className="w-48 h-4 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="w-48 h-4 rounded-full animate-pulse bg-sombra" />
       </div>
     )
   }

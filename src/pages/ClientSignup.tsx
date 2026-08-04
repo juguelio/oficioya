@@ -62,18 +62,17 @@ export function ClientSignup() {
 
   if (checkEmail) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center px-8 text-center bg-noche">
         <span className="text-5xl mb-5">📬</span>
         <h2 className="font-black text-2xl mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
           Revisá tu email
         </h2>
-        <p className="text-sm mb-8 max-w-sm" style={{ color: 'var(--color-muted)' }}>
+        <p className="text-sm mb-8 max-w-sm text-muted">
           Te mandamos un link para confirmar tu cuenta. Tocalo y volvé a entrar para ver tus trabajos.
         </p>
         <button
           onClick={() => navigate('/')}
-          className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
-          style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+          className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all bg-bosque-lt"
         >
           Volver al inicio
         </button>
@@ -82,7 +81,7 @@ export function ClientSignup() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen flex flex-col bg-noche">
 
       <PageHeader />
 
@@ -92,14 +91,13 @@ export function ClientSignup() {
           <h1 className="text-3xl font-black mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.03em' }}>
             Creá tu cuenta
           </h1>
-          <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-sm text-muted">
             Para seguir tus trabajos y los presupuestos que recibís, todo en un lugar.
           </p>
         </div>
 
         <div
-          className="mb-6 px-4 py-3 rounded-lg border text-xs leading-relaxed"
-          style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)', color: 'var(--color-bosque-lt)' }}
+          className="mb-6 px-4 py-3 rounded-lg border text-xs leading-relaxed bg-brand-tint border-bosque-lt text-bosque-lt"
         >
           No es obligatorio: podés <Link to="/trabajos/nuevo" className="font-bold underline">publicar un trabajo sin cuenta</Link> y seguirlo con un link privado.
         </div>
@@ -110,17 +108,16 @@ export function ClientSignup() {
             type="button"
             onClick={handleGoogle}
             disabled={googleLoading || isSubmitting}
-            className="w-full h-14 rounded-full font-bold text-base flex items-center justify-center gap-3 border transition-all active:scale-[0.98] disabled:opacity-50"
-            style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-nieve)', borderColor: 'var(--color-line)' }}
+            className="w-full h-14 rounded-full font-bold text-base flex items-center justify-center gap-3 border transition-all active:scale-[0.98] disabled:opacity-50 bg-sombra text-nieve border-line"
           >
             <GoogleIcon />
             {googleLoading ? 'Abriendo Google…' : 'Continuar con Google'}
           </button>
 
           <div className="flex items-center gap-3 py-1" aria-hidden="true">
-            <div className="h-px flex-1 bg-[--color-line]" />
-            <span className="text-[10px] font-bold tracking-[0.14em] text-[--color-muted]">O CON EMAIL</span>
-            <div className="h-px flex-1 bg-[--color-line]" />
+            <div className="h-px flex-1 bg-line" />
+            <span className="text-[10px] font-bold tracking-[0.14em] text-muted">O CON EMAIL</span>
+            <div className="h-px flex-1 bg-line" />
           </div>
 
           <Field label="Tu nombre" error={errors.name?.message}>
@@ -141,20 +138,19 @@ export function ClientSignup() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-14 rounded-full font-bold text-base text-white transition-all active:scale-[0.98] disabled:opacity-50"
-              style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+              className="w-full h-14 rounded-full font-bold text-base text-white transition-all active:scale-[0.98] disabled:opacity-50 bg-bosque-lt"
             >
               {isSubmitting ? 'Creando cuenta…' : 'Crear cuenta'}
             </button>
           </div>
 
-          <p className="text-xs text-center pt-2" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs text-center pt-2 text-muted">
             ¿Ya tenés cuenta?{' '}
-            <Link to="/login" className="font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>Ingresá</Link>
+            <Link to="/login" className="font-semibold text-bosque-lt">Ingresá</Link>
           </p>
-          <p className="text-xs text-center" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs text-center text-muted">
             ¿Ofrecés servicios?{' '}
-            <Link to="/registro/prestador" className="font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>Registrate como prestador</Link>
+            <Link to="/registro/prestador" className="font-semibold text-bosque-lt">Registrate como prestador</Link>
           </p>
         </form>
       </main>

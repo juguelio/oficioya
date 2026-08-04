@@ -135,10 +135,9 @@ export function EmergencyMap({ center, providers, userLoc, activeId, onSelect, c
   if (status === 'error') {
     return (
       <div
-        className={cn('flex items-center justify-center text-center px-8', className)}
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className={cn('flex items-center justify-center text-center px-8 bg-noche', className)}
       >
-        <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+        <p className="text-xs text-muted">
           {hasMapsKey()
             ? 'No se pudo cargar el mapa. Revisá tu conexión.'
             : 'Mapa no disponible — falta configurar la clave de Google Maps.'}
@@ -151,7 +150,7 @@ export function EmergencyMap({ center, providers, userLoc, activeId, onSelect, c
     <div className={cn('relative', className)}>
       <div ref={divRef} className="absolute inset-0" />
       {status === 'loading' && (
-        <div className="absolute inset-0 animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="absolute inset-0 animate-pulse bg-sombra" />
       )}
     </div>
   )

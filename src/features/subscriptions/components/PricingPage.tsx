@@ -53,17 +53,16 @@ export function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen text-nieve bg-noche">
 
       {/* ── TopAppBar ──────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-[--color-line]"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 border-b border-line bg-noche"
       >
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="text-[--color-bosque-lt] hover:bg-white/5 transition-colors active:scale-95 p-2 rounded-lg"
+            className="text-bosque-lt hover:bg-white/5 transition-colors active:scale-95 p-2 rounded-lg"
             aria-label="Volver"
           >
             <IconArrowLeft />
@@ -72,7 +71,7 @@ export function PricingPage() {
         </div>
         <Link
           to="/"
-          className="text-xs font-semibold text-[--color-muted] hover:text-[--color-bosque-lt] transition-colors"
+          className="text-xs font-semibold text-muted hover:text-bosque-lt transition-colors"
         >
           Soy cliente →
         </Link>
@@ -82,16 +81,16 @@ export function PricingPage() {
 
         {/* ── Hero ───────────────────────────────────────────────────────────────── */}
         <section className="mb-10">
-          <p className="text-xs font-bold tracking-[0.15em] text-[--color-bosque-lt] uppercase mb-3">
+          <p className="text-xs font-bold tracking-[0.15em] text-bosque-lt uppercase mb-3">
             Para profesionales
           </p>
           <h1
-            className="text-5xl font-black text-[--color-nieve] leading-[1.05] mb-4"
+            className="text-5xl font-black text-nieve leading-[1.05] mb-4"
             style={{ letterSpacing: '-0.03em' }}
           >
             Elegí tu<br />plan
           </h1>
-          <p className="text-sm text-[--color-muted] leading-relaxed max-w-sm">
+          <p className="text-sm text-muted leading-relaxed max-w-sm">
             Publicá tu perfil y empezá a recibir clientes en el radio San Martín + Junín.
             Gratis durante el lanzamiento; precios en pesos, sin costos ocultos.
           </p>
@@ -110,7 +109,7 @@ export function PricingPage() {
         </div>
 
         {/* ── Footer note ────────────────────────────────────────────────────────── */}
-        <p className="text-xs text-[--color-muted] text-center mt-8 leading-relaxed">
+        <p className="text-xs text-muted text-center mt-8 leading-relaxed">
           Precios en ARS · Se actualizan cada 3 meses según inflación.
           <br />
           Podés cambiar o cancelar en cualquier momento.
@@ -125,14 +124,13 @@ export function PricingPage() {
           ].map(({ q, a }) => (
             <details
               key={q}
-              className="rounded-xl p-4 group cursor-pointer border border-[--color-line]"
-              style={{ backgroundColor: 'var(--color-sombra)' }}
+              className="rounded-xl p-4 group cursor-pointer border border-line bg-sombra"
             >
-              <summary className="list-none flex items-center justify-between text-sm font-semibold text-[--color-nieve] select-none">
+              <summary className="list-none flex items-center justify-between text-sm font-semibold text-nieve select-none">
                 {q}
-                <span className="text-[--color-bosque-lt] text-lg leading-none group-open:rotate-45 transition-transform inline-block">+</span>
+                <span className="text-bosque-lt text-lg leading-none group-open:rotate-45 transition-transform inline-block">+</span>
               </summary>
-              <p className="mt-3 text-sm text-[--color-muted] leading-relaxed">{a}</p>
+              <p className="mt-3 text-sm text-muted leading-relaxed">{a}</p>
             </details>
           ))}
         </div>
@@ -141,8 +139,7 @@ export function PricingPage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-[--color-line] sm:hidden"
-        style={{ backgroundColor: 'var(--color-noche)' }}
+        className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 z-50 border-t border-line sm:hidden bg-noche"
       >
         <NavTab icon={<IconExplore />} label="Explorar" onClick={() => navigate('/')} />
         <NavTab icon={<IconSearch />}  label="Buscar" />
@@ -177,7 +174,7 @@ function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled
     >
       {/* Plan label + badge */}
       <div className="flex items-center gap-2 mb-4">
-        <p className="text-xs font-bold tracking-[0.15em] text-[--color-muted] uppercase">
+        <p className="text-xs font-bold tracking-[0.15em] text-muted uppercase">
           {plan.label}
         </p>
         {isDestacado && (
@@ -190,8 +187,7 @@ function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled
         )}
         {isProfesional && (
           <span
-            className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider text-white"
-            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider text-white bg-bosque-lt"
           >
             Recomendado
           </span>
@@ -201,28 +197,28 @@ function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled
       {/* Price */}
       <div className="mb-1">
         <span
-          className="text-4xl font-bold text-[--color-nieve]"
+          className="text-4xl font-bold text-nieve"
           style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}
         >
           {formatARS(plan.priceARS)}
         </span>
-        <span className="text-xs text-[--color-muted] ml-2">/ mes</span>
+        <span className="text-xs text-muted ml-2">/ mes</span>
       </div>
-      <p className="text-xs text-[--color-muted] mb-6">{meta.tagline}</p>
+      <p className="text-xs text-muted mb-6">{meta.tagline}</p>
 
       {/* Separator */}
       <div className="flex items-center gap-3 mb-5">
-        <div className="flex-1 h-px bg-[--color-line]" />
-        <span className="text-[10px] font-bold tracking-widest text-[--color-muted] uppercase">Incluye</span>
-        <div className="flex-1 h-px bg-[--color-line]" />
+        <div className="flex-1 h-px bg-line" />
+        <span className="text-[10px] font-bold tracking-widest text-muted uppercase">Incluye</span>
+        <div className="flex-1 h-px bg-line" />
       </div>
 
       {/* Features */}
       <ul className="space-y-2.5 mb-6">
         {meta.features.map(f => (
           <li key={f} className="flex items-start gap-2.5 text-sm">
-            <span className="text-[--color-bosque-lt] font-bold leading-none mt-0.5 flex-shrink-0">✓</span>
-            <span className="text-[--color-nieve]">{f}</span>
+            <span className="text-bosque-lt font-bold leading-none mt-0.5 flex-shrink-0">✓</span>
+            <span className="text-nieve">{f}</span>
           </li>
         ))}
       </ul>
@@ -260,7 +256,7 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
       onClick={onClick}
       className={cn(
         'flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-all active:scale-90 duration-150',
-        active ? 'text-[--color-bosque-lt]' : 'text-[--color-muted] hover:text-[--color-bosque-lt]',
+        active ? 'text-bosque-lt' : 'text-muted hover:text-bosque-lt',
       )}
       style={undefined}
     >

@@ -109,11 +109,11 @@ export function ProviderDashboard() {
 
 function DashboardLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen flex items-center justify-center bg-noche">
       <div className="w-full max-w-xl px-5 space-y-3 animate-pulse">
-        <div className="h-24 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
-        <div className="h-40 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
-        <div className="h-40 rounded-xl" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="h-24 rounded-xl bg-sombra" />
+        <div className="h-40 rounded-xl bg-sombra" />
+        <div className="h-40 rounded-xl bg-sombra" />
       </div>
     </div>
   )
@@ -140,12 +140,12 @@ function ElegiTuCamino({ onExit }: ElegiTuCaminoProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center px-6 py-16" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen flex flex-col justify-center px-6 py-16 bg-noche">
       <div className="w-full max-w-md mx-auto">
         <h1 className="font-black text-2xl mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.03em' }}>
           ¿Qué querés hacer en Oficio?
         </h1>
-        <p className="text-sm mb-7" style={{ color: 'var(--color-muted)' }}>
+        <p className="text-sm mb-7 text-muted">
           Ya entraste con tu cuenta. Elegí cómo la vas a usar — después lo podés cambiar.
         </p>
 
@@ -153,15 +153,14 @@ function ElegiTuCamino({ onExit }: ElegiTuCaminoProps) {
           <button
             onClick={() => elegir('cliente')}
             disabled={saving !== null}
-            className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all disabled:opacity-50"
-            style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+            className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all disabled:opacity-50 bg-sombra border-line"
           >
-            <span className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)' }}>
+            <span className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0 bg-brand-tint">
               🏠
             </span>
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>Necesito un profesional</p>
-              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+              <p className="font-bold text-sm text-nieve">Necesito un profesional</p>
+              <p className="text-xs text-muted">
                 {saving === 'cliente' ? 'Preparando tus trabajos…' : 'Publicar trabajos y recibir presupuestos'}
               </p>
             </div>
@@ -170,15 +169,14 @@ function ElegiTuCamino({ onExit }: ElegiTuCaminoProps) {
           <button
             onClick={() => elegir('prestador')}
             disabled={saving !== null}
-            className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all disabled:opacity-50"
-            style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-bosque-lt)' }}
+            className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all disabled:opacity-50 bg-sombra border-bosque-lt"
           >
-            <span className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)' }}>
+            <span className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0 bg-brand-tint">
               🔧
             </span>
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>Ofrezco mis servicios</p>
-              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+              <p className="font-bold text-sm text-nieve">Ofrezco mis servicios</p>
+              <p className="text-xs text-muted">
                 {saving === 'prestador' ? 'Abriendo el alta…' : 'Crear mi perfil de prestador y recibir clientes'}
               </p>
             </div>
@@ -187,8 +185,7 @@ function ElegiTuCamino({ onExit }: ElegiTuCaminoProps) {
 
         <button
           onClick={onExit}
-          className="w-full mt-6 py-2 text-sm font-semibold"
-          style={{ color: 'var(--color-muted)' }}
+          className="w-full mt-6 py-2 text-sm font-semibold text-muted"
         >
           Cerrar sesión
         </button>
@@ -206,17 +203,16 @@ function ProviderSelector({ onSelect }: ProviderSelectorProps) {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
       <header
-        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b bg-sombra border-line"
       >
-        <button onClick={() => navigate(-1)} className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all" style={{ backgroundColor: 'var(--color-noche)' }}>
+        <button onClick={() => navigate(-1)} className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all bg-noche">
           <IconBack />
         </button>
         <div>
           <p className="font-black text-sm" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.01em' }}>¿Quién sos?</p>
-          <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>Elegí tu perfil para acceder al panel</p>
+          <p className="text-[10px] text-muted">Elegí tu perfil para acceder al panel</p>
         </div>
       </header>
 
@@ -226,15 +222,14 @@ function ProviderSelector({ onSelect }: ProviderSelectorProps) {
             <button
               key={p.id}
               onClick={() => onSelect(p.id)}
-              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-lg border text-left active:scale-[0.99] transition-all"
-              style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-lg border text-left active:scale-[0.99] transition-all bg-sombra border-line"
             >
-              <div className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border" style={{ borderColor: 'var(--color-line)' }}>
+              <div className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border border-line">
                 <img src={p.photos?.[0] ?? FALLBACK_PHOTO} alt={p.name} className="w-full h-full object-cover object-top" onError={e => { (e.target as HTMLImageElement).src = FALLBACK_PHOTO }} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{p.name}</p>
-                <p className="text-xs truncate" style={{ color: 'var(--color-muted)' }}>
+                <p className="font-bold text-sm truncate text-nieve">{p.name}</p>
+                <p className="text-xs truncate text-muted">
                   {p.rubro.replace(/-/g, ' ')} · {p.ciudad.replace(/-/g, ' ')}
                 </p>
               </div>
@@ -286,33 +281,30 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
   const { enabled: subsEnabled, status: subStatus, cancel: cancelSub, loading: subLoading } = useSubscription()
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
 
       {/* ── Header ─────────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 flex items-center justify-between px-5 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed top-0 w-full z-50 flex items-center justify-between px-5 h-14 border-b bg-sombra border-line"
       >
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-8 h-8 rounded-full overflow-hidden border shrink-0" style={{ borderColor: 'var(--color-line)' }}>
+          <div className="w-8 h-8 rounded-full overflow-hidden border shrink-0 border-line">
             <img src={photo} alt={provider.name} className="w-full h-full object-cover object-top" onError={e => { (e.target as HTMLImageElement).src = FALLBACK_PHOTO }} />
           </div>
-          <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{provider.name}</p>
+          <p className="font-bold text-sm truncate text-nieve">{provider.name}</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {isLive && (
             <button
               onClick={() => navigate('/perfil')}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
-              style={{ borderColor: 'var(--color-line)', color: 'var(--color-bosque-lt)' }}
+              className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all border-line text-bosque-lt"
             >
               Editar perfil
             </button>
           )}
           <button
             onClick={onExit}
-            className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all"
-            style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+            className="text-xs font-semibold px-3 py-1.5 rounded-full border active:scale-95 transition-all border-line text-muted"
           >
             Salir
           </button>
@@ -323,26 +315,25 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
 
         {/* ── Tu suscripción (solo con el módulo prendido) ──────────────────────── */}
         {subsEnabled && (
-          <section className="mx-5 mt-5 rounded-xl p-5 border" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-            <h3 className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>Tu suscripción</h3>
+          <section className="mx-5 mt-5 rounded-xl p-5 border bg-sombra border-line">
+            <h3 className="font-bold text-sm mb-1 text-nieve">Tu suscripción</h3>
             {subStatus && subStatus.status === 'authorized' ? (
               <>
-                <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                  Plan <b style={{ color: 'var(--color-nieve)' }}>{subStatus.tier_id}</b> · activa
+                <p className="text-xs text-muted">
+                  Plan <b className="text-nieve">{subStatus.tier_id}</b> · activa
                   {subStatus.current_period_end && ` · próximo cobro ${new Date(subStatus.current_period_end).toLocaleDateString('es-AR')}`}
                 </p>
                 <button
                   onClick={() => cancelSub().catch(() => alert('No pudimos cancelar. Probá de nuevo en un momento.'))}
                   disabled={subLoading}
-                  className="mt-3 px-4 py-2 rounded-lg text-xs font-semibold border active:scale-95 disabled:opacity-60"
-                  style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+                  className="mt-3 px-4 py-2 rounded-lg text-xs font-semibold border active:scale-95 disabled:opacity-60 border-line text-nieve"
                 >
                   Cancelar suscripción
                 </button>
               </>
             ) : (
-              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                No tenés una suscripción activa. <button onClick={() => navigate('/planes')} className="font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>Ver planes</button>
+              <p className="text-xs text-muted">
+                No tenés una suscripción activa. <button onClick={() => navigate('/planes')} className="font-semibold text-bosque-lt">Ver planes</button>
               </p>
             )}
           </section>
@@ -355,7 +346,7 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
         >
           <ScoreRing score={score} max={MAX_CERT_SCORE} />
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-1 text-muted">
               Puntuación de confianza
             </p>
             <div
@@ -364,7 +355,7 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
             >
               {badge.icon} {badge.label}
             </div>
-            <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-xs leading-relaxed text-muted">
               {score < MAX_CERT_SCORE
                 ? `Sumá ${MAX_CERT_SCORE - score} pts más subiendo tus certificaciones`
                 : '¡Perfil completo al 100%!'
@@ -375,8 +366,7 @@ function DashboardMain({ provider, onExit, isLive }: DashboardMainProps) {
 
         {/* ── Tab bar ──────────────────────────────────────────────────────────── */}
         <div
-          className="sticky top-14 z-40 flex border-b"
-          style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+          className="sticky top-14 z-40 flex border-b bg-sombra border-line"
         >
           {[
             { key: 'resumen', label: 'Resumen' },
@@ -455,8 +445,7 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
         ].map(s => (
           <div
             key={s.label}
-            className="flex flex-col items-center py-4 rounded-lg border"
-            style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+            className="flex flex-col items-center py-4 rounded-lg border bg-sombra border-line"
           >
             <span className="text-xl mb-1">{s.icon}</span>
             <p
@@ -465,7 +454,7 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
             >
               {s.value}
             </p>
-            <p className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--color-muted)' }}>{s.label}</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted">{s.label}</p>
           </div>
         ))}
       </div>
@@ -474,11 +463,10 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
 
       {/* Plan */}
       <div
-        className="flex items-center justify-between p-4 rounded-lg border"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="flex items-center justify-between p-4 rounded-lg border bg-sombra border-line"
       >
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--color-muted)' }}>Plan actual</p>
+          <p className="text-xs font-bold uppercase tracking-widest mb-1 text-muted">Plan actual</p>
           {provider.subscription ? (
             <span
               className="font-bold text-sm capitalize px-2.5 py-0.5 rounded-full"
@@ -490,13 +478,12 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
               {provider.subscription}
             </span>
           ) : (
-            <span className="text-sm" style={{ color: 'var(--color-muted)' }}>Sin plan activo</span>
+            <span className="text-sm text-muted">Sin plan activo</span>
           )}
         </div>
         <button
           onClick={() => onNavigate('/planes')}
-          className="text-xs font-bold px-3 py-1.5 rounded-full active:scale-95 transition-all"
-          style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
+          className="text-xs font-bold px-3 py-1.5 rounded-full active:scale-95 transition-all bg-brand-tint text-bosque-lt"
         >
           {provider.subscription ? 'Cambiar' : 'Ver planes'}
         </button>
@@ -513,9 +500,9 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
         <div className="flex-1 min-w-0 pr-4">
           <div className="flex items-center gap-2 mb-1">
             {isOnGuardia && <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-emergency)', flexShrink: 0 }} />}
-            <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>Modo guardia 🔴</p>
+            <p className="font-bold text-sm text-nieve">Modo guardia 🔴</p>
           </div>
-          <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs leading-relaxed text-muted">
             {isOnGuardia
               ? `Estás visible en emergencias. Se cobran ${formatARS(20000)} por contacto.`
               : `Activalo para aparecer primero en urgencias. ${formatARS(20000)} por contacto.`
@@ -540,17 +527,16 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
       {/* Ver perfil público */}
       <Link
         to={`/prestador/${provider.id}`}
-        className="flex items-center justify-between p-4 rounded-lg border active:scale-[0.99] transition-all"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="flex items-center justify-between p-4 rounded-lg border active:scale-[0.99] transition-all bg-sombra border-line"
       >
         <div className="flex items-center gap-3">
           <span className="text-xl">👁️</span>
           <div>
-            <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>Ver perfil público</p>
-            <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Así te ven los clientes</p>
+            <p className="font-bold text-sm text-nieve">Ver perfil público</p>
+            <p className="text-xs text-muted">Así te ven los clientes</p>
           </div>
         </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-muted)' }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted">
           <path d="M9 18l6-6-6-6" />
         </svg>
       </Link>
@@ -558,11 +544,10 @@ function ResumenTab({ provider, isOnGuardia, onToggleGuardia, avgRating, reviewC
       {/* Score hint */}
       {score < 20 && (
         <div
-          className="flex items-start gap-3 p-4 rounded-lg border"
-          style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
+          className="flex items-start gap-3 p-4 rounded-lg border bg-brand-tint border-bosque-lt"
         >
           <span className="text-xl shrink-0">💡</span>
-          <p className="text-xs leading-relaxed" style={{ color: 'var(--color-bosque-lt)' }}>
+          <p className="text-xs leading-relaxed text-bosque-lt">
             Subí el DNI y una certificación más para obtener el badge <strong>Verificado</strong> y aparecer con mayor confianza en los resultados.
           </p>
         </div>
@@ -580,45 +565,44 @@ function ProviderOpportunities({ provider, onNavigate }: { provider: Provider; o
   const latest = jobs.filter(job => job.status === 'open').slice(0, 3)
 
   return (
-    <section className="rounded-lg border overflow-hidden" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+    <section className="rounded-lg border overflow-hidden bg-sombra border-line">
       <div className="flex items-start justify-between gap-3 px-4 pt-4 pb-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--color-muted)' }}>Oportunidades</p>
-          <h3 className="font-black text-base" style={{ color: 'var(--color-nieve)' }}>Trabajos para vos</h3>
-          <p className="text-xs mt-1 capitalize" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-1 text-muted">Oportunidades</p>
+          <h3 className="font-black text-base text-nieve">Trabajos para vos</h3>
+          <p className="text-xs mt-1 capitalize text-muted">
             {provider.rubro.replace(/-/g, ' ')} · {provider.ciudad.replace(/-/g, ' ')}
           </p>
         </div>
-        <button onClick={() => onNavigate(`/trabajos?ciudad=${encodeURIComponent(provider.ciudad)}&rubro=${encodeURIComponent(provider.rubro)}`)} className="text-xs font-bold shrink-0" style={{ color: 'var(--color-bosque-lt)' }}>
+        <button onClick={() => onNavigate(`/trabajos?ciudad=${encodeURIComponent(provider.ciudad)}&rubro=${encodeURIComponent(provider.rubro)}`)} className="text-xs font-bold shrink-0 text-bosque-lt">
           Ver todos →
         </button>
       </div>
 
       {loading ? (
         <div className="px-4 pb-4 space-y-2 animate-pulse">
-          <div className="h-10 rounded-md" style={{ backgroundColor: 'var(--color-noche)' }} />
-          <div className="h-10 rounded-md" style={{ backgroundColor: 'var(--color-noche)' }} />
+          <div className="h-10 rounded-md bg-noche" />
+          <div className="h-10 rounded-md bg-noche" />
         </div>
       ) : latest.length > 0 ? (
-        <div className="border-t" style={{ borderColor: 'var(--color-line)' }}>
+        <div className="border-t border-line">
           {latest.map(job => (
             <button
               key={job.id}
               onClick={() => onNavigate(`/trabajos/${job.id}`)}
-              className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left border-b last:border-b-0 active:bg-black/[0.02] transition-colors"
-              style={{ borderColor: 'var(--color-line)' }}
+              className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left border-b last:border-b-0 active:bg-black/[0.02] transition-colors border-line"
             >
               <div className="min-w-0">
-                <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{job.title}</p>
-                <p className="text-xs truncate mt-0.5" style={{ color: 'var(--color-muted)' }}>{job.barrio ? `${job.barrio} · ` : ''}{job.description}</p>
+                <p className="font-bold text-sm truncate text-nieve">{job.title}</p>
+                <p className="text-xs truncate mt-0.5 text-muted">{job.barrio ? `${job.barrio} · ` : ''}{job.description}</p>
               </div>
-              <span className="text-xs font-bold shrink-0" style={{ color: 'var(--color-bosque-lt)' }}>Cotizar</span>
+              <span className="text-xs font-bold shrink-0 text-bosque-lt">Cotizar</span>
             </button>
           ))}
         </div>
       ) : (
         <div className="px-4 pb-4">
-          <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs leading-relaxed text-muted">
             Todavía no hay trabajos abiertos de tu rubro en esta ciudad. Mirá el tablero completo por si aparece uno cercano.
           </p>
         </div>
@@ -653,13 +637,12 @@ function CertificacionesTab({ certifications, onAdd, onRemove }: Certificaciones
 
       {/* Score summary */}
       <div
-        className="flex items-center justify-between p-4 rounded-lg border"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="flex items-center justify-between p-4 rounded-lg border bg-sombra border-line"
       >
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--color-muted)' }}>Puntaje total</p>
+          <p className="text-xs font-bold uppercase tracking-widest mb-0.5 text-muted">Puntaje total</p>
           <p className="font-black text-2xl" style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
-            {totalScore} <span className="text-sm font-semibold" style={{ color: 'var(--color-muted)' }}>/ 100 pts</span>
+            {totalScore} <span className="text-sm font-semibold text-muted">/ 100 pts</span>
           </p>
         </div>
         <div className="flex gap-1">
@@ -702,8 +685,8 @@ function CertificacionesTab({ certifications, onAdd, onRemove }: Certificaciones
                   {config.icon}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>{config.label}</p>
-                  <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                  <p className="font-bold text-sm text-nieve">{config.label}</p>
+                  <p className="text-xs text-muted">
                     {isVerified ? existing!.fileName : config.description}
                   </p>
                 </div>
@@ -730,8 +713,7 @@ function CertificacionesTab({ certifications, onAdd, onRemove }: Certificaciones
                   ) : (
                     <button
                       onClick={() => fileInputRefs.current[config.type]?.click()}
-                      className="text-xs font-bold px-3 py-1.5 rounded-full active:scale-95 transition-all text-white"
-                      style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                      className="text-xs font-bold px-3 py-1.5 rounded-full active:scale-95 transition-all text-white bg-bosque-lt"
                     >
                       Subir
                     </button>
@@ -741,10 +723,9 @@ function CertificacionesTab({ certifications, onAdd, onRemove }: Certificaciones
 
               {isVerified && (
                 <div
-                  className="flex items-center gap-2 px-4 py-2 border-t"
-                  style={{ borderColor: 'var(--color-line)', backgroundColor: 'var(--color-brand-tint)' }}
+                  className="flex items-center gap-2 px-4 py-2 border-t border-line bg-brand-tint"
                 >
-                  <span className="text-[10px] font-bold" style={{ color: 'var(--color-bosque-lt)' }}>✓ Verificado</span>
+                  <span className="text-[10px] font-bold text-bosque-lt">✓ Verificado</span>
                   <span className="text-[10px]" style={{ color: 'var(--color-bosque-lt)', opacity: 0.6 }}>·</span>
                   <span className="text-[10px]" style={{ color: 'var(--color-bosque-lt)', opacity: 0.7 }}>{timeAgo(existing!.uploadedAt)}</span>
                 </div>
@@ -763,7 +744,7 @@ function CertificacionesTab({ certifications, onAdd, onRemove }: Certificaciones
         })}
       </div>
 
-      <p className="text-xs text-center py-2" style={{ color: 'var(--color-muted)' }}>
+      <p className="text-xs text-center py-2 text-muted">
         Los documentos son revisados por el equipo de Oficio en 24-48hs.
       </p>
 
@@ -782,14 +763,13 @@ function ResenasTab({ reviews, providerId }: ResenasTabProps) {
     return (
       <div className="flex flex-col items-center py-16 text-center">
         <span className="text-5xl mb-4">💬</span>
-        <p className="font-bold text-base mb-1" style={{ color: 'var(--color-nieve)' }}>Sin reseñas todavía</p>
-        <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+        <p className="font-bold text-base mb-1 text-nieve">Sin reseñas todavía</p>
+        <p className="text-sm text-muted">
           Los clientes pueden dejarte una reseña desde tu perfil público.
         </p>
         <Link
           to={`/prestador/${providerId}`}
-          className="mt-5 px-5 py-2.5 rounded-full text-sm font-bold border active:scale-95 transition-all"
-          style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}
+          className="mt-5 px-5 py-2.5 rounded-full text-sm font-bold border active:scale-95 transition-all border-line text-nieve"
         >
           Ver perfil público
         </Link>
@@ -802,8 +782,7 @@ function ResenasTab({ reviews, providerId }: ResenasTabProps) {
 
       {/* Summary */}
       <div
-        className="flex items-center gap-4 p-4 rounded-lg border"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="flex items-center gap-4 p-4 rounded-lg border bg-sombra border-line"
       >
         <div className="text-center">
           <p
@@ -813,7 +792,7 @@ function ResenasTab({ reviews, providerId }: ResenasTabProps) {
             {avgRating.toFixed(1)}
           </p>
           <StarRow rating={avgRating} size={12} />
-          <p className="text-[10px] mt-1" style={{ color: 'var(--color-muted)' }}>{reviews.length} reseñas</p>
+          <p className="text-[10px] mt-1 text-muted">{reviews.length} reseñas</p>
         </div>
         <div className="flex-1 space-y-1.5">
           {[5, 4, 3, 2, 1].map(star => {
@@ -821,11 +800,11 @@ function ResenasTab({ reviews, providerId }: ResenasTabProps) {
             const pct   = reviews.length > 0 ? (count / reviews.length) * 100 : 0
             return (
               <div key={star} className="flex items-center gap-2">
-                <span className="text-[10px] font-bold w-2" style={{ color: 'var(--color-muted)' }}>{star}</span>
-                <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--color-line)' }}>
+                <span className="text-[10px] font-bold w-2 text-muted">{star}</span>
+                <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-line">
                   <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#E8A020', transition: 'width 0.3s' }} />
                 </div>
-                <span className="text-[10px] w-4 text-right" style={{ color: 'var(--color-muted)', fontFamily: 'var(--font-mono)' }}>{count}</span>
+                <span className="text-[10px] w-4 text-right text-muted font-mono">{count}</span>
               </div>
             )
           })}
@@ -848,25 +827,23 @@ function ResenasTab({ reviews, providerId }: ResenasTabProps) {
 function ReviewCard({ review }: { review: Review }) {
   return (
     <div
-      className="p-4 rounded-lg border"
-      style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+      className="p-4 rounded-lg border bg-sombra border-line"
     >
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black shrink-0"
-            style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black shrink-0 bg-brand-tint text-bosque-lt"
           >
             {review.authorName.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>{review.authorName}</p>
+            <p className="font-bold text-sm text-nieve">{review.authorName}</p>
             <StarRow rating={review.rating} size={11} />
           </div>
         </div>
-        <span className="text-[10px] shrink-0 mt-0.5" style={{ color: 'var(--color-muted)' }}>{timeAgo(review.createdAt)}</span>
+        <span className="text-[10px] shrink-0 mt-0.5 text-muted">{timeAgo(review.createdAt)}</span>
       </div>
-      <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>{review.comment}</p>
+      <p className="text-xs leading-relaxed text-muted">{review.comment}</p>
     </div>
   )
 }
@@ -921,7 +898,7 @@ function StarRow({ rating, size = 12 }: { rating: number; size?: number }) {
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
 function IconBack() {
-  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-nieve)' }}><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-nieve"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
 }
 function IconTrash() {
   return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>

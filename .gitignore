@@ -7,3 +7,6 @@ dist
 .DS_Store
 .vite
 .vercel
+
+# Cowork no puede borrar archivos en este mount: mueve la basura acá.
+_to_delete/

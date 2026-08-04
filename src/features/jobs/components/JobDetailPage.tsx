@@ -57,7 +57,7 @@ function ClientJobView({ token }: { token: string }) {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
       <JobHeader title={job.title} status={job.status} onBack={() => navigate('/')} />
 
       <main className="pt-14 pb-10">
@@ -69,8 +69,7 @@ function ClientJobView({ token }: { token: string }) {
               Presupuestos recibidos
             </h2>
             <span
-              className="text-xs font-black px-2 py-0.5 rounded-full"
-              style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)', fontFamily: 'var(--font-mono)' }}
+              className="text-xs font-black px-2 py-0.5 rounded-full bg-brand-tint text-bosque-lt font-mono"
             >
               {quotes.length}
             </span>
@@ -92,29 +91,27 @@ function ClientJobView({ token }: { token: string }) {
         const q = quotes.find(x => x.id === confirmQuoteId)!
         return (
           <div className="fixed inset-0 z-[300] flex items-center justify-center px-6" style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}>
-            <div className="w-full max-w-xs rounded-xl p-6" style={{ backgroundColor: 'var(--color-sombra)' }}>
+            <div className="w-full max-w-xs rounded-xl p-6 bg-sombra">
               <p className="font-black text-base mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.01em' }}>
                 ¿Aceptar este presupuesto?
               </p>
-              <p className="text-sm mb-1" style={{ color: 'var(--color-muted)' }}>
-                <strong style={{ color: 'var(--color-nieve)' }}>{q.providerName}</strong> — {formatARS(q.amount)}
+              <p className="text-sm mb-1 text-muted">
+                <strong className="text-nieve">{q.providerName}</strong> — {formatARS(q.amount)}
               </p>
-              <p className="text-xs mb-5" style={{ color: 'var(--color-muted)' }}>
+              <p className="text-xs mb-5 text-muted">
                 Los otros quedarán descartados y se te mostrará el WhatsApp del prestador.
               </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setConfirmQuoteId(null)}
-                  className="flex-1 py-2.5 rounded-full text-sm font-bold border active:scale-95 transition-all"
-                  style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+                  className="flex-1 py-2.5 rounded-full text-sm font-bold border active:scale-95 transition-all border-line text-muted"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={() => handleAccept(confirmQuoteId)}
                   disabled={accepting}
-                  className="flex-1 py-2.5 rounded-full text-sm font-bold text-white active:scale-95 transition-all disabled:opacity-60"
-                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                  className="flex-1 py-2.5 rounded-full text-sm font-bold text-white active:scale-95 transition-all disabled:opacity-60 bg-bosque-lt"
                 >
                   {accepting ? 'Aceptando…' : 'Sí, aceptar'}
                 </button>
@@ -162,7 +159,7 @@ function ProviderJobView({ jobId }: { jobId: string }) {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
       <JobHeader title={job.title} status={job.status} onBack={() => navigate(-1)} />
 
       <main className="pt-14 pb-32">
@@ -170,9 +167,9 @@ function ProviderJobView({ jobId }: { jobId: string }) {
 
         <section className="px-5 pt-6">
           {sent ? (
-            <div className="flex items-center gap-3 px-4 py-3 rounded-lg border" style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-lg border bg-brand-tint border-bosque-lt">
               <span className="text-xl">✅</span>
-              <p className="text-sm font-semibold" style={{ color: 'var(--color-bosque-lt)' }}>
+              <p className="text-sm font-semibold text-bosque-lt">
                 ¡Presupuesto enviado! El cliente lo verá en su panel.
               </p>
             </div>
@@ -186,15 +183,13 @@ function ProviderJobView({ jobId }: { jobId: string }) {
               <div className="mt-4 flex justify-center gap-2">
                 <button
                   onClick={() => navigate('/login')}
-                  className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-95 transition-all"
-                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                  className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-95 transition-all bg-bosque-lt"
                 >
                   Iniciar sesión
                 </button>
                 <button
                   onClick={() => navigate('/registro/prestador')}
-                  className="px-5 py-3 rounded-full font-bold text-sm border active:scale-95 transition-all"
-                  style={{ borderColor: 'var(--color-bosque-lt)', color: 'var(--color-bosque-lt)' }}
+                  className="px-5 py-3 rounded-full font-bold text-sm border active:scale-95 transition-all border-bosque-lt text-bosque-lt"
                 >
                   Crear perfil gratis
                 </button>
@@ -207,11 +202,10 @@ function ProviderJobView({ jobId }: { jobId: string }) {
       </main>
 
       {canQuote && !sent && (
-        <div className="fixed bottom-0 left-0 w-full px-5 py-4 border-t" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+        <div className="fixed bottom-0 left-0 w-full px-5 py-4 border-t bg-sombra border-line">
           <button
             onClick={() => setShowSheet(true)}
-            className="w-full py-4 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
-            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+            className="w-full py-4 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all bg-bosque-lt"
           >
             Enviar presupuesto
           </button>
@@ -220,15 +214,15 @@ function ProviderJobView({ jobId }: { jobId: string }) {
 
       {showSheet && (
         <div className="fixed inset-0 z-[200] flex flex-col justify-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} onClick={() => setShowSheet(false)}>
-          <div className="rounded-t-2xl px-5 pt-4 pb-8 max-h-[90vh] overflow-y-auto" style={{ backgroundColor: 'var(--color-sombra)' }} onClick={e => e.stopPropagation()}>
-            <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ backgroundColor: 'var(--color-line)' }} />
+          <div className="rounded-t-2xl px-5 pt-4 pb-8 max-h-[90vh] overflow-y-auto bg-sombra" onClick={e => e.stopPropagation()}>
+            <div className="w-10 h-1 rounded-full mx-auto mb-5 bg-line" />
             <h3 className="font-black text-lg mb-4" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>Tu presupuesto</h3>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Monto (ARS)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-muted">Monto (ARS)</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none" style={{ color: 'var(--color-muted)' }}>$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none text-muted">$</span>
                     <input
                       {...register('amount')}
                       type="number"
@@ -240,7 +234,7 @@ function ProviderJobView({ jobId }: { jobId: string }) {
                   {errors.amount && <p className="text-[10px] mt-0.5" style={{ color: '#ffb4ab' }}>{errors.amount.message}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Días est.</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-muted">Días est.</label>
                   <input
                     {...register('estimatedDays')}
                     type="number"
@@ -251,7 +245,7 @@ function ProviderJobView({ jobId }: { jobId: string }) {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--color-muted)' }}>Tu propuesta</label>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-1.5 text-muted">Tu propuesta</label>
                 <textarea
                   {...register('message')}
                   rows={3}
@@ -265,8 +259,7 @@ function ProviderJobView({ jobId }: { jobId: string }) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all disabled:opacity-60"
-                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                className="w-full py-3.5 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all disabled:opacity-60 bg-bosque-lt"
               >
                 Enviar presupuesto
               </button>
@@ -287,8 +280,8 @@ type JobInfoData = {
 
 function JobHeader({ title, status, onBack }: { title: string; status: string; onBack: () => void }) {
   return (
-    <header className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-      <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <header className="fixed top-0 w-full z-50 flex items-center gap-3 px-5 h-14 border-b bg-sombra border-line">
+      <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-lg active:scale-90 transition-all bg-noche">
         <IconBack />
       </button>
       <div className="flex-1 min-w-0">
@@ -304,12 +297,12 @@ function JobHeader({ title, status, onBack }: { title: string; status: string; o
 function JobInfo({ job }: { job: JobInfoData }) {
   const rubro = RUBRO_MAP[job.rubro]
   return (
-    <section className="px-5 pt-5 pb-5 border-b" style={{ borderColor: 'var(--color-line)' }}>
-      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-3" style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}>
+    <section className="px-5 pt-5 pb-5 border-b border-line">
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-3 bg-brand-tint text-bosque-lt">
         {rubro?.icon} {rubro?.label}
       </span>
       <h1 className="font-black text-xl leading-tight mb-3" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>{job.title}</h1>
-      <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--color-muted)' }}>{job.description}</p>
+      <p className="text-sm leading-relaxed mb-4 text-muted">{job.description}</p>
       <div className="flex flex-wrap gap-3">
         <MetaChip icon="📍" label={job.barrio ? `${job.barrio}, ${job.ciudad}` : job.ciudad} />
         <MetaChip icon="👤" label={job.authorName} />
@@ -328,27 +321,27 @@ function JobInfo({ job }: { job: JobInfoData }) {
 
 function CenterMsg({ text }: { text: string }) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
-      <p style={{ color: 'var(--color-muted)' }}>{text}</p>
+    <div className="min-h-screen flex items-center justify-center px-8 text-center bg-noche">
+      <p className="text-muted">{text}</p>
     </div>
   )
 }
 
 function EmptyBox({ icon, title, body }: { icon: string; title: string; body: string }) {
   return (
-    <div className="flex flex-col items-center py-10 rounded-lg border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+    <div className="flex flex-col items-center py-10 rounded-lg border text-center bg-sombra border-line">
       <span className="text-4xl mb-3">{icon}</span>
-      <p className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>{title}</p>
-      <p className="text-xs px-6" style={{ color: 'var(--color-muted)' }}>{body}</p>
+      <p className="font-bold text-sm mb-1 text-nieve">{title}</p>
+      <p className="text-xs px-6 text-muted">{body}</p>
     </div>
   )
 }
 
 function InfoBox({ title, body }: { title: string; body: string }) {
   return (
-    <div className="rounded-lg border p-4" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-      <p className="font-bold text-sm mb-1" style={{ color: 'var(--color-nieve)' }}>{title}</p>
-      <p className="text-xs" style={{ color: 'var(--color-muted)' }}>{body}</p>
+    <div className="rounded-lg border p-4 bg-sombra border-line">
+      <p className="font-bold text-sm mb-1 text-nieve">{title}</p>
+      <p className="text-xs text-muted">{body}</p>
     </div>
   )
 }
@@ -364,20 +357,20 @@ function QuoteCard({ quote, isOpen, onAccept }: QuoteCardProps) {
     <div className={cn('rounded-lg border overflow-hidden')} style={{ backgroundColor: 'var(--color-sombra)', borderColor: isAccepted ? 'var(--color-bosque-lt)' : 'var(--color-line)', opacity: isRejected ? 0.5 : 1 }}>
       <div className="p-4">
         <div className="flex items-center gap-2.5 mb-3">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}>
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black shrink-0 bg-brand-tint text-bosque-lt">
             {quote.providerName.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="font-bold text-sm truncate" style={{ color: 'var(--color-nieve)' }}>{quote.providerName}</p>
+              <p className="font-bold text-sm truncate text-nieve">{quote.providerName}</p>
               {quote.providerVerified && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0" style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}>✓ VER</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 bg-brand-tint text-bosque-lt">✓ VER</span>
               )}
             </div>
             {quote.providerRating != null && (
-              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+              <p className="text-xs text-muted">
                 <span style={{ color: '#E8A020' }}>★</span>{' '}
-                <span style={{ fontFamily: 'var(--font-mono)' }}>{quote.providerRating.toFixed(1)}</span>
+                <span className="font-mono">{quote.providerRating.toFixed(1)}</span>
                 {quote.estimatedDays && ` · ${quote.estimatedDays}d de trabajo`}
               </p>
             )}
@@ -386,10 +379,10 @@ function QuoteCard({ quote, isOpen, onAccept }: QuoteCardProps) {
             {formatARS(quote.amount)}
           </p>
         </div>
-        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>{quote.message}</p>
+        <p className="text-xs leading-relaxed text-muted">{quote.message}</p>
       </div>
       <div className="flex items-center justify-between px-4 py-2.5 border-t" style={{ borderColor: 'var(--color-line)', backgroundColor: 'rgba(0,0,0,0.02)' }}>
-        <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>{timeAgo(quote.createdAt)}</span>
+        <span className="text-[10px] text-muted">{timeAgo(quote.createdAt)}</span>
         {isAccepted && quote.providerPhone ? (
           <a
             href={`https://wa.me/${quote.providerPhone.replace(/\D/g, '')}`}
@@ -401,9 +394,9 @@ function QuoteCard({ quote, isOpen, onAccept }: QuoteCardProps) {
             <IconWhatsApp /> Contactar
           </a>
         ) : isRejected ? (
-          <span className="text-xs font-bold" style={{ color: 'var(--color-muted)' }}>No seleccionado</span>
+          <span className="text-xs font-bold text-muted">No seleccionado</span>
         ) : isOpen ? (
-          <button onClick={onAccept} className="px-3 py-1.5 rounded-full text-xs font-bold text-white active:scale-95 transition-all" style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
+          <button onClick={onAccept} className="px-3 py-1.5 rounded-full text-xs font-bold text-white active:scale-95 transition-all bg-bosque-lt">
             Aceptar
           </button>
         ) : null}
@@ -427,7 +420,7 @@ function MetaChip({ icon, label, mono = false }: MetaChipProps) {
 
 function IconBack() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-nieve)' }}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-nieve">
       <path d="M19 12H5M12 5l-7 7 7 7" />
     </svg>
   )

@@ -65,7 +65,7 @@ export function ProviderLogin() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col text-[--color-nieve]" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen flex flex-col text-nieve bg-noche">
 
       <PageHeader title="Iniciar sesión" />
 
@@ -73,12 +73,12 @@ export function ProviderLogin() {
 
         <div className="mb-10">
           <h2
-            className="text-3xl font-bold text-[--color-nieve] mb-2"
+            className="text-3xl font-bold text-nieve mb-2"
             style={{ letterSpacing: '-0.02em' }}
           >
             Bienvenido de vuelta
           </h2>
-          <p className="text-sm text-[--color-muted]">Ingresá para gestionar tu perfil y contactos.</p>
+          <p className="text-sm text-muted">Ingresá para gestionar tu perfil y contactos.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
@@ -87,17 +87,16 @@ export function ProviderLogin() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={googleLoading || isSubmitting}
-            className="w-full h-14 rounded-full font-bold text-base flex items-center justify-center gap-3 border transition-all active:scale-[0.98] disabled:opacity-50"
-            style={{ backgroundColor: 'var(--color-sombra)', color: 'var(--color-nieve)', borderColor: 'var(--color-line)' }}
+            className="w-full h-14 rounded-full font-bold text-base flex items-center justify-center gap-3 border transition-all active:scale-[0.98] disabled:opacity-50 bg-sombra text-nieve border-line"
           >
             <GoogleIcon />
             {googleLoading ? 'Abriendo Google…' : 'Continuar con Google'}
           </button>
 
           <div className="flex items-center gap-3 py-1" aria-hidden="true">
-            <div className="h-px flex-1 bg-[--color-line]" />
-            <span className="text-[10px] font-bold tracking-[0.14em] text-[--color-muted]">O CON EMAIL</span>
-            <div className="h-px flex-1 bg-[--color-line]" />
+            <div className="h-px flex-1 bg-line" />
+            <span className="text-[10px] font-bold tracking-[0.14em] text-muted">O CON EMAIL</span>
+            <div className="h-px flex-1 bg-line" />
           </div>
 
           <Field label="Email" error={errors.email?.message}>
@@ -122,7 +121,7 @@ export function ProviderLogin() {
               <button
                 type="button"
                 onClick={() => setShowPassword(v => !v)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[--color-muted] hover:text-[--color-nieve] transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-nieve transition-colors"
                 aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
               >
                 {showPassword ? <IconEyeOff /> : <IconEye />}
@@ -144,9 +143,9 @@ export function ProviderLogin() {
             </button>
           </div>
 
-          <p className="text-xs text-center text-[--color-muted] pt-2">
+          <p className="text-xs text-center text-muted pt-2">
             ¿Todavía no tenés perfil?{' '}
-            <Link to="/registro/prestador" className="text-[--color-bosque-lt] font-semibold hover:underline">
+            <Link to="/registro/prestador" className="text-bosque-lt font-semibold hover:underline">
               Registrate
             </Link>
           </p>

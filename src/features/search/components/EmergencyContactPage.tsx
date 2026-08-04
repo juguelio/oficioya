@@ -51,16 +51,16 @@ export function EmergencyContactPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-noche)' }}>
-      <header className="flex items-center gap-3 px-5 h-14 border-b" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-        <button onClick={() => navigate('/emergencias')} className="p-2 rounded-lg active:scale-95" style={{ color: 'var(--color-bosque-lt)' }} aria-label="Volver">
+    <div className="min-h-screen flex flex-col bg-noche">
+      <header className="flex items-center gap-3 px-5 h-14 border-b bg-sombra border-line">
+        <button onClick={() => navigate('/emergencias')} className="p-2 rounded-lg active:scale-95 text-bosque-lt" aria-label="Volver">
           <IconArrowLeft />
         </button>
         <h1 className="font-bold text-base" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>Tu contacto</h1>
       </header>
 
       <main className="flex-1 px-5 pt-8 pb-10 max-w-xl mx-auto w-full">
-        {state === 'verifying' && <p className="text-center text-sm" style={{ color: 'var(--color-muted)' }}>Confirmando tu pago…</p>}
+        {state === 'verifying' && <p className="text-center text-sm text-muted">Confirmando tu pago…</p>}
 
         {state === 'pending' && (
           <Box icon="⏳" title="Tu pago está en proceso"
@@ -75,10 +75,10 @@ export function EmergencyContactPage() {
 
         {state === 'approved' && data && (
           <>
-            <div className="rounded-xl p-5 border mb-5 text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-guardia)' }}>
+            <div className="rounded-xl p-5 border mb-5 text-center bg-sombra border-guardia">
               <span className="text-3xl">✅</span>
               <p className="font-black text-lg mt-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>¡Listo! Contactá a {data.name.split(' ')[0]}</p>
-              <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>
+              <p className="text-xs mt-1 text-muted">
                 Le escribimos tu urgencia. Si no responde en 10 minutos, te damos un crédito.
               </p>
             </div>
@@ -94,7 +94,7 @@ export function EmergencyContactPage() {
               <IconWhatsApp />
               Contactar por WhatsApp
             </a>
-            <p className="text-center text-xs mt-3" style={{ color: 'var(--color-muted)', fontFamily: 'var(--font-mono)' }}>
+            <p className="text-center text-xs mt-3 text-muted font-mono">
               {data.whatsapp.replace(/(\+54)(9)(\d{4})(\d{3})(\d{4})/, '$1 $2 $3 $4-$5')}
             </p>
           </>
@@ -106,12 +106,12 @@ export function EmergencyContactPage() {
 
 function Box({ icon, title, body, cta }: { icon: string; title: string; body: string; cta?: { label: string; onClick: () => void } }) {
   return (
-    <div className="rounded-xl p-6 border text-center" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+    <div className="rounded-xl p-6 border text-center bg-sombra border-line">
       <span className="text-3xl">{icon}</span>
-      <p className="font-bold text-base mt-2" style={{ color: 'var(--color-nieve)' }}>{title}</p>
-      <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--color-muted)' }}>{body}</p>
+      <p className="font-bold text-base mt-2 text-nieve">{title}</p>
+      <p className="text-xs mt-1 leading-relaxed text-muted">{body}</p>
       {cta && (
-        <button onClick={cta.onClick} className="mt-4 px-5 py-2.5 rounded-lg text-sm font-semibold border active:scale-95" style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}>
+        <button onClick={cta.onClick} className="mt-4 px-5 py-2.5 rounded-lg text-sm font-semibold border active:scale-95 border-line text-nieve">
           {cta.label}
         </button>
       )}

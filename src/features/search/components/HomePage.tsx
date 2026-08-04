@@ -124,12 +124,11 @@ export function HomePage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-noche)' }}>
+    <div className="min-h-screen bg-noche">
 
       {/* ── Header ─────────────────────────────────────────────────────────────── */}
       <header
-        className="fixed top-0 w-full z-50 h-14 border-b"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed top-0 w-full z-50 h-14 border-b bg-sombra border-line"
       >
         <div className="px-5 h-full flex items-center justify-between">
           <button onClick={clearCiudad} className="active:scale-95 transition-transform" aria-label="Inicio">
@@ -143,12 +142,11 @@ export function HomePage() {
               destino depende de qué es la cuenta. */}
           <div className="flex items-center gap-2">
             {authLoading || viewerLoading ? (
-              <div className="h-7 w-24 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-line)' }} />
+              <div className="h-7 w-24 rounded-full animate-pulse bg-line" />
             ) : user ? (
               <Link
                 to={viewerRole === 'cliente' ? '/mis-trabajos' : '/dashboard'}
-                className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white"
-                style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white bg-bosque-lt"
               >
                 {viewerRole === 'cliente' ? 'Mis trabajos' : 'Mi panel'}
               </Link>
@@ -156,8 +154,7 @@ export function HomePage() {
               <>
                 <button
                   onClick={() => setShowLoginSheet(true)}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors active:scale-95"
-                  style={{ color: 'var(--color-muted)' }}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-muted"
                 >
                   Ingresar
                 </button>
@@ -166,8 +163,7 @@ export function HomePage() {
                     alta — en v1 el cliente ni siquiera necesita cuenta. */}
                 <Link
                   to="/onboarding"
-                  className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white"
-                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                  className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors active:scale-95 text-white bg-bosque-lt"
                 >
                   Registrate
                 </Link>
@@ -180,7 +176,7 @@ export function HomePage() {
       <main className="pt-14 pb-24">
 
         {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-        <section style={{ backgroundColor: 'var(--color-bosque-lt)' }}>
+        <section className="bg-bosque-lt">
           <div className="px-5 sm:px-10 lg:px-16 pt-8 pb-8">
           <h1
             className="text-white font-black leading-none mb-1"
@@ -201,29 +197,25 @@ export function HomePage() {
                 value={rubroSearch}
                 onChange={e => setRubroSearch(e.target.value)}
                 placeholder="¿Qué servicio necesitás?"
-                className="text-sm flex-1 bg-transparent focus:outline-none min-w-0"
-                style={{ color: 'var(--color-nieve)' }}
+                className="text-sm flex-1 bg-transparent focus:outline-none min-w-0 text-nieve"
               />
               {rubroSearch ? (
                 <button
                   onClick={() => setRubroSearch('')}
-                  className="w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shrink-0"
-                  style={{ backgroundColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+                  className="w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shrink-0 bg-line text-muted"
                 >
                   ×
                 </button>
               ) : ciudadId ? (
                 <span
-                  className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0"
-                  style={{ color: 'var(--color-bosque-lt)', backgroundColor: 'var(--color-brand-tint)' }}
+                  className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0 text-bosque-lt bg-brand-tint"
                 >
                   {ciudadData?.label}
                 </span>
               ) : (
                 <button
                   onClick={() => document.getElementById('city-section')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-xs font-bold px-3 py-1.5 rounded-full shrink-0 text-white active:scale-95 transition-all"
-                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                  className="text-xs font-bold px-3 py-1.5 rounded-full shrink-0 text-white active:scale-95 transition-all bg-bosque-lt"
                 >
                   Elegí ciudad
                 </button>
@@ -246,14 +238,13 @@ export function HomePage() {
                           className="flex items-center gap-3 px-4 py-3 w-full text-left active:bg-gray-50 transition-colors border-b last:border-b-0"
                           style={{ borderColor: 'rgba(0,0,0,0.06)' }}
                         >
-                          <RubroIcon rubro={r.id as RubroId} size={22} style={{ color: 'var(--color-bosque-lt)' }} />
-                          <span className="text-sm font-semibold flex-1" style={{ color: 'var(--color-nieve)' }}>
+                          <RubroIcon rubro={r.id as RubroId} size={22} className="text-bosque-lt" />
+                          <span className="text-sm font-semibold flex-1 text-nieve">
                             {r.label}
                           </span>
                           {count !== null && count > 0 && (
                             <span
-                              className="text-xs font-black shrink-0 px-1.5 py-0.5 rounded-full text-white"
-                              style={{ backgroundColor: 'var(--color-bosque-lt)', fontFamily: 'var(--font-mono)' }}
+                              className="text-xs font-black shrink-0 px-1.5 py-0.5 rounded-full text-white bg-bosque-lt font-mono"
                             >
                               {count}
                             </span>
@@ -262,7 +253,7 @@ export function HomePage() {
                       )
                     })
                   : (
-                    <p className="text-xs text-center py-4" style={{ color: 'var(--color-muted)' }}>
+                    <p className="text-xs text-center py-4 text-muted">
                       Sin resultados para "{rubroSearch}"
                     </p>
                   )
@@ -274,7 +265,7 @@ export function HomePage() {
         </section>
 
         {/* ── TRUST STRIP ──────────────────────────────────────────────────────── */}
-        <section style={{ backgroundColor: 'var(--color-bosque-dk)' }}>
+        <section className="bg-bosque-dk">
           <div className="flex divide-x" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
           {[
             { stat: '90 días', label: 'Gratis para fundadores' },
@@ -283,8 +274,7 @@ export function HomePage() {
           ].map(({ stat, label }) => (
             <div key={label} className="flex-1 py-3 px-2 text-center" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
               <p
-                className="font-black text-base leading-none"
-                style={{ color: 'var(--color-guardia)', fontFamily: 'var(--font-mono)' }}
+                className="font-black text-base leading-none text-guardia font-mono"
               >
                 {stat}
               </p>
@@ -299,7 +289,7 @@ export function HomePage() {
         {/* ── CIUDAD ───────────────────────────────────────────────────────────── */}
         <section id="city-section">
           <div className="px-5 sm:px-10 lg:px-16 pt-5 pb-1">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3 text-muted">
             {ciudadId ? 'Tu ciudad' : '¿Dónde estás?'}
           </p>
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
@@ -320,34 +310,32 @@ export function HomePage() {
             {ciudadId && (
               <button
                 onClick={clearCiudad}
-                className="px-3 py-2.5 rounded-lg text-xs font-semibold whitespace-nowrap border active:scale-95"
-                style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+                className="px-3 py-2.5 rounded-lg text-xs font-semibold whitespace-nowrap border active:scale-95 bg-sombra border-line text-muted"
               >
                 ×
               </button>
             )}
             <span
-              className="px-4 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap border shrink-0"
-              style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-line)', color: 'var(--color-bosque-dk)' }}
+              className="px-4 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap border shrink-0 bg-brand-tint border-line text-bosque-dk"
             >
               Junín de los Andes · sumando prestadores
             </span>
           </div>
-          <p className="text-xs mt-3 leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs mt-3 leading-relaxed text-muted">
             Validamos un radio cercano: San Martín como núcleo y Junín como oferta útil si atiende la zona.
           </p>
           </div>
         </section>
 
         {/* ── URGENCIAS — zona oscura full-bleed ───────────────────────────────── */}
-        <section className="mt-5" style={{ backgroundColor: 'var(--color-guardia-bg)' }}>
+        <section className="mt-5 bg-guardia-bg">
           <div className="px-5 sm:px-10 lg:px-16 pt-5 pb-4">
 
             {/* Label + link */}
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-emergency)' }} />
-                <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--color-emergency)' }}>
+                <span className="w-2 h-2 rounded-full animate-pulse bg-emergency" />
+                <span className="text-xs font-black uppercase tracking-widest text-emergency">
                   Urgencias 24/7
                 </span>
               </div>
@@ -387,11 +375,11 @@ export function HomePage() {
             className="w-full flex items-center justify-between px-5 py-4 active:opacity-70 transition-opacity"
             style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
           >
-            <span className="text-sm font-bold flex items-center gap-2" style={{ color: 'var(--color-emergency)' }}>
+            <span className="text-sm font-bold flex items-center gap-2 text-emergency">
               <IconBolt />
               Ver todos los guardias disponibles
             </span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-emergency)' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-emergency">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
@@ -405,7 +393,7 @@ export function HomePage() {
               {ciudadId ? `Servicios en ${ciudadData?.label}` : 'Servicios'}
             </h2>
             {!ciudadId && (
-              <span className="text-xs" style={{ color: 'var(--color-muted)' }}>Elegí una ciudad</span>
+              <span className="text-xs text-muted">Elegí una ciudad</span>
             )}
           </div>
 
@@ -444,8 +432,7 @@ export function HomePage() {
                   )}
                   {/* Foto del oficio; si todavía no hay, cae al icono sobre el tint de marca. */}
                   <div
-                    className="w-full aspect-square flex items-center justify-center"
-                    style={{ backgroundColor: 'var(--color-brand-tint)' }}
+                    className="w-full aspect-square flex items-center justify-center bg-brand-tint"
                   >
                     {photo
                       ? <img src={photo} alt="" className="w-full h-full object-cover" loading="lazy" />
@@ -454,11 +441,10 @@ export function HomePage() {
                           size={30}
                           /* proporcional a la tarjeta: con size fijo el icono se
                              pierde apenas la tarjeta crece */
-                          className="w-[42%] h-[42%]"
-                          style={{ color: 'var(--color-bosque-lt)' }}
+                          className="w-[42%] h-[42%] text-bosque-lt"
                         />}
                   </div>
-                  <span className="text-[11px] font-semibold leading-tight px-2 py-2.5" style={{ color: 'var(--color-nieve)' }}>
+                  <span className="text-[11px] font-semibold leading-tight px-2 py-2.5 text-nieve">
                     {r.label}
                   </span>
                 </button>
@@ -488,8 +474,7 @@ export function HomePage() {
               {rubroSearch && (
                 <button
                   onClick={() => setRubroSearch('')}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-sm font-bold leading-none active:scale-90 transition-all"
-                  style={{ backgroundColor: 'var(--color-line)', color: 'var(--color-muted)' }}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-sm font-bold leading-none active:scale-90 transition-all bg-line text-muted"
                 >
                   ×
                 </button>
@@ -514,8 +499,8 @@ export function HomePage() {
                             opacity: hasProviders ? 1 : 0.5,
                           }}
                         >
-                          <RubroIcon rubro={r.id as RubroId} size={24} style={{ color: 'var(--color-bosque-lt)' }} />
-                          <span className="text-sm font-semibold flex-1" style={{ color: 'var(--color-nieve)' }}>
+                          <RubroIcon rubro={r.id as RubroId} size={24} className="text-bosque-lt" />
+                          <span className="text-sm font-semibold flex-1 text-nieve">
                             {r.label}
                           </span>
                           {count !== null && count > 0 && (
@@ -533,7 +518,7 @@ export function HomePage() {
                       )
                     })
                   : (
-                    <p className="text-xs text-center py-4" style={{ color: 'var(--color-muted)' }}>
+                    <p className="text-xs text-center py-4 text-muted">
                       Sin resultados para "{rubroSearch}"
                     </p>
                   )
@@ -543,7 +528,7 @@ export function HomePage() {
           </div>
 
           {!ciudadId && !isRubroSearching && (
-            <p className="text-xs text-center mt-3 px-5" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-xs text-center mt-3 px-5 text-muted">
               Elegí tu ciudad para ver disponibilidad
             </p>
           )}
@@ -555,29 +540,26 @@ export function HomePage() {
         <section className="pt-8">
           <div className="px-5 sm:px-10 lg:px-16">
             <div
-              className="rounded-xl border p-5 sm:flex sm:items-center sm:justify-between sm:gap-6"
-              style={{ backgroundColor: 'var(--color-brand-tint)', borderColor: 'var(--color-bosque-lt)' }}
+              className="rounded-xl border p-5 sm:flex sm:items-center sm:justify-between sm:gap-6 bg-brand-tint border-bosque-lt"
             >
               <div className="mb-4 sm:mb-0">
                 <h2 className="font-black text-lg mb-1" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
                   ¿Preferís que te contacten ellos?
                 </h2>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+                <p className="text-sm leading-relaxed text-muted">
                   Contá qué necesitás y recibí presupuestos de la zona. Sin cuenta: seguís las respuestas con un link.
                 </p>
               </div>
               <div className="flex items-center gap-4 shrink-0">
                 <button
                   onClick={() => navigate('/trabajos/nuevo')}
-                  className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all"
-                  style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+                  className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all bg-bosque-lt"
                 >
                   Publicar un trabajo
                 </button>
                 <button
                   onClick={() => navigate('/trabajos')}
-                  className="text-sm font-bold"
-                  style={{ color: 'var(--color-bosque-lt)' }}
+                  className="text-sm font-bold text-bosque-lt"
                 >
                   Ver trabajos
                 </button>
@@ -591,7 +573,7 @@ export function HomePage() {
           <section className="pt-8">
             <div className="px-5 sm:px-10 lg:px-16 flex items-end justify-between mb-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--color-muted)' }}>
+                <p className="text-xs font-bold uppercase tracking-widest mb-0.5 text-muted">
                   Cerca tuyo
                 </p>
                 <h2 className="font-black text-lg" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
@@ -599,8 +581,7 @@ export function HomePage() {
                 </h2>
               </div>
               <span
-                className="text-xs font-bold"
-                style={{ color: 'var(--color-bosque-lt)', fontFamily: 'var(--font-mono)' }}
+                className="text-xs font-bold text-bosque-lt font-mono"
               >
                 {providersLoading ? '—' : `${publicProviders.length} en la zona`}
               </span>
@@ -630,18 +611,16 @@ export function HomePage() {
             ].map(({ icon, title, body }) => (
               <div
                 key={title}
-                className="flex gap-4 p-4 rounded-lg border"
-                style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+                className="flex gap-4 p-4 rounded-lg border bg-sombra border-line"
               >
                 <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-base shrink-0 font-bold"
-                  style={{ backgroundColor: 'var(--color-brand-tint)', color: 'var(--color-bosque-lt)' }}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-base shrink-0 font-bold bg-brand-tint text-bosque-lt"
                 >
                   {icon}
                 </div>
                 <div>
-                  <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>{title}</p>
-                  <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--color-muted)' }}>{body}</p>
+                  <p className="font-bold text-sm text-nieve">{title}</p>
+                  <p className="text-xs mt-0.5 leading-relaxed text-muted">{body}</p>
                 </div>
               </div>
             ))}
@@ -653,8 +632,7 @@ export function HomePage() {
         <section>
           <div className="px-5 pt-8">
           <div
-            className="rounded-xl p-6"
-            style={{ backgroundColor: 'var(--color-bosque-lt)' }}
+            className="rounded-xl p-6 bg-bosque-lt"
           >
             <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.6)' }}>
               Para profesionales
@@ -669,8 +647,7 @@ export function HomePage() {
             <div className="flex gap-2">
               <Link
                 to="/registro/prestador"
-                className="flex-1 text-center py-3 rounded-lg font-bold text-sm active:scale-95 transition-all"
-                style={{ backgroundColor: 'var(--color-guardia)', color: 'var(--color-guardia-bg)' }}
+                className="flex-1 text-center py-3 rounded-lg font-bold text-sm active:scale-95 transition-all bg-guardia text-guardia-bg"
               >
                 Registrate gratis
               </Link>
@@ -699,14 +676,12 @@ export function HomePage() {
           onClick={() => setShowLoginSheet(false)}
         >
           <div
-            className="rounded-t-2xl px-5 pt-4 pb-10"
-            style={{ backgroundColor: 'var(--color-sombra)' }}
+            className="rounded-t-2xl px-5 pt-4 pb-10 bg-sombra"
             onClick={e => e.stopPropagation()}
           >
             {/* drag handle */}
             <div
-              className="w-10 h-1 rounded-full mx-auto mb-5"
-              style={{ backgroundColor: 'var(--color-line)' }}
+              className="w-10 h-1 rounded-full mx-auto mb-5 bg-line"
             />
             <h3
               className="font-black text-xl mb-1"
@@ -714,7 +689,7 @@ export function HomePage() {
             >
               ¿Cómo querés ingresar?
             </h3>
-            <p className="text-sm mb-5" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-sm mb-5 text-muted">
               Elegí tu perfil para continuar
             </p>
             <div className="space-y-3">
@@ -722,20 +697,18 @@ export function HomePage() {
                   opcional y sirve para conservar trabajos y presupuestos. */}
               <button
                 onClick={() => { navigate('/registro/cliente'); setShowLoginSheet(false) }}
-                className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all"
-                style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-line)' }}
+                className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all bg-noche border-line"
               >
                 <span
-                  className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0"
-                  style={{ backgroundColor: 'var(--color-brand-tint)' }}
+                  className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0 bg-brand-tint"
                 >
                   🏠
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>
+                  <p className="font-bold text-sm text-nieve">
                     Soy cliente
                   </p>
-                  <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                  <p className="text-xs text-muted">
                     Publicá sin cuenta o ingresá para seguir todos tus presupuestos
                   </p>
                 </div>
@@ -747,20 +720,18 @@ export function HomePage() {
                   (antes iba a /onboarding, la pantalla de presentación). */}
               <button
                 onClick={() => { navigate('/login'); setShowLoginSheet(false) }}
-                className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all"
-                style={{ backgroundColor: 'var(--color-noche)', borderColor: 'var(--color-bosque-lt)' }}
+                className="w-full flex items-center gap-4 p-4 rounded-lg border text-left active:scale-[0.98] transition-all bg-noche border-bosque-lt"
               >
                 <span
-                  className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0"
-                  style={{ backgroundColor: 'var(--color-brand-tint)' }}
+                  className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl shrink-0 bg-brand-tint"
                 >
                   🔧
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm" style={{ color: 'var(--color-nieve)' }}>
+                  <p className="font-bold text-sm text-nieve">
                     Soy prestador
                   </p>
-                  <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                  <p className="text-xs text-muted">
                     Entrá a tu panel para gestionar tu perfil y contactos
                   </p>
                 </div>
@@ -775,16 +746,15 @@ export function HomePage() {
 
       {/* ── Bottom Nav ─────────────────────────────────────────────────────────── */}
       <nav
-        className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 border-t sm:hidden"
-        style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}
+        className="fixed bottom-0 left-0 w-full z-50 flex items-stretch gap-1 px-2 py-2 border-t sm:hidden bg-sombra border-line"
       >
         <NavTab icon={<IconExplore />} label="Explorar" active />
         <button
           onClick={() => navigate('/emergencias')}
-          className="flex flex-col items-center gap-1 active:scale-90 transition-all"
+          className="shrink-0 flex flex-col items-center justify-center active:scale-90 transition-all"
         >
           <span
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide"
             style={{ backgroundColor: 'var(--color-emergency)', color: '#fff' }}
           >
             <span className="w-1.5 h-1.5 bg-white/80 rounded-full animate-pulse" />
@@ -793,27 +763,24 @@ export function HomePage() {
         </button>
         <Link
           to="/trabajos"
-          className="flex flex-col items-center gap-1 active:scale-90 transition-all"
-          style={{ color: 'var(--color-muted)' }}
+          className="flex-1 min-w-0 flex flex-col items-center gap-1 active:scale-90 transition-all text-muted"
         >
           <IconClipboard />
-          <span className="text-[10px] font-semibold uppercase tracking-widest">Trabajos</span>
+          <span className="text-[9px] font-semibold uppercase tracking-wide truncate max-w-full">Trabajos</span>
         </Link>
         <Link
           to="/registro/prestador"
-          className="flex flex-col items-center gap-1 active:scale-90 transition-all"
-          style={{ color: 'var(--color-muted)' }}
+          className="flex-1 min-w-0 flex flex-col items-center gap-1 active:scale-90 transition-all text-muted"
         >
           <IconBriefcase />
-          <span className="text-[10px] font-semibold uppercase tracking-widest">Sumate</span>
+          <span className="text-[9px] font-semibold uppercase tracking-wide truncate max-w-full">Sumate</span>
         </Link>
         <Link
           to="/login"
-          className="flex flex-col items-center gap-1 active:scale-90 transition-all"
-          style={{ color: 'var(--color-muted)' }}
+          className="flex-1 min-w-0 flex flex-col items-center gap-1 active:scale-90 transition-all text-muted"
         >
           <IconPerson />
-          <span className="text-[10px] font-semibold uppercase tracking-widest">Ingresar</span>
+          <span className="text-[9px] font-semibold uppercase tracking-wide truncate max-w-full">Ingresar</span>
         </Link>
       </nav>
 
@@ -836,8 +803,7 @@ function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
       className="snap-start shrink-0 w-36 sm:w-full text-left active:scale-[0.98] transition-transform"
     >
       <div
-        className="relative aspect-square w-36 sm:w-full rounded-lg overflow-hidden border"
-        style={{ borderColor: 'var(--color-line)' }}
+        className="relative aspect-square w-36 sm:w-full rounded-lg overflow-hidden border border-line"
       >
         {ownPhoto ? (
           <img
@@ -851,8 +817,7 @@ function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
           /* Sin foto propia el nombre es la imagen: una ilustración de stock repetida
              en cientos de fichas se lee como relleno. */
           <div
-            className="w-full h-full flex items-center justify-center"
-            style={{ backgroundColor: 'var(--color-brand-tint)' }}
+            className="w-full h-full flex items-center justify-center bg-brand-tint"
           >
             <span
               className="leading-none select-none"
@@ -885,14 +850,14 @@ function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
         )}
       </div>
       <div className="mt-2">
-        <p className="text-sm font-bold truncate" style={{ color: 'var(--color-nieve)' }}>
+        <p className="text-sm font-bold truncate text-nieve">
           {provider.name}
         </p>
-        <div className="flex items-center gap-1.5 mt-0.5 text-xs" style={{ color: 'var(--color-muted)' }}>
+        <div className="flex items-center gap-1.5 mt-0.5 text-xs text-muted">
           {/* Nunca "★ 0.0": rating Oficio si es real, si no la señal externa (Google), si no sólo el rubro */}
           {provider.claimed && provider.rating > 0 ? (
             <>
-              <span style={{ color: 'var(--color-amber)' }}>★</span>
+              <span className="text-amber">★</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
                 {provider.rating.toFixed(1)}
               </span>
@@ -900,7 +865,7 @@ function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
             </>
           ) : provider.externalRating ? (
             <>
-              <span style={{ color: 'var(--color-amber)' }}>★</span>
+              <span className="text-amber">★</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
                 {provider.externalRating.toFixed(1)}
               </span>
@@ -920,12 +885,11 @@ function ProviderMiniCardSkeleton() {
   return (
     <div className="snap-start shrink-0 w-36">
       <div
-        className="aspect-square w-36 rounded-lg animate-pulse"
-        style={{ backgroundColor: 'var(--color-sombra)' }}
+        className="aspect-square w-36 rounded-lg animate-pulse bg-sombra"
       />
       <div className="mt-2 space-y-1.5">
-        <div className="h-3.5 w-28 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
-        <div className="h-3 w-20 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-sombra)' }} />
+        <div className="h-3.5 w-28 rounded-full animate-pulse bg-sombra" />
+        <div className="h-3 w-20 rounded-full animate-pulse bg-sombra" />
       </div>
     </div>
   )
@@ -939,11 +903,11 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition-all active:scale-90"
+      className="flex-1 min-w-0 flex flex-col items-center gap-1 px-1 py-1 rounded-lg transition-all active:scale-90"
       style={{ color: active ? 'var(--color-bosque-lt)' : 'var(--color-muted)' }}
     >
       {icon}
-      <span className="text-[10px] font-semibold uppercase tracking-widest">{label}</span>
+      <span className="text-[9px] font-semibold uppercase tracking-wide truncate max-w-full">{label}</span>
     </button>
   )
 }

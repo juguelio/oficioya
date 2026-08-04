@@ -56,32 +56,32 @@ export function EmergencyCheckoutPage() {
   const ciudad = ciudades.find(c => c.id === provider.ciudad)
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-noche)' }}>
-      <header className="flex items-center gap-3 px-5 h-14 border-b" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
-        <button onClick={() => navigate(-1)} className="p-2 rounded-lg active:scale-95" style={{ color: 'var(--color-bosque-lt)' }} aria-label="Volver">
+    <div className="min-h-screen flex flex-col bg-noche">
+      <header className="flex items-center gap-3 px-5 h-14 border-b bg-sombra border-line">
+        <button onClick={() => navigate(-1)} className="p-2 rounded-lg active:scale-95 text-bosque-lt" aria-label="Volver">
           <IconArrowLeft />
         </button>
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-emergency)' }} />
+          <span className="w-2 h-2 rounded-full animate-pulse bg-emergency" />
           <h1 className="font-bold text-base" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>Contacto de urgencia</h1>
         </div>
       </header>
 
       <main className="flex-1 px-5 pt-6 pb-10 max-w-xl mx-auto w-full">
-        <div className="rounded-xl p-5 border mb-5" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+        <div className="rounded-xl p-5 border mb-5 bg-sombra border-line">
           <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-guardia)' }} />
+            <span className="w-2 h-2 rounded-full animate-pulse bg-guardia" />
             <h2 className="font-bold text-lg" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>{provider.name}</h2>
           </div>
-          <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-sm text-muted">
             {rubro?.icon} {rubro?.label} · {ciudad?.label} · en guardia ahora
           </p>
         </div>
 
-        <div className="rounded-xl p-5 border mb-5" style={{ backgroundColor: 'var(--color-sombra)', borderColor: 'var(--color-line)' }}>
+        <div className="rounded-xl p-5 border mb-5 bg-sombra border-line">
           <div className="flex items-baseline justify-between mb-3">
-            <span className="text-sm font-semibold" style={{ color: 'var(--color-nieve)' }}>Contacto de urgencia</span>
-            <span className="text-2xl font-black" style={{ color: 'var(--color-nieve)', fontFamily: 'var(--font-mono)' }}>{formatARS(20000)}</span>
+            <span className="text-sm font-semibold text-nieve">Contacto de urgencia</span>
+            <span className="text-2xl font-black text-nieve font-mono">{formatARS(20000)}</span>
           </div>
           <ul className="space-y-2">
             {[
@@ -89,8 +89,8 @@ export function EmergencyCheckoutPage() {
               'Mensaje listo para enviar, con tu urgencia precargada.',
               'Garantía: si no te responde en 10 minutos, te damos un crédito para la próxima.',
             ].map(t => (
-              <li key={t} className="flex gap-2 text-xs" style={{ color: 'var(--color-muted)' }}>
-                <span style={{ color: 'var(--color-guardia)' }}>✓</span> {t}
+              <li key={t} className="flex gap-2 text-xs text-muted">
+                <span className="text-guardia">✓</span> {t}
               </li>
             ))}
           </ul>
@@ -103,12 +103,11 @@ export function EmergencyCheckoutPage() {
         <button
           onClick={handlePay}
           disabled={paying}
-          className="w-full py-4 rounded-full font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-60"
-          style={{ backgroundColor: 'var(--color-emergency)' }}
+          className="w-full py-4 rounded-full font-bold text-white text-base active:scale-[0.98] transition-transform disabled:opacity-60 bg-emergency"
         >
           {paying ? 'Abriendo el pago…' : `Pagar ${formatARS(20000)} y ver contacto`}
         </button>
-        <p className="text-center text-[11px] mt-3" style={{ color: 'var(--color-muted)' }}>
+        <p className="text-center text-[11px] mt-3 text-muted">
           Pago seguro con MercadoPago. No compartimos tu número con el prestador hasta que lo contactes vos.
         </p>
       </main>
@@ -118,10 +117,10 @@ export function EmergencyCheckoutPage() {
 
 function Center({ text, onBack }: { text: string; onBack?: () => void }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-8 text-center" style={{ backgroundColor: 'var(--color-noche)' }}>
-      <p className="text-sm" style={{ color: 'var(--color-muted)' }}>{text}</p>
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-8 text-center bg-noche">
+      <p className="text-sm text-muted">{text}</p>
       {onBack && (
-        <button onClick={onBack} className="px-5 py-2.5 rounded-lg text-sm font-semibold border active:scale-95" style={{ borderColor: 'var(--color-line)', color: 'var(--color-nieve)' }}>
+        <button onClick={onBack} className="px-5 py-2.5 rounded-lg text-sm font-semibold border active:scale-95 border-line text-nieve">
           ← Volver
         </button>
       )}
