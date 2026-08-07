@@ -473,6 +473,18 @@ export type Database = {
         Args: Record<string, never>
         Returns: Json
       }
+      is_admin: {
+        Args: Record<string, never>
+        Returns: boolean
+      }
+      admin_provider_queue: {
+        Args: Record<string, never>
+        Returns: Json
+      }
+      admin_set_verified: {
+        Args: { p_provider_id: string; p_verified: boolean }
+        Returns: Json
+      }
       accept_quote_by_token: {
         Args: { p_token: string; p_quote_id: string }
         Returns: Json

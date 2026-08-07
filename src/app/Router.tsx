@@ -1,5 +1,6 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { lazy } from 'react'
+import { RootLayout } from '@/app/RootLayout'
 // No-lazy a propósito: la pantalla de error/404 debe renderizar aunque falle la carga de un chunk.
 // ProtectedRoute tampoco es lazy: es el guard de las rutas privadas y decide (esperando
 // `loading` de la sesión) antes de que cargue cualquier chunk protegido.
@@ -26,11 +27,15 @@ const JobDetailPage      = lazy(() => import('@/features/jobs/components/JobDeta
 const ClaimProfilePage   = lazy(() => import('@/features/auth/components/ClaimProfilePage').then(m => ({ default: m.ClaimProfilePage })))
 const ClientSignup       = lazy(() => import('@/pages/ClientSignup').then(m => ({ default: m.ClientSignup })))
 const MyJobsPage         = lazy(() => import('@/features/jobs/components/MyJobsPage').then(m => ({ default: m.MyJobsPage })))
+const AdminVerification  = lazy(() => import('@/features/admin/components/AdminVerificationPage').then(m => ({ default: m.AdminVerificationPage })))
 
 export const router = createBrowserRouter([
   {
     // Layout sin path: un solo errorElement cubre todas las rutas hijas (crashes de render/loader).
-    element: <Outlet />,
+    // RootLayout además intercepta los errores que Supabase devuelve en el hash
+    // de la URL (link de confirmación vencido, por ejemplo), que hasta ahora se
+    // ignoraban en silencio y dejaban al usuario en la home sin explicación.
+    element: <RootLayout />,
     errorElement: <RootBoundary />,
     children: [
   // Auth
@@ -64,6 +69,10 @@ export const router = createBrowserRouter([
   { path: '/trabajos/:id',       element: <JobDetailPage /> },
   // Panel del CLIENTE (equivalente a /dashboard para prestadores).
   { path: '/mis-trabajos',       element: <ProtectedRoute><MyJobsPage /></ProtectedRoute> },
+
+  // Panel de verificación (admin). El control de acceso real está en la base:
+  // los RPC chequean is_admin() y devuelven vacío a cualquier otro.
+  { path: '/admin/verificacion', element: <ProtectedRoute><AdminVerification /></ProtectedRoute> },
 
   // Dashboard prestador. ProtectedRoute espera `loading` y exige sesión (en dev deja
   // pasar sin sesión para el selector mock). /dashboard es además el único punto que

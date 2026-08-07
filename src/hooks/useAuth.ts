@@ -89,6 +89,12 @@ async function setAccountType(type: 'cliente' | 'prestador') {
   return supabase.auth.updateUser({ data: { account_type: type } })
 }
 
+// Reenvía el mail de confirmación. Sin esto, un link vencido era un callejón
+// sin salida: el usuario no podía confirmar ni volver a pedir el mail.
+async function resendConfirmation(email: string) {
+  return supabase.auth.resend({ type: 'signup', email })
+}
+
 async function signOut() {
   return supabase.auth.signOut()
 }
@@ -97,5 +103,5 @@ async function signOut() {
 
 export function useAuth() {
   const snapshot = useSyncExternalStore(subscribe, getSnapshot)
-  return { ...snapshot, signUp, signIn, signInWithGoogle, signOut, setAccountType }
+  return { ...snapshot, signUp, signIn, signInWithGoogle, signOut, setAccountType, resendConfirmation }
 }

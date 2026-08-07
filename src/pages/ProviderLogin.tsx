@@ -21,18 +21,29 @@ type FormData = z.infer<typeof schema>
 export function ProviderLogin() {
   const navigate          = useNavigate()
   const [searchParams]    = useSearchParams()
-  const { signIn, signInWithGoogle } = useAuth()
+  const { signIn, signInWithGoogle, resendConfirmation } = useAuth()
 
   // A dónde volver después de entrar. Lo pone ProtectedRoute cuando te frena
-  // en una ruta privada; si no hay, el destino natural es el panel.
-  const next = searchParams.get('next') || '/dashboard'
+  // en una ruta privada; si no hay, el destino natural es el panel. Nunca
+  // aceptar una URL externa o protocol-relative desde un query param.
+  const requestedNext = searchParams.get('next')
+  const next = requestedNext?.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : '/dashboard'
   const [authError, setAuthError] = useState<string | null>(null)
+  const [reenvio, setReenvio]     = useState<'idle' | 'enviando' | 'enviado' | 'error'>('idle')
+
+  // RootLayout manda acá cuando Supabase devuelve un error en el hash: casi
+  // siempre un link de confirmación vencido o ya usado (Gmail agrupa el mail
+  // viejo con el nuevo en el mismo hilo, así que tocar el equivocado es fácil).
+  const linkError = searchParams.get('authError')
   const [showPassword, setShowPassword] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
 
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) })
 
@@ -56,6 +67,19 @@ export function ProviderLogin() {
       return
     }
     navigate(next, { replace: true })
+  }
+
+  // Reenvía el mail usando el email que el usuario ya tiene tipeado en el form:
+  // no tiene sentido pedírselo dos veces.
+  async function handleReenvio() {
+    const email = getValues('email')
+    if (!email || !email.includes('@')) {
+      setAuthError('Escribí tu email arriba y volvé a tocar el botón.')
+      return
+    }
+    setReenvio('enviando')
+    const { error } = await resendConfirmation(email)
+    setReenvio(error ? 'error' : 'enviado')
   }
 
   async function handleGoogleSignIn() {
@@ -133,6 +157,26 @@ export function ProviderLogin() {
               </button>
             </div>
           </Field>
+
+          {linkError && (
+            <div className="px-4 py-3 rounded-lg border text-xs leading-relaxed bg-brand-tint border-bosque-lt text-bosque-lt">
+              <p className="font-bold mb-1">Ese link de confirmación ya no sirve</p>
+              <p className="mb-2">
+                Los links vencen y se usan una sola vez. Escribí tu email acá abajo y te mandamos uno nuevo.
+              </p>
+              <button
+                type="button"
+                onClick={handleReenvio}
+                disabled={reenvio === 'enviando' || reenvio === 'enviado'}
+                className="px-3 py-1.5 rounded-full text-xs font-bold text-white active:scale-95 transition-all disabled:opacity-60 bg-bosque-lt"
+              >
+                {reenvio === 'enviando' ? 'Enviando…'
+                  : reenvio === 'enviado' ? 'Listo, revisá tu correo'
+                  : reenvio === 'error' ? 'No salió, probá de nuevo'
+                  : 'Reenviar el mail de confirmación'}
+              </button>
+            </div>
+          )}
 
           {authError && <FormError>{authError}</FormError>}
 
