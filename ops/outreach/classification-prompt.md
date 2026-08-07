@@ -58,7 +58,7 @@ Entrada: "Dale, contame cómo es"
 
 Entrada: "y cuanto sale?"
 ```json
-{ "intent": "price_question", "suggested_reply": "Aparecer es gratis; la suscripción es opcional: Básico $20.000, Profesional $35.000 o Destacado $55.000 por mes. ¿Te paso el link para registrarte?" }
+{ "intent": "price_question", "suggested_reply": "Mientras estamos arrancando no cobramos nada, y cuando empecemos avisamos con 30 días antes. Los planes van a ser Básico $20.000, Profesional $35.000 o Destacado $55.000 por mes. ¿Te paso el link para registrarte?" }
 ```
 
 Entrada: "no me jodas mas, sacame de la lista"

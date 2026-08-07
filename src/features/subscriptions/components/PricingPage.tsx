@@ -3,7 +3,7 @@ import { formatARS } from '@/shared/utils/formatARS'
 import { Logo } from '@/shared/components'
 import { cn } from '@/shared/utils/cn'
 import { useSubscription } from '@/features/subscriptions/hooks'
-import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/shared/config/plans'
+import { LANZAMIENTO, SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/shared/config/plans'
 
 const planMeta: Record<SubscriptionPlan['id'], { tagline: string; features: string[] }> = {
   basico: {
@@ -92,9 +92,15 @@ export function PricingPage() {
           </h1>
           <p className="text-sm text-muted leading-relaxed max-w-sm">
             Publicá tu perfil y empezá a recibir clientes en el radio San Martín + Junín.
-            Gratis durante el lanzamiento; precios en pesos, sin costos ocultos.
+            Precios en pesos, sin costos ocultos.
           </p>
         </section>
+
+        {/* ── Aviso de lanzamiento ───────────────────────────────────────────────── */}
+        {/* Va ANTES de las cards a propósito: el prestador al que llamamos por teléfono
+            escuchó "gratis" y acá se encuentra con precios de cinco cifras. El número
+            no puede aparecer sin la promesa arriba, o parece que le escondimos algo. */}
+        {!enabled && <AvisoLanzamiento />}
 
         {/* ── Plan cards ─────────────────────────────────────────────────────────── */}
         <div className="space-y-4">
@@ -204,7 +210,9 @@ function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled
         </span>
         <span className="text-xs text-muted ml-2">/ mes</span>
       </div>
-      <p className="text-xs text-muted mb-6">{meta.tagline}</p>
+      <p className="text-xs text-muted mb-6">
+        {enabled ? meta.tagline : `${meta.tagline} Hoy no se cobra.`}
+      </p>
 
       {/* Separator */}
       <div className="flex items-center gap-3 mb-5">
@@ -240,8 +248,21 @@ function PlanCard({ plan, enabled, onSelect }: { plan: SubscriptionPlan; enabled
             : { backgroundColor: 'var(--color-noche)', color: 'var(--color-nieve)', borderColor: 'var(--color-line)' }
         }
       >
-        {enabled ? `Suscribirme — ${plan.label}` : 'Gratis durante el lanzamiento 🎉'}
+        {enabled ? `Suscribirme — ${plan.label}` : `${LANZAMIENTO.titulo} 🎉`}
       </button>
+    </div>
+  )
+}
+
+// ─── AvisoLanzamiento ─────────────────────────────────────────────────────────
+// La promesa sale de shared/config/plans para que diga exactamente lo mismo acá,
+// en la home, en /activar y en el guion de llamada.
+
+function AvisoLanzamiento() {
+  return (
+    <div className="mb-6 px-5 py-4 rounded-lg border bg-brand-tint border-bosque-lt">
+      <p className="font-bold text-sm mb-1.5 text-bosque-lt">{LANZAMIENTO.titulo}</p>
+      <p className="text-xs leading-relaxed text-bosque-lt">{LANZAMIENTO.promesa}</p>
     </div>
   )
 }
@@ -255,13 +276,16 @@ function NavTab({ icon, label, active = false, onClick }: NavTabProps) {
     <button
       onClick={onClick}
       className={cn(
-        'flex flex-col items-center justify-center px-4 py-2 rounded-lg transition-all active:scale-90 duration-150',
+        // flex-1 + min-w-0: con px fijo la cuarta pestaña ("Prestador") se salía
+        // 16px del viewport a 390px. Mismo bug que la barra del home con el tab
+        // "Trabajos"; mismo arreglo: que repartan el ancho en vez de exigirlo.
+        'flex-1 min-w-0 flex flex-col items-center justify-center px-1 py-2 rounded-lg transition-all active:scale-90 duration-150',
         active ? 'text-bosque-lt' : 'text-muted hover:text-bosque-lt',
       )}
       style={undefined}
     >
       {icon}
-      <span className="text-[10px] font-semibold uppercase tracking-widest mt-1">{label}</span>
+      <span className="w-full truncate text-center text-[10px] font-semibold uppercase tracking-wider mt-1">{label}</span>
     </button>
   )
 }

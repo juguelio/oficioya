@@ -11,7 +11,7 @@ import { useViewer } from '@/hooks/useViewer'
 import { Logo, RubroIcon, Footer } from '@/shared/components'
 import { formatARS } from '@/shared/utils/formatARS'
 import { initials } from '@/shared/utils/initials'
-import { BASE_PLAN } from '@/shared/config/plans'
+import { BASE_PLAN, LANZAMIENTO } from '@/shared/config/plans'
 import { rubroPhotos } from '@/shared/config/rubro-photos'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
 import type { Provider } from '@/shared/types'
@@ -268,7 +268,7 @@ export function HomePage() {
         <section className="bg-bosque-dk">
           <div className="flex divide-x" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
           {[
-            { stat: '90 días', label: 'Gratis para fundadores' },
+            { stat: 'Gratis', label: 'Mientras arrancamos' },
             { stat: 'WhatsApp', label: 'Contacto directo' },
             { stat: '<40 km', label: 'Radio operativo' },
           ].map(({ stat, label }) => (
@@ -641,7 +641,8 @@ export function HomePage() {
               Sumá tu perfil
             </h2>
             <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.65)' }}>
-              Sumate a la cohorte fundadora de {MARKET_SCOPE_COPY}. Gratis durante el lanzamiento; después desde{' '}
+              Sumate a la cohorte fundadora de {MARKET_SCOPE_COPY}. {LANZAMIENTO.corta} Después,
+              los planes arrancan en{' '}
               <span className="font-bold text-white">{formatARS(BASE_PLAN.priceARS)}/mes</span>.
             </p>
             <div className="flex gap-2">

@@ -32,7 +32,7 @@ Control central de los 3 proyectos activos.
 ### Decisiones tomadas
 - WhatsApp como CTA principal. Suscripción solo prestadores, clientes gratis.
 - Precios: Básico $20k / Profesional $35k / Destacado $55k ARS (revisar cada 3 meses).
-- Validación de oferta antes que más código: solo SMA, cohorte fundadora gratis 90 días, MP en fase 2. Métrica: ≥15 prestadores verificados + ≥50 clics WhatsApp/semana en 30 días.
+- Validación de oferta antes que más código: solo SMA, cohorte fundadora gratis mientras arrancamos (aviso 30 días antes de cobrar), MP en fase 2. Métrica: ≥15 prestadores verificados + ≥50 clics WhatsApp/semana en 30 días.
 
 ---
 

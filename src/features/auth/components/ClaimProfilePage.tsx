@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { signUpErrorMessage } from '@/lib/auth-signup'
 import { ciudades, rubros } from '@/design-system/tokens'
+import { LANZAMIENTO } from '@/shared/config/plans'
 
 // ─── Tipos del RPC ──────────────────────────────────────────────────────────────
 type Claimable = {
@@ -172,9 +173,15 @@ export function ClaimProfilePage() {
           <h2 className="text-2xl font-black mb-2" style={{ letterSpacing: '-0.02em' }}>
             Te armamos tu perfil en Oficio
           </h2>
-          <p className="text-sm text-muted mb-7 max-w-sm mx-auto">
-            Creá tu clave para administrarlo y empezá a recibir contactos de clientes de la zona — <strong className="text-nieve">gratis</strong>.
+          <p className="text-sm text-muted mb-4 max-w-sm mx-auto">
+            Creá tu clave para administrarlo y empezá a recibir contactos de clientes de la zona.
           </p>
+          {/* La misma promesa que escuchó por teléfono y que va a leer en /planes.
+              Acá es donde decide: si «gratis» no dice hasta cuándo, suena a trampa. */}
+          <div className="mb-7 mx-auto max-w-sm px-4 py-3 rounded-lg border bg-brand-tint border-bosque-lt text-left">
+            <p className="text-xs font-bold mb-1 text-bosque-lt">{LANZAMIENTO.titulo}</p>
+            <p className="text-xs leading-relaxed text-bosque-lt">{LANZAMIENTO.promesa}</p>
+          </div>
         </div>
 
         {/* Tarjeta del perfil pre-armado */}
