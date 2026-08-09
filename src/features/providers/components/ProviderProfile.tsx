@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { ciudades, rubros } from '@/design-system/tokens'
+import { useSeo } from '@/shared/hooks'
 import { Footer, Logo } from '@/shared/components'
 import { useReviews } from '@/features/providers/hooks'
 import { track } from '@/lib/analytics'
@@ -51,6 +52,31 @@ export function ProviderProfile() {
 
   // undefined = cargando · null = no encontrado
   const [provider, setProvider] = useState<Provider | null | undefined>(undefined)
+
+  // Cada perfil es una página propia. Ojo: NO se emite aggregateRating — el rating
+  // que mostramos de los perfiles sin reclamar es de Google, y publicarlo como
+  // reseñas nuestras sería atribuirnos algo que no es nuestro.
+  useSeo(provider ? {
+    title: `${provider.name} — ${rubros.find(r => r.id === provider.rubro)?.label ?? 'Oficios'} en ${ciudades.find(c => c.id === provider.ciudad)?.label ?? 'la zona'} | Oficio`,
+    description:
+      provider.bio?.trim()
+        ? provider.bio.trim().slice(0, 155)
+        : `${provider.name}, ${(rubros.find(r => r.id === provider.rubro)?.label ?? 'oficio').toLowerCase()} en ${ciudades.find(c => c.id === provider.ciudad)?.label ?? 'la zona'}. Contacto directo por WhatsApp.`,
+    path: `/prestador/${provider.id}`,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      name: provider.name,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: ciudades.find(c => c.id === provider.ciudad)?.label ?? '',
+        addressRegion: 'Neuquén',
+        addressCountry: 'AR',
+      },
+      areaServed: ciudades.find(c => c.id === provider.ciudad)?.label ?? '',
+      knowsAbout: rubros.find(r => r.id === provider.rubro)?.label ?? '',
+    },
+  } : null)
 
   useEffect(() => {
     let cancelled = false

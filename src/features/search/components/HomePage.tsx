@@ -12,6 +12,7 @@ import { Logo, RubroIcon, Footer } from '@/shared/components'
 import { formatARS } from '@/shared/utils/formatARS'
 import { initials } from '@/shared/utils/initials'
 import { BASE_PLAN, LANZAMIENTO } from '@/shared/config/plans'
+import { useSeo, SITE_URL } from '@/shared/hooks'
 import { rubroPhotos } from '@/shared/config/rubro-photos'
 import type { CiudadId, RubroId } from '@/design-system/tokens'
 import type { Provider } from '@/shared/types'
@@ -47,6 +48,20 @@ const EMERGENCY_RUBROS: { id: RubroId; label: string; icon: string; keywords: st
 // ─── HomePage ─────────────────────────────────────────────────────────────────
 
 export function HomePage() {
+  useSeo({
+    title: 'Oficio — La guía de oficios de San Martín y Junín de los Andes',
+    description:
+      'Electricistas, plomeros, gasistas, cerrajeros y más en San Martín de los Andes y ' +
+      'Junín de los Andes. Buscá por rubro y contactalos directo por WhatsApp.',
+    path: '/',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Oficio',
+      url: SITE_URL,
+      inLanguage: 'es-AR',
+    },
+  })
   const ciudadId    = useCityStore(s => s.ciudadId)
   const setCiudad   = useCityStore(s => s.setCiudad)
   const clearCiudad = useCityStore(s => s.clearCiudad)
@@ -803,6 +818,7 @@ type ProviderMiniCardProps = { provider: Provider }
 
 function ProviderMiniCard({ provider }: ProviderMiniCardProps) {
   const navigate = useNavigate()
+
   const ownPhoto = provider.photos?.[0]
   const photo    = ownPhoto ?? FALLBACK_PHOTO
 

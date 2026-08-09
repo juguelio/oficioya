@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useParams, useNavigate, Navigate, Link } from 'react-router-dom'
 import { ciudades, rubros } from '@/design-system/tokens'
+import { useSeo } from '@/shared/hooks'
 import { useCityStore } from '@/features/search/store'
 // excepción documentada (§3): search consume el hook useProviders de la feature providers.
 // El hook encapsula el fetch a Supabase (providers_public) — mover eso a shared/ sería un
@@ -46,6 +47,28 @@ export function RubroPage() {
 
   const ciudadData = ciudades.find(c => c.id === ciudadId)
   const rubroData  = rubros.find(r => r.id === rubro)
+
+  // Ésta es LA página del canal orgánico: alguien tipeando "gasista junín de los
+  // andes" a las once de la noche. Hasta ahora compartía título y canonical con la
+  // home, así que para Google no existía como página propia.
+  useSeo(ciudadData && rubroData ? {
+    title: `${rubroData.label} en ${ciudadData.label} | Oficio`,
+    description:
+      `Encontrá ${rubroData.label.toLowerCase()} en ${ciudadData.label}. ` +
+      'Mirá quién trabaja en tu zona y contactalos directo por WhatsApp, sin intermediarios.',
+    path: `/${ciudadId}/${rubro}`,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: `${rubroData.label} en ${ciudadData.label}`,
+      about: { '@type': 'Service', serviceType: rubroData.label },
+      spatialCoverage: {
+        '@type': 'City',
+        name: ciudadData.label,
+        address: { '@type': 'PostalAddress', addressLocality: ciudadData.label, addressRegion: 'Neuquén', addressCountry: 'AR' },
+      },
+    },
+  } : null)
 
   const { providers, loading } = useProviders({
     ciudad: ciudadId ?? undefined,

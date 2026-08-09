@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /mis-trabajos
+Disallow: /admin
+Disallow: /activar
+Disallow: /verificacion
+Disallow: /perfil
+
+Sitemap: https://www.oficioya.app/sitemap.xml
