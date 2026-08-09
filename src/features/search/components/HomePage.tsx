@@ -781,7 +781,10 @@ export function HomePage() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide"
             style={{ backgroundColor: 'var(--color-emergency)', color: '#fff' }}
           >
-            <span className="w-1.5 h-1.5 bg-white/80 rounded-full animate-pulse" />
+            {/* Mismo criterio que la sección de urgencias de arriba: el punto que late
+                dice "hay alguien atendiendo ahora", y hoy hay CERO prestadores en
+                guardia. Este quedó vivo cuando se apagó el de la sección. */}
+            <span className="w-1.5 h-1.5 bg-white/80 rounded-full" />
             Urgencias
           </span>
         </button>
