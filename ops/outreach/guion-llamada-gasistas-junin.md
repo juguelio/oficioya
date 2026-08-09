@@ -53,6 +53,63 @@ Guion, no libreto. La idea es sonar como un vecino que está armando algo, no co
 3. *¿Además de gas hacés plomería o calefacción?* — puede tapar tres rubros.
 4. *¿Te parece bien que te mande el link para confirmar tu perfil?*
 
+## De qué número sale el WhatsApp — y por qué importa
+
+**Sale del número personal de Juguelio.** Decisión del 2026-08-07, para la primera
+tanda de 30.
+
+El razonamiento: en Argentina la estafa por WhatsApp tiene una forma reconocible
+—número desconocido, sin foto, sin historia, que escribe primero— y un número
+"de empresa" recién sacado se parece más a eso que a un vecino. El número
+personal tiene cara, nombre y alguien por quien preguntar en un pueblo de treinta
+mil. Pero el que genera la confianza no es el número: **es la llamada previa**.
+El WhatsApp es siempre el segundo contacto.
+
+### El opt-in no es cortesía, es la regla
+
+La política de WhatsApp Business **no distingue entre cuenta personal y cuenta de
+empresa**, y pide dos cosas antes de escribirle a alguien: que te haya dado el
+número y que te haya dado permiso. La pregunta 4 del guion —*"¿te parece bien que
+te mande el link?"*— **es** ese permiso. Sin ese sí, no sale nada.
+
+Lo que dispara restricciones no es vender: es que la gente **bloquee o reporte**.
+WhatsApp limita los envíos automáticamente cuando eso pasa seguido, y puede cortar
+el acceso. Como acá el número es el personal, el costo de que pase es alto: es el
+número de la familia y de los otros proyectos. Por eso el protocolo se respeta
+entero, no en parte.
+
+### Reglas de envío
+
+- **Nadie recibe un mensaje sin haber dicho que sí por teléfono.** Sin excepción,
+  ni siquiera "este seguro que quiere".
+- **Guardá el contacto antes de escribir.** Un mensaje a un contacto guardado se
+  ve distinto que uno a un número suelto.
+- **Uno por uno, con el nombre de la persona.** Nada de copiar y pegar el mismo
+  texto a diez números seguidos.
+- **Espaciados.** No salen diez mensajes en cinco minutos; salen a medida que
+  vas llamando.
+- **Si no contesta, no insistas** más de lo que dice la cadencia. Si dice que no,
+  se cierra y no se vuelve a escribir.
+- **Nunca acortes el link.** `oficioya.app/activar/...` es largo, pero el dominio
+  se lee de entrada; un acortador es señal de estafa.
+- **Nunca le pidas plata, datos de tarjeta ni códigos.** Oficio no pide nada de
+  eso en ningún momento, y el prestador tiene que poder comprobarlo.
+
+### Si desconfía
+
+Es la reacción sana y hay que tratarla como tal, no como objeción a vencer.
+
+> Hacés bien en preguntar. Mirá: entrá a oficioya.app, ahí abajo dice quién está
+> atrás, con mi nombre. Y si querés chequear con alguien de acá, preguntale a
+> Matías del Laboratorio, en San Martín, que ya tiene su perfil.
+
+Es verificable en un pueblo así, y ninguna explicación por WhatsApp reemplaza eso.
+
+**Migración pendiente:** cuando pasemos de la primera tanda hay que mover el
+contacto a un número de Oficio y avisarles a los fundadores. Los 30 primeros van
+a tener el número personal para siempre — es una puerta de una sola dirección y
+se abre a sabiendas.
+
 ## Si dice que sí
 
 > Perfecto. Te mando el link por WhatsApp ahora. Lo abrís, ves tu perfil ya armado, confirmás que sos vos y queda activo. Es un toque.

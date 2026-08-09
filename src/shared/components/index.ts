@@ -8,7 +8,7 @@ export { ProtectedRoute } from './ProtectedRoute'
 export { NotFoundPage } from './NotFoundPage'
 export { RootBoundary } from './RootBoundary'
 export { RubroIcon } from './RubroIcon'
-export { Footer, CONTACTO_EMAIL } from './Footer'
+export { Footer, CONTACTO_EMAIL, FUNDADOR, FUNDADOR_CIUDAD } from './Footer'
 // Primitivas del sistema visual — usar SIEMPRE estas en vez de rehacer headers,
 // títulos de sección, campos de formulario o chips a mano.
 export { PageHeader } from './PageHeader'

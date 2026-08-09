@@ -3,6 +3,14 @@ import { cn } from '@/shared/utils/cn'
 
 export const CONTACTO_EMAIL = 'hola@oficioya.app'
 
+// Quién está atrás. No es decoración: el prestador al que llamamos por teléfono
+// y le mandamos un link por WhatsApp va a entrar acá justamente a chequear que
+// no lo estén estafando. Un sitio que dice "somos una plataforma" y firma con un
+// mail genérico se parece demasiado a lo que esa persona está tratando de evitar.
+// Un nombre y un pueblo son verificables: acá se pregunta y se sabe.
+export const FUNDADOR = 'Joaquín Apóstolo'
+export const FUNDADOR_CIUDAD = 'San Martín de los Andes'
+
 /**
  * Footer del sitio público.
  *
@@ -53,6 +61,11 @@ export function Footer({ className }: FooterProps) {
             <p className="text-sm leading-relaxed text-muted">
               Los oficios de San Martín y Junín de los Andes, en un solo lugar.
               Contacto directo por WhatsApp, sin intermediarios.
+            </p>
+            <p className="text-sm leading-relaxed mt-3 text-muted">
+              Lo armó <strong className="text-nieve font-semibold">{FUNDADOR}</strong>, de {FUNDADOR_CIUDAD}.
+              Si te escribimos y querés chequear que somos de verdad, respondenos
+              a <a className="underline" href={`mailto:${CONTACTO_EMAIL}`}>{CONTACTO_EMAIL}</a>.
             </p>
           </div>
 

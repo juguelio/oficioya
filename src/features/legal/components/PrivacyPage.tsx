@@ -1,5 +1,5 @@
 import { LegalLayout, Section } from './LegalLayout'
-import { CONTACTO_EMAIL } from '@/shared/components/Footer'
+import { CONTACTO_EMAIL, FUNDADOR, FUNDADOR_CIUDAD } from '@/shared/components/Footer'
 
 /**
  * BORRADOR. Refleja lo que la plataforma hace hoy, no una plantilla genérica.
@@ -13,7 +13,8 @@ export function PrivacyPage() {
       <Section title="Quiénes somos">
         <p>
           Oficio es una plataforma que conecta vecinos con trabajadores de oficios en San
-          Martín de los Andes y Junín de los Andes, provincia de Neuquén, Argentina.
+          Martín de los Andes y Junín de los Andes, provincia de Neuquén, Argentina. La armó
+          y la lleva adelante <strong className="text-nieve">{FUNDADOR}</strong>, de {FUNDADOR_CIUDAD}.
           Podés escribirnos a <a className="underline" href={`mailto:${CONTACTO_EMAIL}`}>{CONTACTO_EMAIL}</a> por
           cualquier tema de esta política.
         </p>
