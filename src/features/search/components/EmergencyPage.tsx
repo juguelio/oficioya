@@ -102,7 +102,7 @@ export function EmergencyPage() {
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full animate-pulse bg-emergency" />
           <h1 className="font-bold text-base" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.02em' }}>
-            Urgencias 24/7
+            Urgencias
           </h1>
         </div>
         <span className="ml-auto text-xs font-semibold text-muted">
@@ -176,14 +176,26 @@ export function EmergencyPage() {
               <p className="text-sm text-muted">No pudimos cargar los prestadores. Probá de nuevo.</p>
             </div>
           ) : shown.length === 0 ? (
+            /* "Volvé a chequear en un rato" es el peor consejo posible para alguien
+               que tiene una pérdida de gas ahora. Si no hay guardia, lo mandamos al
+               listado del rubro para que llame directo: peor experiencia que la
+               guardia, pero es una salida y no una pared. */
             <div className="rounded-xl p-6 border text-center bg-sombra border-line">
               <span className="text-3xl">🌙</span>
               <p className="text-sm font-bold mt-2 text-nieve">
                 No hay prestadores en guardia ahora en {cityCenter.label}
               </p>
-              <p className="text-xs mt-1 text-muted">
-                Probá con otra categoría o volvé a chequear en un rato.
+              <p className="text-xs mt-1 mb-4 text-muted">
+                Todavía estamos sumando gente de guardia. Mientras tanto podés ver los
+                {active === 'todas' ? ' prestadores ' : ` ${rubros.find(r => r.id === active)?.label.toLowerCase() ?? ''} `}
+                de {cityCenter.label} y llamarlos vos.
               </p>
+              <button
+                onClick={() => navigate(active === 'todas' ? '/' : `/${ciudad}/${active}`)}
+                className="px-5 py-3 rounded-full font-bold text-sm text-white active:scale-[0.98] transition-all bg-bosque-lt"
+              >
+                Ver {active === 'todas' ? 'el listado' : rubros.find(r => r.id === active)?.label.toLowerCase()} de {cityCenter.label}
+              </button>
             </div>
           ) : (
             <div className="space-y-3">
@@ -209,7 +221,9 @@ export function EmergencyPage() {
             {[
               { n: '1', text: 'Elegís el rubro que necesitás' },
               { n: '2', text: 'Ves quién está de guardia ahora' },
-              { n: '3', text: 'Pagás el contacto y te llega en minutos' },
+              // "te llega en minutos" es una promesa de tiempo que nadie puede sostener
+              // con 0 prestadores en guardia. Se describe el mecanismo, no un plazo.
+              { n: '3', text: 'Pagás el contacto y coordinás directo por WhatsApp' },
             ].map(step => (
               <div key={step.n} className="rounded-lg p-3 border text-center bg-sombra border-line">
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black mx-auto mb-2 text-white bg-bosque-lt">

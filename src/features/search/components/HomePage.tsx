@@ -336,10 +336,15 @@ export function HomePage() {
 
             {/* Label + link */}
             <div className="flex items-center justify-between mb-2">
+              {/* Ni "24/7" ni el punto latiendo: los dos dicen "hay alguien atendiendo
+                  ahora", y hoy hay CERO prestadores en guardia. Alguien con un caño
+                  roto a las 3 de la mañana no necesita que le prometamos cobertura,
+                  necesita que le digamos la verdad y lo mandemos a alguien a quien
+                  pueda llamar. Vuelve el 24/7 cuando haya guardias reales. */}
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full animate-pulse bg-emergency" />
+                <span className="w-2 h-2 rounded-full bg-emergency" />
                 <span className="text-xs font-black uppercase tracking-widest text-emergency">
-                  Urgencias 24/7
+                  Urgencias
                 </span>
               </div>
               <button onClick={() => navigate('/emergencias')} className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.35)' }}>
@@ -380,7 +385,7 @@ export function HomePage() {
           >
             <span className="text-sm font-bold flex items-center gap-2 text-emergency">
               <IconBolt />
-              Ver todos los guardias disponibles
+              Ver quién está de guardia
             </span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-emergency">
               <path d="M9 18l6-6-6-6" />

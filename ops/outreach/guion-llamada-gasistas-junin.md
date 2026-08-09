@@ -53,6 +53,15 @@ Guion, no libreto. La idea es sonar como un vecino que está armando algo, no co
 3. *¿Además de gas hacés plomería o calefacción?* — puede tapar tres rubros.
 4. *¿Te parece bien que te mande el link para confirmar tu perfil?*
 
+**Y una quinta, que no es para vender sino para saber si un producto existe:**
+
+5. *Che, ¿vos tomarías una urgencia de noche o un fin de semana? ¿Con cuánto aviso, y cobrás distinto?*
+
+No le prometas nada sobre esto —la guardia **no existe todavía**, hay cero prestadores
+anotados— y no lo uses como argumento de venta. Es una pregunta de exploración: la
+respuesta decide si Oficio puede llegar a ofrecer urgencias o no. Anotá lo que diga tal
+cual, incluido "ni loco". Un "no" repetido es tan informativo como un sí.
+
 ## De qué número sale el WhatsApp — y por qué importa
 
 **Sale del número personal de Juguelio.** Decisión del 2026-08-07, para la primera
@@ -160,7 +169,7 @@ Y si lo pide: **sacarlo en el momento**. Ese pedido se respeta sin negociar.
 
 ## Lo que NO se dice
 
-- ❌ "Emergencias 24/7" ni los $20.000 por contacto — no existe todavía, hay 0 prestadores en guardia.
+- ❌ "Emergencias 24/7" ni los $20.000 por contacto — no existe todavía, hay **0 prestadores en guardia**. La pregunta 5 explora si podría existir; eso no es lo mismo que ofrecerlo.
 - ❌ Prometer cantidad de clientes o de contactos.
 - ❌ Decir que está "verificado" antes de que presente matrícula o DNI.
 - ❌ Hablar de otros gasistas por nombre. Pueblo chico.

@@ -262,7 +262,7 @@ export function ProviderProfile() {
                 En guardia ahora — Contactar urgencia
               </button>
               <p className="text-center text-xs text-muted mt-3 mb-8">
-                Está atendiendo urgencias 24/7. El contacto se habilita al confirmar el servicio.
+                Está de guardia ahora. El contacto se habilita al confirmar el servicio.
               </p>
             </>
           ) : provider.claimed ? (

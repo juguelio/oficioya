@@ -73,7 +73,7 @@ export function Footer({ className }: FooterProps) {
             <p className="text-xs font-bold uppercase tracking-[0.15em] mb-1 text-muted">
               Plataforma
             </p>
-            <FooterLink to="/emergencias">Urgencias 24/7</FooterLink>
+            <FooterLink to="/emergencias">Urgencias</FooterLink>
             <FooterLink to="/trabajos">Trabajos publicados</FooterLink>
             <FooterLink to="/planes">Planes para prestadores</FooterLink>
             <FooterLink to="/registro/prestador">Sumate como prestador</FooterLink>
