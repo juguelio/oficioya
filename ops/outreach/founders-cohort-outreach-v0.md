@@ -1,5 +1,5 @@
-> ⚠️ Oferta actualizada 2026-08-07: **gratis mientras arrancamos**, sin fecha fija, con aviso
-> de 30 días antes de cobrar. La fuente única de esta copy es `src/shared/config/plans.ts`
+> ⚠️ Oferta actualizada 2026-08-07: **60 días gratis para los primeros 30 prestadores**,
+> más la promesa de no cobrar si Oficio no le trajo trabajo en ese plazo. La fuente única de esta copy es `src/shared/config/plans.ts`
 > (`LANZAMIENTO`) — si cambia allá, cambia acá.
 
 # Outreach pack — cohorte fundadora SMA + Junín (v0)
@@ -8,14 +8,14 @@
 
 Complementa `templates.md`. Donde difieren, **manda este archivo**: `templates.md` quedó
 escrito para el modelo "gratis para aparecer + planes pagos ya visibles", y la decisión
-de producto 2026-07-27 es **gratis mientras arrancamos (sin fecha fija, aviso 30 días), sin cobrar hasta
+de producto 2026-07-27 es **60 días gratis con cupo de 30 fundadores, sin cobrar hasta
 que haya señal**.
 
 ## Diferencias con `templates.md` (leer antes de usar)
 
 | Tema | `templates.md` | Este pack |
 |---|---|---|
-| Oferta | "aparecer es gratis" + planes pagos en plantilla 3 | gratis mientras arrancamos + aviso de 30 días, plan mensual recién después |
+| Oferta | "aparecer es gratis" + planes pagos en plantilla 3 | 60 días gratis, cupo de 30, plan mensual recién después |
 | Follow-up | +72hs | +48hs (una sola vez) |
 | Envío | WhatsApp Business Platform, plantilla aprobada Meta | **manual, uno por uno**, sin automatización |
 | Alcance | `{{2}}` ciudad | radio SMA + Junín |
@@ -53,7 +53,7 @@ confirmado se sigue por WhatsApp.
 > Te armamos el perfil con tus datos públicos y ya está publicado — lo único que falta
 > es que lo confirmes vos para que la gente te pueda escribir directo por WhatsApp.
 >
-> Mientras estamos arrancando es **gratis**: perfil, verificación básica y te
+> Para los primeros 30 son **60 días gratis**: perfil, verificación básica y te
 > mostramos cuántos contactos reales te trajo. Si sirve, después vemos plan mensual;
 > si no sirve, no te cobramos nada.
 >
@@ -69,7 +69,7 @@ Guion, no libreto. Llamada corta:
 > verificados para San Martín y Junín. Te vi en el directorio con buena puntuación y quería
 > saber si te interesa aparecer.
 >
-> Mientras estamos arrancando es gratis: te armamos el perfil, hacemos una
+> Para los primeros 30 son 60 días gratis: te armamos el perfil, hacemos una
 > verificación básica y medimos si te trae contactos reales. Si sirve, después vemos plan
 > mensual; si no, no te cobramos nada.
 >
@@ -139,7 +139,7 @@ target → contacted → interested → docs_pending → verified → rejected
 
 - No mencionar paywall de emergencias ni los $20.000 por contacto.
 - No prometer cantidad de contactos ni ingresos.
-- No cobrar nada mientras dure el lanzamiento, y avisar con 30 días antes del primer cobro.
+- No cobrar nada durante los 60 días, y no cobrar después si Oficio no le trajo trabajo.
 - No contactar fuera del radio SMA + Junín.
 - Voseo rioplatense siempre.
 - Ningún teléfono ni dato personal sale a notas de Obsidian.

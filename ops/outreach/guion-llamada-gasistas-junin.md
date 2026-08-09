@@ -29,7 +29,7 @@ El desk ya viene ordenado por ese criterio: P1 primero.
 - [ ] Tener el nombre a mano y pronunciarlo bien.
 - [ ] Saber la categoría de esa persona (está en el desk).
 - [ ] Tener el link de claim listo para mandar en el momento si dice que sí.
-- [ ] Saber de memoria la promesa: **gratis mientras arrancamos, avisamos con 30 días antes de cobrar**. Es la única frase que no se improvisa: tiene que decir lo mismo que el sitio.
+- [ ] Saber de memoria la promesa: **60 días gratis para los primeros 30, y si no te trajo trabajo no pagás**. Es la única frase que no se improvisa: tiene que decir lo mismo que el sitio.
 - [ ] Anotar el resultado en el desk **durante** la llamada, no después.
 
 ## El guion
@@ -42,9 +42,9 @@ Guion, no libreto. La idea es sonar como un vecino que está armando algo, no co
 >
 > *(pausa — dejalo ubicarse)*
 >
-> Estamos armando el listado de gasistas de la zona y quería preguntarte si te interesa aparecer. **Mientras estamos arrancando es gratis**: te armamos el perfil, y la gente que necesita un gasista te escribe directo por WhatsApp. Sin intermediarios, vos manejás tu agenda y tus precios.
+> Estamos armando el listado de gasistas de la zona y quería preguntarte si te interesa aparecer. **Los primeros 30 tienen 60 días gratis**: te armamos el perfil, y la gente que necesita un gasista te escribe directo por WhatsApp. Sin intermediarios, vos manejás tu agenda y tus precios.
 >
-> Cuando empecemos a cobrar te avisamos con 30 días de anticipación. Y si no te trajo trabajo, no tenés nada que pagar.
+> Y si en esos 60 días no te trajo trabajo, no tenés nada que pagar.
 
 **Las cuatro preguntas** (el objetivo real de la llamada):
 
@@ -77,7 +77,7 @@ Estado → `rejected`. **No volver a llamar.** No mandarle WhatsApp "por si acas
 
 La objeción más probable es *"¿y esto qué me cuesta?"* o *"¿quién sos?"*.
 
-> Hoy no te cuesta nada, sin tarjeta ni nada. Somos de acá, estamos arrancando con San Martín y Junín. En la página vas a ver precios de $20.000 para arriba: **eso es para más adelante**, y cuando empiece te avisamos con 30 días. Si querés mirala primero y te llamo la semana que viene.
+> Sesenta días no te cuesta nada, sin tarjeta ni nada. Somos de acá, estamos arrancando con San Martín y Junín. En la página vas a ver precios de $20.000 para arriba: **eso es para después de los 60 días**, y si en ese tiempo no te trajimos trabajo, no pagás. Si querés mirala primero y te llamo la semana que viene.
 
 Estado → `contacted`, con nota. Un solo re-contacto, a los 14 días.
 
@@ -87,8 +87,9 @@ Va a pasar: `/planes` muestra Básico $20.000, Profesional $35.000 y Destacado $
 de todo un cartel que dice que hoy no se cobra. Que lo vea es bueno — significa que el precio no
 se lo escondiste. La respuesta es la misma que le diste por teléfono, sin cambiarle una coma:
 
-> Sí, esos son los planes para cuando empecemos a cobrar. Hoy no se cobra nada y cuando arranque
-> te avisamos con 30 días antes. Está escrito arriba de los precios, fijate.
+> Sí, esos son los planes para después. Vos entrás en los primeros 30, así que tenés 60 días
+> gratis desde que activás — y si en esos 60 días no te trajimos trabajo, no pagás nada. Está
+> escrito arriba de los precios, fijate.
 
 **Nunca** contestar "no le des bola a eso" ni "eso es viejo". El número es real y va a llegar.
 
@@ -106,7 +107,8 @@ Y si lo pide: **sacarlo en el momento**. Ese pedido se respeta sin negociar.
 - ❌ Prometer cantidad de clientes o de contactos.
 - ❌ Decir que está "verificado" antes de que presente matrícula o DNI.
 - ❌ Hablar de otros gasistas por nombre. Pueblo chico.
-- ❌ Inventar una fecha de cobro. No hay fecha: es gratis mientras arrancamos y avisamos con 30 días. Decir "90 días" es prometer algo que nadie decidió.
+- ❌ Cambiarle el número a la oferta. Son **60 días** y **30 lugares**, no 90 ni "los primeros que se anoten". Es lo que dice el sitio y lo que va a leer cuando toque el link.
+- ❌ Decir cuántos lugares quedan. No hay contador y no lo vamos a inventar.
 
 ## Meta de la primera tanda
 

@@ -58,7 +58,7 @@ Entrada: "Dale, contame cómo es"
 
 Entrada: "y cuanto sale?"
 ```json
-{ "intent": "price_question", "suggested_reply": "Mientras estamos arrancando no cobramos nada, y cuando empecemos avisamos con 30 días antes. Los planes van a ser Básico $20.000, Profesional $35.000 o Destacado $55.000 por mes. ¿Te paso el link para registrarte?" }
+{ "intent": "price_question", "suggested_reply": "Los primeros 30 prestadores tienen 60 días gratis desde que activan, y si en ese tiempo Oficio no te trajo trabajo no pagás nada. Después los planes son Básico $20.000, Profesional $35.000 o Destacado $55.000 por mes. ¿Te paso el link para registrarte?" }
 ```
 
 Entrada: "no me jodas mas, sacame de la lista"

@@ -1,3 +1,9 @@
+> ⚠️ **Estas plantillas NO son canónicas para la campaña de 2026-08.** Están escritas para
+> el modelo viejo ("aparecer es gratis + planes visibles"). La oferta vigente es
+> **60 días gratis para los primeros 30 prestadores**, y no cobrar si Oficio no le trajo
+> trabajo. Fuente única: `LANZAMIENTO` en `src/shared/config/plans.ts`. Actualizarlas antes
+> de mandar cualquier cosa por WABA.
+
 # Plantillas de outreach — captación de prestadores
 
 Regla madre: **NADA de blast desde WhatsApp app/Business app.** Esto está pensado para

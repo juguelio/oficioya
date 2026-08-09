@@ -31,17 +31,25 @@ export const BASE_PLAN: SubscriptionPlan = SUBSCRIPTION_PLANS.reduce(
 // LO MISMO en los tres lugares donde aparece (home, /planes, /activar) y en el
 // guion de ops/outreach. Alguien a quien llamaste por teléfono recorre las tres
 // superficies en veinte minutos: si dicen cosas distintas, parece letra chica.
-// Decisión 2026-08-07: sin fecha fija de corte. Un plazo inventado se vence solo
-// y te obliga a cobrarle a alguien a quien todavía no le trajiste un cliente.
+//
+// Decisión 2026-08-07: 60 días con cupo de 30 fundadores. El plazo y el cupo dan
+// urgencia en la llamada; la segunda promesa —no cobrar si no le trajimos
+// trabajo— es la que evita el problema del plazo fijo, que es que el reloj corre
+// igual aunque el prestador no haya visto un solo cliente.
+//
+// El cupo NO se muestra como contador ("quedan N lugares"): con 2 prestadores
+// activos, un contador honesto anuncia que no se sumó nadie.
 
 export const LANZAMIENTO = {
   /** Titular corto. Para chips, stats y encabezados. */
-  titulo: 'Gratis mientras arrancamos',
+  titulo: 'Gratis 60 días para los primeros 30',
   /** La promesa completa. Es la que hay que poder sostener por teléfono. */
   promesa:
-    'No cobramos nada mientras estamos arrancando. Cuando empecemos a cobrar te avisamos ' +
-    'con 30 días de anticipación — y si Oficio no te trajo trabajo, no tenés nada que pagar.',
+    'Estamos armando el listado: los primeros 30 prestadores no pagan nada durante ' +
+    '60 días desde que activan el perfil. Y si en esos 60 días Oficio no te trajo ' +
+    'trabajo, no tenés nada que pagar.',
   /** Una línea, para donde no entra la promesa completa. */
-  corta: 'Gratis mientras arrancamos. Avisamos con 30 días antes de cobrar.',
-  avisoDias: 30,
+  corta: 'Gratis 60 días para los primeros 30 prestadores.',
+  dias: 60,
+  cupo: 30,
 } as const

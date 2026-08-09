@@ -268,7 +268,7 @@ export function HomePage() {
         <section className="bg-bosque-dk">
           <div className="flex divide-x" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
           {[
-            { stat: 'Gratis', label: 'Mientras arrancamos' },
+            { stat: '60 días', label: 'Gratis, primeros 30' },
             { stat: 'WhatsApp', label: 'Contacto directo' },
             { stat: '<40 km', label: 'Radio operativo' },
           ].map(({ stat, label }) => (
@@ -292,7 +292,10 @@ export function HomePage() {
           <p className="text-xs font-bold uppercase tracking-widest mb-3 text-muted">
             {ciudadId ? 'Tu ciudad' : '¿Dónde estás?'}
           </p>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          {/* wrap y no scroll horizontal: con dos ciudades la fila mide 433px a
+              390 de viewport, así que el segundo botón quedaba cortado contra el
+              borde. Cortado por poco no se lee como "deslizá", se lee como roto. */}
+          <div className="flex flex-wrap gap-2 pb-1">
             {visibleCiudades.map(c => (
               <button
                 key={c.id}
@@ -315,14 +318,14 @@ export function HomePage() {
                 ×
               </button>
             )}
-            <span
-              className="px-4 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap border shrink-0 bg-brand-tint border-line text-bosque-dk"
-            >
-              Junín de los Andes · sumando prestadores
-            </span>
           </div>
+          {/* Junín NO va como aparte: es una de las ciudades del selector, dos
+              botones más arriba. El chip "sumando prestadores" la mostraba dos
+              veces y la dejaba como ciudad de segunda, cuando hoy tiene 80
+              perfiles publicados y es de donde sale la primera tanda de alta. */}
           <p className="text-xs mt-3 leading-relaxed text-muted">
-            Validamos un radio cercano: San Martín como núcleo y Junín como oferta útil si atiende la zona.
+            Trabajamos un radio corto: San Martín y Junín de los Andes, a menos de 40 km.
+            El prestador que atiende la zona aparece en las dos.
           </p>
           </div>
         </section>
