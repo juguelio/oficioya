@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Placa de prestador — Oficio</title>
+<!--
+  Generador de placas para Instagram.
+
+  Para qué es: cuando un prestador activa su perfil, esta placa se la mandás A ÉL
+  para que la comparta a su propia red. Ése es el punto — no es publicidad de
+  Oficio, es una tarjeta de presentación suya. Por eso su nombre ocupa la mitad
+  del cuadrado y "Oficio" entra chico abajo. Un gasista que nunca tuvo folleto
+  ahora tiene algo para mandar cuando le piden referencias, y de paso Oficio
+  llega a gente a la que nunca habríamos llegado posteando desde una cuenta de
+  marca.
+
+  Cómo se usa: abrí este archivo en el navegador, completá los campos, y
+  "Descargar PNG". Sale 1080×1080, que es el cuadrado de Instagram.
+
+  Se dibuja todo en canvas a propósito: sin dependencias, sin CDN, sin build.
+  Anda offline y va a seguir andando dentro de dos años.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --noche: #F7F6F2; --nieve: #1A1714; --muted: #9C9589;
+    --brand: #1E6FA5; --brand-dk: #174F77; --line: #ECEAE4; --tint: #E6F3FF;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px; background: var(--noche); color: var(--nieve);
+    font-family: 'Raleway', system-ui, sans-serif;
+    display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  p.sub { margin: 0 0 24px; color: var(--muted); font-size: 14px; max-width: 40ch; line-height: 1.5; }
+  .panel { width: 340px; }
+  label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+          letter-spacing: .12em; color: var(--muted); margin: 16px 0 6px; }
+  input, select {
+    width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px;
+    background: #fff; font-family: inherit; font-size: 15px; color: var(--nieve);
+  }
+  input:focus, select:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
+  .row { display: flex; gap: 10px; align-items: center; margin-top: 16px; }
+  .row input[type=checkbox] { width: auto; }
+  .row label { margin: 0; text-transform: none; letter-spacing: 0; font-size: 14px;
+               font-weight: 600; color: var(--nieve); }
+  button {
+    margin-top: 24px; width: 100%; padding: 14px; border: 0; border-radius: 999px;
+    background: var(--brand); color: #fff; font-family: inherit; font-weight: 700;
+    font-size: 15px; cursor: pointer;
+  }
+  button:active { transform: scale(.98); }
+  canvas { width: 480px; height: 480px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+  .nota { font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.5; max-width: 480px; }
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <h1>Placa de prestador</h1>
+  <p class="sub">Se la mandás al prestador para que la comparta él. Cuanto más suya se
+  sienta, más la comparte — y ahí está toda la distribución.</p>
+
+  <label for="nombre">Nombre</label>
+  <input id="nombre" value="Marcos Castillo" />
+
+  <label for="rubro">Rubro</label>
+  <input id="rubro" value="Gasista matriculado" />
+
+  <label for="ciudad">Ciudad</label>
+  <input id="ciudad" value="Junín de los Andes" />
+
+  <label for="detalle">Una línea suya (opcional)</label>
+  <input id="detalle" value="15 años instalando y reparando gas" />
+
+  <div class="row">
+    <input type="checkbox" id="verificado" checked />
+    <label for="verificado">Mostrar “Verificado”</label>
+  </div>
+
+  <button id="bajar">Descargar PNG</button>
+  <p class="nota">1080×1080. Si el prestador no está verificado todavía,
+  destildá la casilla: poner el sello antes de ver la matrícula es exactamente
+  lo que el guion prohíbe.</p>
+</div>
+
+<div>
+  <canvas id="placa" width="1080" height="1080"></canvas>
+  <p class="nota">Vista previa a escala. El archivo sale en tamaño completo.</p>
+</div>
+
+<script>
+const C = { noche:'#F7F6F2', nieve:'#1A1714', muted:'#9C9589', brand:'#1E6FA5',
+            brandDk:'#174F77', line:'#ECEAE4', tint:'#E6F3FF', blanco:'#FFFFFF' }
+
+const cv = document.getElementById('placa')
+const cx = cv.getContext('2d')
+
+function texto(t, x, y, { size = 40, peso = 400, color = C.nieve, alineado = 'left', espaciado = 0 } = {}) {
+  cx.font = `${peso} ${size}px Raleway, system-ui, sans-serif`
+  cx.fillStyle = color
+  cx.textAlign = alineado
+  cx.textBaseline = 'alphabetic'
+  if (!espaciado) { cx.fillText(t, x, y); return cx.measureText(t).width }
+  // letter-spacing a mano: canvas no lo soporta
+  let ancho = 0
+  for (const ch of t) ancho += cx.measureText(ch).width + espaciado
+  let cur = alineado === 'center' ? x - ancho / 2 : x
+  cx.textAlign = 'left'
+  for (const ch of t) { cx.fillText(ch, cur, y); cur += cx.measureText(ch).width + espaciado }
+  return ancho
+}
+
+/** Parte el nombre en líneas que entren en el ancho dado. */
+function envolver(t, size, peso, max) {
+  cx.font = `${peso} ${size}px Raleway, system-ui, sans-serif`
+  const palabras = t.split(/\s+/).filter(Boolean)
+  const lineas = []
+  let actual = ''
+  for (const p of palabras) {
+    const prueba = actual ? actual + ' ' + p : p
+    if (cx.measureText(prueba).width > max && actual) { lineas.push(actual); actual = p }
+    else actual = prueba
+  }
+  if (actual) lineas.push(actual)
+  return lineas
+}
+
+function redondeado(x, y, w, h, r) {
+  cx.beginPath()
+  cx.moveTo(x + r, y)
+  cx.arcTo(x + w, y, x + w, y + h, r)
+  cx.arcTo(x + w, y + h, x, y + h, r)
+  cx.arcTo(x, y + h, x, y, r)
+  cx.arcTo(x, y, x + w, y, r)
+  cx.closePath()
+}
+
+function dibujar() {
+  const nombre = document.getElementById('nombre').value.trim() || 'Nombre del prestador'
+  const rubro  = document.getElementById('rubro').value.trim()  || 'Oficio'
+  const ciudad = document.getElementById('ciudad').value.trim() || 'San Martín de los Andes'
+  const detalle= document.getElementById('detalle').value.trim()
+  const verif  = document.getElementById('verificado').checked
+
+  cx.clearRect(0, 0, 1080, 1080)
+
+  // Fondo
+  cx.fillStyle = C.noche
+  cx.fillRect(0, 0, 1080, 1080)
+
+  // Banda superior de marca
+  cx.fillStyle = C.brand
+  cx.fillRect(0, 0, 1080, 24)
+
+  const M = 90 // margen
+
+  // Rubro arriba, chico y en versalita
+  texto(rubro.toUpperCase(), M, 210, { size: 30, peso: 700, color: C.brand, espaciado: 5 })
+
+  // El nombre es el protagonista: hasta tres líneas, tamaño según cuánto ocupe
+  let size = 116
+  let lineas = envolver(nombre, size, 900, 1080 - M * 2)
+  while (lineas.length > 3 && size > 62) { size -= 10; lineas = envolver(nombre, size, 900, 1080 - M * 2) }
+  let y = 210 + 120
+  for (const l of lineas) { texto(l, M, y, { size, peso: 900, color: C.nieve }); y += size * 1.06 }
+
+  // Ciudad
+  y += 26
+  texto(ciudad, M, y, { size: 42, peso: 600, color: C.muted })
+
+  // Chip de verificado
+  if (verif) {
+    y += 82
+    const etiqueta = 'Verificado por Oficio'
+    cx.font = '700 30px Raleway, system-ui, sans-serif'
+    const w = cx.measureText(etiqueta).width + 104
+    cx.fillStyle = C.tint
+    redondeado(M, y - 44, w, 66, 33); cx.fill()
+    // tilde
+    cx.strokeStyle = C.brand; cx.lineWidth = 6; cx.lineCap = 'round'; cx.lineJoin = 'round'
+    cx.beginPath(); cx.moveTo(M + 34, y - 12); cx.lineTo(M + 47, y + 1); cx.lineTo(M + 72, y - 26); cx.stroke()
+    texto(etiqueta, M + 88, y, { size: 30, peso: 700, color: C.brandDk })
+  }
+
+  // Línea suya, abajo del bloque principal
+  if (detalle) {
+    const dl = envolver(detalle, 38, 400, 1080 - M * 2).slice(0, 2)
+    let dy = 830
+    for (const l of dl) { texto(l, M, dy, { size: 38, peso: 400, color: C.nieve }); dy += 50 }
+  }
+
+  // Pie: Oficio chico. Es la placa del prestador, no nuestra publicidad.
+  cx.fillStyle = C.line
+  cx.fillRect(M, 930, 1080 - M * 2, 2)
+  texto('OFICIO', M, 1000, { size: 28, peso: 900, color: C.nieve, espaciado: 3 })
+  texto('oficioya.app', 1080 - M, 1000, { size: 28, peso: 600, color: C.muted, alineado: 'right' })
+  texto('Los oficios de San Martín y Junín de los Andes', M, 1040, { size: 24, peso: 400, color: C.muted })
+}
+
+for (const id of ['nombre', 'rubro', 'ciudad', 'detalle', 'verificado']) {
+  document.getElementById(id).addEventListener('input', dibujar)
+  document.getElementById(id).addEventListener('change', dibujar)
+}
+
+document.getElementById('bajar').addEventListener('click', () => {
+  const a = document.createElement('a')
+  const nombre = document.getElementById('nombre').value.trim().toLowerCase().replace(/\s+/g, '-') || 'prestador'
+  a.download = `oficio-${nombre}.png`
+  a.href = cv.toDataURL('image/png')
+  a.click()
+})
+
+// Esperar la fuente antes de dibujar: si no, la primera pasada sale con la de sistema.
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(dibujar)
+else dibujar()
+dibujar()
+</script>
+</body>
+</html>
