@@ -10,3 +10,8 @@ dist
 
 # Cowork no puede borrar archivos en este mount: mueve la basura acá.
 _to_delete/
+
+# Generados por scripts/generate-seo-files.mjs en cada build (el lastmod cambia
+# todos los días). Versionarlos ensucia el árbol después de cada `npm run build`.
+public/sitemap.xml
+public/robots.txt
