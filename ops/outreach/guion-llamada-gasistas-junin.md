@@ -109,10 +109,17 @@ entero, no en parte.
 Es la reacción sana y hay que tratarla como tal, no como objeción a vencer.
 
 > Hacés bien en preguntar. Mirá: entrá a oficioya.app, ahí abajo dice quién está
-> atrás, con mi nombre. Y si querés chequear con alguien de acá, preguntale a
-> Matías del Laboratorio, en San Martín, que ya tiene su perfil.
+> atrás, con mi nombre.
 
-Es verificable en un pueblo así, y ninguna explicación por WhatsApp reemplaza eso.
+Y si se puede, dar una referencia local: en un pueblo así se pregunta y se sabe, y
+eso ninguna explicación por WhatsApp lo reemplaza.
+
+⚠️ **Ojo con a quién nombrás.** Al 2026-08-09 **no hay ningún prestador que haya
+activado su perfil**. Matías Frugoni (El Laboratorio) figura en el sitio como activo
+y verificado, pero **nunca reclamó la cuenta** — se lo marcó a mano. Si lo nombrás
+como referencia y el gasista lo llama, Matías puede contestar que no sabe nada de
+Oficio, y ahí quedás peor que sin referencia. **Sólo nombrar a alguien que ya activó
+y sabe que existimos.**
 
 **Migración pendiente:** cuando pasemos de la primera tanda hay que mover el
 contacto a un número de Oficio y avisarles a los fundadores. Los 30 primeros van
