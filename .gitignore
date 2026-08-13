@@ -11,6 +11,10 @@ dist
 # Cowork no puede borrar archivos en este mount: mueve la basura acá.
 _to_delete/
 
+# Desk de activación: teléfonos E.164 completos y claim_token (que son
+# credenciales — con el link se reclama el perfil). Nunca a Git.
+ops/privado/
+
 # Generados por scripts/generate-seo-files.mjs en cada build (el lastmod cambia
 # todos los días). Versionarlos ensucia el árbol después de cada `npm run build`.
 public/sitemap.xml
