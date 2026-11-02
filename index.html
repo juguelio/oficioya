@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0E1510" />
+    <!-- Light mode "Azul Andino": el color de la barra del navegador es el fondo de página. -->
+    <meta name="theme-color" content="#F7F6F2" />
 
     <!-- SEO local — canal natural: "electricista san martín de los andes" en Google -->
     <title>Oficio — La guía de oficios de San Martín y Junín de los Andes</title>
@@ -29,16 +30,21 @@
       property="og:description"
       content="Electricistas, plomeros, gasistas, cerrajeros y más en el radio San Martín + Junín. Contacto directo por WhatsApp, sin intermediarios."
     />
-    <meta property="og:image" content="https://www.oficioya.app/images/hero-lanin.png" />
+    <!-- SIN og:image a propósito. La preview de WhatsApp mostraba `hero-lanin.png`
+         (el volcán del hero viejo de Stitch), una imagen que la app ya no usa en
+         ninguna pantalla y que no es la identidad de Oficio. Hasta que haya una
+         placa de marca aprobada, es preferible una preview de texto —título,
+         descripción y dominio— antes que seguir firmando cada link compartido con
+         el arte equivocado. Cómo sumarla cuando exista: docs/social-preview.md -->
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Twitter — `summary` (tarjeta chica) porque no hay imagen; `summary_large_image`
+         sin og:image degrada a una tarjeta vacía. -->
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Oficio — La guía de oficios de San Martín y Junín de los Andes" />
     <meta
       name="twitter:description"
       content="Electricistas, plomeros, gasistas, cerrajeros y más en el radio San Martín + Junín. Contacto directo por WhatsApp, sin intermediarios."
     />
-    <meta name="twitter:image" content="https://www.oficioya.app/images/hero-lanin.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

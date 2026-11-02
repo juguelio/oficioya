@@ -108,7 +108,8 @@ export function PrivacyPage() {
         <p>
           Guardamos en tu navegador la ciudad que elegís, para no volver a preguntártela, y la
           sesión si iniciaste sesión. No usamos cookies publicitarias ni de seguimiento entre
-          sitios.
+          sitios. El detalle completo está en la{' '}
+          <a className="underline" href="/cookies">Política de cookies</a>.
         </p>
       </Section>
 

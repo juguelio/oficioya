@@ -20,6 +20,7 @@ const ProviderLogin      = lazy(() => import('@/pages/ProviderLogin').then(m => 
 const ProviderDashboard  = lazy(() => import('@/pages/ProviderDashboard').then(m => ({ default: m.ProviderDashboard })))
 const PrivacyPage        = lazy(() => import('@/features/legal/components/PrivacyPage').then(m => ({ default: m.PrivacyPage })))
 const TermsPage          = lazy(() => import('@/features/legal/components/TermsPage').then(m => ({ default: m.TermsPage })))
+const CookiesPage        = lazy(() => import('@/features/legal/components/CookiesPage').then(m => ({ default: m.CookiesPage })))
 const ProviderProfileEdit = lazy(() => import('@/pages/ProviderProfileEdit').then(m => ({ default: m.ProviderProfileEdit })))
 const JobsPage           = lazy(() => import('@/features/jobs/components/JobsPage').then(m => ({ default: m.JobsPage })))
 const PostJobPage        = lazy(() => import('@/features/jobs/components/PostJobPage').then(m => ({ default: m.PostJobPage })))
@@ -85,6 +86,7 @@ export const router = createBrowserRouter([
   // la pantalla de consentimiento del login con Google.
   { path: '/privacidad',         element: <PrivacyPage /> },
   { path: '/terminos',           element: <TermsPage /> },
+  { path: '/cookies',            element: <CookiesPage /> },
 
   // Catch-all: cualquier URL desconocida → 404 branded (no la pantalla de dev de React Router).
   { path: '*',                   element: <NotFoundPage /> },

@@ -9,6 +9,7 @@ export function toProvider(row: DbProviderPublic): Provider {
     id:           row.id,
     name:         row.name,
     rubro:        row.rubro_id as RubroId,
+    rubros:       (row.rubros ?? [row.rubro_id]) as RubroId[],
     ciudad:       row.ciudad_id as CiudadId,
     barrio:       row.barrio ?? undefined,
     phone:        row.whatsapp_number ?? '',   // contacto; '' si unclaimed (oculto hasta el claim)

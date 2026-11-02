@@ -425,6 +425,7 @@ export type Database = {
           id: string
           name: string
           rubro_id: string
+          rubros: string[]
           ciudad_id: string
           barrio: string | null
           bio: string | null

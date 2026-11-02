@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/features/subscriptions/hooks'
 import { useOpenJobs } from '@/features/jobs/hooks'
 import { toProvider } from '@/shared/utils/toProvider'
+import { PageHeader } from '@/shared/components'
 
 const FALLBACK_PHOTO = '/images/user-avatar.png'
 
@@ -140,7 +141,11 @@ function ElegiTuCamino({ onExit }: ElegiTuCaminoProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center px-6 py-16 bg-noche">
+    // Con el header de la app: para quien entra con Google, esta es la primera
+    // pantalla de Oficio después de la de Google, y sin la barra de marca se
+    // llegaba a una página sin logo ni salida. `back` no: atrás es Google.
+    <div className="min-h-screen flex flex-col justify-center px-6 pt-24 pb-16 bg-noche">
+      <PageHeader back={false} />
       <div className="w-full max-w-md mx-auto">
         <h1 className="font-black text-2xl mb-2" style={{ color: 'var(--color-nieve)', letterSpacing: '-0.03em' }}>
           ¿Qué querés hacer en Oficio?

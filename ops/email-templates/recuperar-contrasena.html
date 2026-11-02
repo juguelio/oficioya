@@ -1,26 +1,60 @@
+<!doctype html>
 <!-- Supabase → Authentication → Emails → "Reset password".
-     Asunto sugerido: Cambiá tu contraseña de Oficio -->
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F6F2;padding:32px 16px;font-family:Helvetica,Arial,sans-serif">
-  <tr><td align="center">
-    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#FFFFFF;border:1px solid #ECEAE4;border-radius:16px;overflow:hidden">
-      <tr><td style="background:#1E6FA5;padding:24px 28px">
-        <span style="color:#FFFFFF;font-size:20px;font-weight:800;letter-spacing:-0.5px">OFICIO</span>
-      </td></tr>
-      <tr><td style="padding:28px">
-        <h1 style="margin:0 0 12px;font-size:22px;color:#1A1714;letter-spacing:-0.5px">Cambiá tu contraseña</h1>
-        <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#5C574F">
-          Pediste recuperar el acceso a tu cuenta. Tocá el botón y elegí una contraseña nueva.
-        </p>
-        <table cellpadding="0" cellspacing="0"><tr><td style="background:#1E6FA5;border-radius:999px">
-          <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 28px;color:#FFFFFF;font-size:15px;font-weight:700;text-decoration:none">Elegir contraseña nueva</a>
-        </td></tr></table>
-        <p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:#9C9589">
-          Si no lo pediste vos, no hagas nada: tu contraseña actual sigue funcionando.
-        </p>
-      </td></tr>
-      <tr><td style="padding:16px 28px;border-top:1px solid #ECEAE4;font-size:12px;color:#9C9589">
-        oficioya.app · San Martín de los Andes, Neuquén
+     Asunto: Cambiá tu contraseña de Oficio
+     Procedimiento de aplicación: ops/email-templates/README.md
+     Colores espejados de src/design-system/theme.css (en un mail no hay CSS variables). -->
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <title>Cambiá tu contraseña de Oficio</title>
+  </head>
+  <body style="margin:0;padding:0;background:#F7F6F2;-webkit-text-size-adjust:100%">
+    <div style="display:none;max-height:0;overflow:hidden;mso-hide:all">
+      Elegí una contraseña nueva para entrar a tu panel de Oficio.
+    </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F7F6F2;padding:32px 16px;font-family:Helvetica,Arial,sans-serif">
+      <tr><td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;background:#FFFFFF;border:1px solid #ECEAE4;border-radius:16px;overflow:hidden">
+
+          <tr><td style="background:#1E6FA5;padding:24px 28px">
+            <span style="color:#FFFFFF;font-size:20px;font-weight:800;letter-spacing:-0.5px">OFICIO</span>
+            <div style="color:#D6E8F5;font-size:13px;margin-top:2px">Los oficios de San Martín y Junín de los Andes</div>
+          </td></tr>
+
+          <tr><td style="padding:28px">
+            <h1 style="margin:0 0 12px;font-size:22px;line-height:1.3;color:#1A1714;letter-spacing:-0.5px">Cambiá tu contraseña</h1>
+
+            <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#5C574F">
+              Pediste recuperar el acceso a tu cuenta. Tocá el botón y elegí una contraseña nueva.
+            </p>
+
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background:#1E6FA5;border-radius:999px">
+              <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 28px;color:#FFFFFF;font-size:15px;font-weight:700;text-decoration:none">Elegir contraseña nueva</a>
+            </td></tr></table>
+
+            <p style="margin:24px 0 0;font-size:13px;line-height:1.6;color:#9C9589">
+              ¿No te anda el botón? Copiá y pegá esta dirección en tu navegador:<br />
+              <a href="{{ .ConfirmationURL }}" style="color:#1E6FA5;word-break:break-all;text-decoration:underline">{{ .ConfirmationURL }}</a>
+            </p>
+
+            <p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:#9C9589">
+              El link vence y se usa una sola vez. Si no lo pediste vos, no hagas nada:
+              tu contraseña actual sigue funcionando.
+            </p>
+          </td></tr>
+
+          <tr><td style="padding:16px 28px;border-top:1px solid #ECEAE4;font-size:12px;line-height:1.5;color:#9C9589">
+            <a href="https://www.oficioya.app" style="color:#9C9589;text-decoration:none">oficioya.app</a> · San Martín de los Andes, Neuquén
+          </td></tr>
+
+        </table>
       </td></tr>
     </table>
-  </td></tr>
-</table>
+  </body>
+</html>

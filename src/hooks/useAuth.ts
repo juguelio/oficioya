@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import type { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
+import { oauthRedirectUrl } from '@/lib/auth-redirect'
 
 type AuthState = {
   user:    User | null
@@ -51,7 +52,7 @@ supabase.auth.getSession().then(({ data: { session } }) => {
 
 // ─── Acciones ─────────────────────────────────────────────────────────────────
 
-async function signUp(email: string, password: string, meta: Record<string, string>) {
+async function signUp(email: string, password: string, meta: Record<string, unknown>) {
   // Limpia cualquier sesión colgada ANTES del alta: si quedara una sesión vieja,
   // la cuenta nueva se mezclaría con el usuario anterior. OJO: un flujo que llega
   // acá CON sesión válida (Google) no debe llamar signUp — el onboarding espera
@@ -72,12 +73,13 @@ async function signInWithGoogle(next?: string) {
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      // Vuelve al panel luego del intercambio OAuth. Esta URL debe estar
-      // incluida en Redirect URLs de Supabase Auth. /dashboard es además el
+      // Una sola URL de retorno para todos los caminos: la que tiene que estar
+      // habilitada en Redirect URLs de Supabase Auth. /dashboard es además el
       // único punto que decide a dónde sigue el usuario según tenga o no fila
       // en providers (panel de prestador vs onboarding vs panel de cliente).
-      // `next` permite que el alta de cliente vuelva directo a /mis-trabajos.
-      redirectTo: `${window.location.origin}${next ?? '/dashboard'}`,
+      // `next` no viaja en la URL: queda guardado y lo aplica RootLayout al
+      // volver (ver src/lib/auth-redirect.ts).
+      redirectTo: oauthRedirectUrl(next),
     },
   })
 }

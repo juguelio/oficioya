@@ -9,7 +9,7 @@ import { CONTACTO_EMAIL } from '@/shared/components/Footer'
  */
 export function TermsPage() {
   return (
-    <LegalLayout title="Términos y condiciones" updated="31 de julio de 2026">
+    <LegalLayout title="Términos y condiciones" updated="30 de agosto de 2026">
 
       <Section title="Qué es Oficio y qué no es">
         <p>
@@ -21,6 +21,19 @@ export function TermsPage() {
         <p>
           El acuerdo por un trabajo es entre el cliente y el prestador. Los reclamos por el
           trabajo hecho, por daños o por incumplimientos se dirimen entre ellos.
+        </p>
+      </Section>
+
+      <Section title="Trabajos y presupuestos">
+        <p>
+          Los clientes pueden publicar lo que necesitan (rubro, zona y detalle) sin crear una
+          cuenta. Los prestadores eligen si quieren cotizar un pedido: <strong className="text-nieve">Oficio
+          no asigna trabajos</strong>. Cuando un presupuesto se acepta, se muestra el WhatsApp del
+          prestador para que las partes coordinen el resto.
+        </p>
+        <p>
+          El presupuesto que enviás es tu propuesta. El cliente decide con quién avanza; el
+          trabajo, sus condiciones y su pago se acuerdan siempre entre las partes.
         </p>
       </Section>
 

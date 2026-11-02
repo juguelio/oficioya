@@ -85,6 +85,7 @@ export function Footer({ className }: FooterProps) {
             </p>
             <FooterLink to="/privacidad">Política de privacidad</FooterLink>
             <FooterLink to="/terminos">Términos y condiciones</FooterLink>
+            <FooterLink to="/cookies">Política de cookies</FooterLink>
             <a
               href={`mailto:${CONTACTO_EMAIL}`}
               className="text-sm transition-colors hover:underline text-muted"

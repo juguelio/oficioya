@@ -44,7 +44,7 @@ export function useProviders(filters: Filters = {}): UseProvidersReturn {
         .select('*')
 
       if (filters.ciudad)          query = query.eq('ciudad_id', filters.ciudad)
-      if (filters.rubro)           query = query.eq('rubro_id', filters.rubro)
+      if (filters.rubro)           query = query.contains('rubros', [filters.rubro])
       if (filters.soloVerificados) query = query.eq('is_verified', true)
       if (filters.soloConPlan)     query = query.not('subscription_tier_id', 'is', null)
 

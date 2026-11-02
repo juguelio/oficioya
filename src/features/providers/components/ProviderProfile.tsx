@@ -117,7 +117,6 @@ export function ProviderProfile() {
   }
 
   const ciudadData  = ciudades.find(c => c.id === provider.ciudad)
-  const rubroData   = rubros.find(r => r.id === provider.rubro)
   const img         = provider.photos?.[0] ?? (RUBRO_IMAGES[provider.rubro] ?? FALLBACK_IMG)
   const waLink      = `https://wa.me/${provider.phone.replace(/\D/g, '')}`
 
@@ -212,9 +211,20 @@ export function ProviderProfile() {
               {provider.name}
             </h2>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-semibold text-bosque-lt">
-                {rubroData?.icon} {rubroData?.label}
-              </span>
+              {(provider.rubros?.length ? provider.rubros : [provider.rubro]).map((rid, i) => {
+                const r = rubros.find(x => x.id === rid)
+                return r ? (
+                  <span
+                    key={rid}
+                    className={cn(
+                      'text-sm font-semibold',
+                      i === 0 ? 'text-bosque-lt' : 'text-muted'
+                    )}
+                  >
+                    {r.icon} {r.label}{i < (provider.rubros?.length ?? 1) - 1 ? ' · ' : ''}
+                  </span>
+                ) : null
+              })}
               <span className="text-muted text-sm">·</span>
               <span className="text-sm text-muted">
                 {provider.barrio ? `${provider.barrio}, ` : ''}{ciudadData?.label}

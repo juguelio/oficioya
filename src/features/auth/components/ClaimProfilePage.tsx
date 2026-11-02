@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { signUpErrorMessage } from '@/lib/auth-signup'
 import { ciudades, rubros } from '@/design-system/tokens'
+import { cn } from '@/shared/utils/cn'
 import { LANZAMIENTO } from '@/shared/config/plans'
 
 // ─── Tipos del RPC ──────────────────────────────────────────────────────────────
@@ -14,6 +15,7 @@ type Claimable = {
   id: string
   name: string
   rubro_id: string
+  rubros: string[]
   ciudad_id: string
   whatsapp_number: string | null
   external_rating: number | null
@@ -61,6 +63,7 @@ export function ClaimProfilePage() {
 
   const [profile, setProfile]     = useState<Claimable | null | undefined>(undefined) // undefined = cargando
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [selectedRubros, setSelectedRubros] = useState<string[]>([])
   // 'session' → ya está adentro; 'confirm' → falta confirmar el mail
   const [done, setDone]           = useState<'session' | 'confirm' | null>(null)
 
@@ -76,9 +79,19 @@ export function ClaimProfilePage() {
       const p = (data as unknown as Claimable | null)
       setProfile(p)
       if (p?.whatsapp_number) setValue('whatsapp', p.whatsapp_number)
+      if (p) {
+        const inicial = (p.rubros && p.rubros.length ? p.rubros : [p.rubro_id]).filter(Boolean)
+        setSelectedRubros([...new Set(inicial)])
+      }
     })()
     return () => { cancelled = true }
   }, [token, setValue])
+
+  function toggleRubro(id: string) {
+    setSelectedRubros(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    )
+  }
 
   async function onSubmit(data: FormData) {
     if (!token) return
@@ -87,6 +100,7 @@ export function ClaimProfilePage() {
     const { data: authData, error } = await signUp(data.email, data.password, {
       claim_token:     token,
       whatsapp_number: data.whatsapp,
+      rubros:          selectedRubros,
     })
 
     // El trigger aborta el alta si el token ya se usó → Supabase lo devuelve como
@@ -196,6 +210,41 @@ export function ClaimProfilePage() {
               {profile.external_reviews ? ` (${profile.external_reviews} reseñas)` : ''}
             </p>
           )}
+        </div>
+
+        {/* Multirubro: el prestador puede marcar todos los oficios que hace */}
+        <div className="mb-7">
+          <p className="text-sm font-bold text-nieve mb-1">¿Qué oficios hacés?</p>
+          <p className="text-xs text-muted mb-3">Marcá todos los que correspondan. Vas a aparecer en cada rubro que elijas.</p>
+          <div className="grid grid-cols-2 gap-2">
+            {rubros.map(r => {
+              const on = selectedRubros.includes(r.id)
+              return (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => toggleRubro(r.id)}
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left text-sm transition-all active:scale-[0.98]',
+                    on ? 'border-bosque-lt bg-brand-tint text-nieve' : 'border-line bg-noche text-muted'
+                  )}
+                >
+                  <span className="text-base leading-none">{r.icon}</span>
+                  <span className="flex-1">{r.label}</span>
+                  <span
+                    className="w-4 h-4 rounded-full border flex items-center justify-center text-[10px] font-bold"
+                    style={{
+                      borderColor: on ? 'var(--color-bosque-lt)' : 'var(--color-line)',
+                      backgroundColor: on ? 'var(--color-bosque-lt)' : 'transparent',
+                      color: on ? '#fff' : 'transparent',
+                    }}
+                  >
+                    ✓
+                  </span>
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>

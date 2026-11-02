@@ -1,4 +1,8 @@
+<!-- Marca de Oficio: cuadrado Azul Andino + "O". Mismos valores que Logo.tsx
+     (--color-bosque-lt sobre --color-noche). El ámbar sobre negro anterior era
+     un resto de la paleta Stitch: no coincidía con el logo de la app ni con la
+     marca actual, y es lo que muchos clientes muestran al lado de un link. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#F59E0B"/>
-  <text x="16" y="22.5" font-family="-apple-system,BlinkMacSystemFont,Inter,Helvetica,Arial,sans-serif" font-weight="900" font-size="20" letter-spacing="-1" text-anchor="middle" fill="#0A0A0B">O</text>
+  <rect width="32" height="32" rx="7" fill="#1E6FA5"/>
+  <text x="16" y="22.5" font-family="-apple-system,BlinkMacSystemFont,Inter,Helvetica,Arial,sans-serif" font-weight="900" font-size="20" letter-spacing="-1" text-anchor="middle" fill="#F7F6F2">O</text>
 </svg>

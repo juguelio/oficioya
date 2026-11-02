@@ -4,6 +4,7 @@ export type Provider = {
   id: string
   name: string
   rubro: RubroId
+  rubros?: RubroId[]
   ciudad: CiudadId
   barrio?: string
   phone: string

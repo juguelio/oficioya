@@ -1,87 +1,78 @@
-# Emails de Supabase Auth — plantillas de Oficio
+# Supabase Auth — configuración del proyecto (emails y URLs)
 
-Los emails salen hoy con el remitente **"Supabase Auth"** y el asunto **"Confirm Your Signup"**,
-en inglés. Esto se cambia en el dashboard: **Authentication → Emails → Templates**.
-No se puede tocar por migración ni por el MCP: es configuración del proyecto, no de la base.
+Esta nota cubre lo que **no vive en el repo**: plantillas de email y URLs de
+retorno son configuración del proyecto Supabase, no de la base. No se aplican por
+migración, ni por el CLI, ni por el MCP — se cargan a mano en el Dashboard.
+
+> **El HTML de las plantillas no está acá.** Vive versionado en
+> `ops/email-templates/`, con el procedimiento exacto de aplicación en el README
+> de esa carpeta. Antes esta nota tenía su propia copia del HTML y las dos
+> versiones ya habían divergido; ahora hay una sola fuente.
+
+## Plantillas de email
+
+| Tipo en Supabase | Archivo | Asunto exacto |
+|---|---|---|
+| Confirm signup | `ops/email-templates/confirmar-cuenta.html` | `Confirmá tu cuenta en Oficio` |
+| Reset password | `ops/email-templates/recuperar-contrasena.html` | `Cambiá tu contraseña de Oficio` |
+
+Magic Link, Change Email Address e Invite quedan en el default de Supabase: hoy
+la app no dispara ninguno de esos mails. Si alguno se empieza a usar, la
+plantilla se escribe primero en `ops/email-templates/`.
+
+Cómo cargarlas y cómo verificarlas (incluido el chequeo de acentos, que es el que
+delata un `charset` perdido al pegar): `ops/email-templates/README.md`.
 
 ## Antes de tocar las plantillas: el remitente
 
-El nombre **"Supabase Auth"** y la dirección `noreply@mail.app.supabase.io` **no se pueden
-cambiar desde las plantillas**. Salen del SMTP por defecto de Supabase, que además:
-
-- está limitado a unos pocos mails por hora, y
-- está pensado sólo para desarrollo — no para producción.
+El nombre **"Supabase Auth"** y la dirección `noreply@mail.app.supabase.io` **no
+se cambian desde las plantillas**. Salen del SMTP por defecto de Supabase, que
+además está limitado a unos pocos mails por hora y está pensado sólo para
+desarrollo.
 
 Para que diga "Oficio <hola@oficioya.app>" hay que configurar **SMTP propio** en
-Authentication → Emails → SMTP Settings. Opciones usuales: Resend, Postmark, Brevo.
-Mientras eso no esté, un prestador que se registra recibe un mail de un remitente
-desconocido en inglés — y muchos no lo van a abrir.
+Authentication → Emails → SMTP Settings (Resend, Postmark, Brevo). Las
+credenciales van sólo ahí: **no se versionan en este repo**. Mientras eso no
+esté, un prestador que se registra recibe un mail de un remitente desconocido —
+y muchos no lo van a abrir.
 
 ---
 
-## Confirm signup
+## URL Configuration — a validar en el Dashboard
 
-**Subject:** `Confirmá tu cuenta en Oficio`
+**Authentication → URL Configuration.** Nada de esto es verificable desde el
+repo: hay que abrir el Dashboard y confirmarlo.
 
-```html
-<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;color:#1A1714">
-  <p style="font-size:20px;font-weight:800;letter-spacing:-0.02em;margin:0 0 24px">Oficio</p>
+- **Site URL:** `https://www.oficioya.app`
+  Con `www`. Es el dominio canónico: el apex redirige (301) hacia ahí por
+  `vercel.json`, y `useSeo` publica el mismo canonical. Importa más de lo que
+  parece: la sesión de Supabase vive en `localStorage`, que es **por origen**, y
+  el Site URL es adonde Supabase manda cuando algo no coincide.
 
-  <h1 style="font-size:22px;font-weight:800;letter-spacing:-0.02em;margin:0 0 12px">Confirmá tu cuenta</h1>
+- **Redirect URLs:** tiene que incluir **`https://www.oficioya.app/dashboard`**.
 
-  <p style="font-size:15px;line-height:1.6;color:#4a4a4a;margin:0 0 24px">
-    Tocá el botón para activar tu perfil de prestador y empezar a recibir contactos
-    de clientes de San Martín y Junín de los Andes.
-  </p>
+  Es la **única** URL de retorno que el código usa para OAuth. La arma
+  `oauthRedirectUrl()` (`src/lib/auth-redirect.ts`) y la consume
+  `useAuth.signInWithGoogle`. Antes cada camino mandaba la suya —
+  `/mis-trabajos` en el alta de cliente, y cualquier ruta privada guardada por
+  `ProtectedRoute` en `?next=` — lo que obligaba a tener una entrada por ruta en
+  esta lista. **Si una `redirectTo` no está en la lista, Supabase no falla:
+  redirige al Site URL**, y el usuario aterriza en el home con la sesión creada,
+  leyendo eso como "el login con Google no anda". Hoy el destino que el usuario
+  pidió no viaja en la URL: queda guardado del lado del cliente y lo aplica
+  `RootLayout` al volver a `/dashboard`.
 
-  <a href="{{ .ConfirmationURL }}"
-     style="display:inline-block;background:#1E6FA5;color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:14px 28px;border-radius:9999px">
-    Confirmar mi cuenta
-  </a>
-
-  <p style="font-size:13px;line-height:1.6;color:#9C9589;margin:28px 0 0">
-    Si el botón no anda, copiá este link en tu navegador:<br>
-    <span style="color:#1E6FA5;word-break:break-all">{{ .ConfirmationURL }}</span>
-  </p>
-
-  <p style="font-size:13px;line-height:1.6;color:#9C9589;margin:20px 0 0">
-    Si no te registraste en Oficio, ignorá este mail.
-  </p>
-</div>
-```
-
-## Magic link
-
-**Subject:** `Tu link para entrar a Oficio`
-
-Mismo bloque, cambiando el título por `Entrá a tu cuenta`, el texto por
-`Tocá el botón para entrar a tu panel. El link vence en una hora.` y el botón por
-`Entrar a mi panel`.
-
-## Reset password
-
-**Subject:** `Cambiá tu contraseña de Oficio`
-
-Mismo bloque, con título `Cambiá tu contraseña`, texto
-`Pediste cambiar tu contraseña. Tocá el botón para elegir una nueva. Si no fuiste vos, ignorá este mail y tu contraseña sigue igual.`
-y botón `Elegir nueva contraseña`.
-
-## Change email address
-
-**Subject:** `Confirmá tu nuevo email en Oficio`
-
-Título `Confirmá tu nuevo email`, texto
-`Pediste cambiar el email de tu cuenta a {{ .Email }}. Tocá el botón para confirmarlo.`
-y botón `Confirmar el cambio`.
-
----
-
-## Chequeo obligatorio de URLs
-
-En **Authentication → URL Configuration**:
-
-- **Site URL:** `https://oficioya.app`
-- **Redirect URLs:** tienen que incluir `https://oficioya.app/dashboard` — es el
-  `redirectTo` que usa el login con Google (`useAuth.signInWithGoogle`). Si falta, Google
-  devuelve al Site URL y el usuario aterriza en el home, pareciendo deslogueado.
 - Para desarrollo, sumar `http://localhost:3000/dashboard`.
+  Las previews de Vercel tienen un host distinto por deploy: el login con Google
+  desde una preview vuelve al Site URL de producción salvo que se agregue esa URL
+  a mano.
+
+### Cómo validarlo sin adivinar
+
+1. Abrir el Dashboard y comparar la lista contra lo de arriba.
+2. Probar en producción, con `localStorage` limpio: entrar a `/perfil` sin
+   sesión → rebota a `/login?next=%2Fperfil` → **Continuar con Google** → tiene
+   que terminar en `/perfil`, logueado. Si termina en el home, falta la entrada
+   en Redirect URLs.
+3. Repetir desde `/registro/cliente` con Google: tiene que terminar en
+   `/mis-trabajos`.
